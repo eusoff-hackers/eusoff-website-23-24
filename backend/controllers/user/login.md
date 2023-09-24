@@ -2,7 +2,7 @@
 
 Used to login to an account.
 
-**URL**: `/doctor/login`
+**URL**: `/user/login`
 
 **Method**: `POST`
 
