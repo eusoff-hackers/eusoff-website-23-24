@@ -8,6 +8,8 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
   },
-  rules: {},
+  rules: {
+    'import/no-dynamic-require': 0,
+  },
   root: true,
 };

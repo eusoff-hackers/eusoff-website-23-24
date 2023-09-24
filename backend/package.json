@@ -11,6 +11,11 @@
   "author": "Eusoff Hackers",
   "license": "ISC",
   "dependencies": {
+    "@fastify/cookie": "^9.1.0",
+    "@fastify/session": "^10.5.0",
+    "bcryptjs": "^2.4.3",
+    "connect-mongo": "^5.0.0",
+    "crypto": "^1.0.1",
     "env-cmd": "^10.1.0",
     "fastify": "^4.23.2",
     "mongoose": "^7.5.2",
@@ -26,8 +31,8 @@
     "lint-staged": "^14.0.1",
     "prettier": "3.0.3"
   },
-  "lint-staged":{
-    "**/*.{js,jsx,ts,tsx}":[
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx}": [
       "npx prettier --write",
       "npx eslint --fix"
     ]
