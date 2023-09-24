@@ -1,6 +1,14 @@
 const session = require(`./session`);
 const { logger } = require(`./logger`);
 
+function auth(req, res, next) {
+  if (!req.session) return next();
+  const { user } = req.session;
+
+  req.user = user;
+  return next();
+}
+
 async function login(user, req) {
   try {
     await session.regenerate(req);
@@ -14,4 +22,4 @@ async function login(user, req) {
   }
 }
 
-module.exports = { login };
+module.exports = { login, auth };

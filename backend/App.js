@@ -9,6 +9,8 @@ const fastifySession = require('@fastify/session');
 const fastifyCookie = require('@fastify/cookie');
 const MongoStore = require('connect-mongo');
 
+const { auth } = require(`./utils/auth`);
+
 const crypto = require(`crypto`);
 
 const fastify = Fastify({
@@ -27,6 +29,7 @@ fastify.register(fastifySession, {
   }),
 });
 
+fastify.addHook(`onRequest`, auth);
 fastify.register(router);
 
 async function run() {
