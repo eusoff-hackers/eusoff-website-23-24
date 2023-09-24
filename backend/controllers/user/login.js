@@ -5,7 +5,7 @@ const { resBuilder } = require(`${UTILS}/req_handler`);
 const { success, sendStatus } = require(`${UTILS}/req_handler`);
 const auth = require(`${UTILS}/auth.js`);
 const { logger } = require(`${UTILS}/logger`);
-const { User } = require(`${MODELS}/user`);
+const { User, userReturnSchema } = require(`${MODELS}/user`);
 const bcrypt = require(`bcryptjs`);
 
 const schema = {
@@ -27,19 +27,7 @@ const schema = {
     200: resBuilder({
       type: `object`,
       properties: {
-        user: {
-          type: `object`,
-          properties: {
-            username: { type: `string` },
-            bids: {
-              type: `array`,
-              maxItems: 5,
-              items: {
-                type: `string`,
-              },
-            },
-          },
-        },
+        user: userReturnSchema,
       },
     }),
   },
