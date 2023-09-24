@@ -60,5 +60,6 @@ Used to login to an account.
 
 | **Condition**                  | **Code**                    | **Message**                    |
 | ------------------------------ | --------------------------- | ------------------------------ |
-| invalid credentials            | `401 Unauthorized`          | `Invalid Credentials.`         |
+| Invalid credentials            | `401 Unauthorized`          | `Invalid Credentials.`         |
+| Incomplete credentials         | `400 Bad Request`           | `body/credentials must have required property.`         |
 | Internal error                 | `500 INTERNAL SERVER ERROR` |                                |
