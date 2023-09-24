@@ -1,0 +1,35 @@
+{
+  "name": "jersey-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "App.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "env-cmd -f ./.env.dev node App.js",
+    "prepare": "cd .. && husky install backend/.husky"
+  },
+  "author": "Eusoff Hackers",
+  "license": "ISC",
+  "dependencies": {
+    "env-cmd": "^10.1.0",
+    "fastify": "^4.23.2",
+    "mongoose": "^7.5.2",
+    "winston": "^3.10.0",
+    "winston-mongodb": "^5.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "9.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^14.0.1",
+    "prettier": "3.0.3"
+  },
+  "lint-staged":{
+    "**/*.{js,jsx,ts,tsx}":[
+      "npx prettier --write",
+      "npx eslint --fix"
+    ]
+  }
+}
