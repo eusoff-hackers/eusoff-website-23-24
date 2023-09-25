@@ -9,15 +9,25 @@ const fastifySession = require('@fastify/session');
 const fastifyCookie = require('@fastify/cookie');
 const MongoStore = require('connect-mongo');
 
-const { auth } = require(`./utils/auth`);
-
+const cors = require(`@fastify/cors`);
 const crypto = require(`crypto`);
+
+const { auth } = require(`./utils/auth`);
 
 const fastify = Fastify({
   logger: LOG_LEVEL,
 });
 
 const secret = env.SESSION_SECRET || crypto.randomBytes(128).toString(`base64`);
+
+fastify.register(cors, {
+  origin: env.FRONTEND_URL,
+  methods: ['GET', 'PUT', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],
+  credentials: true,
+  maxAge: 600,
+  exposedHeaders: ['*', 'Authorization'],
+});
 
 fastify.register(fastifyCookie);
 fastify.register(fastifySession, {
