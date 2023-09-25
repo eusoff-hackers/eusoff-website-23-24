@@ -9,7 +9,12 @@ const { User } = require(`${MODELS}/user`);
 const schema = {
   response: {
     200: resBuilder({
-      $ref: `user`,
+      type: `object`,
+      properties: {
+        user: {
+          $ref: `user`,
+        },
+      },
     }),
   },
 };

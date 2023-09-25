@@ -9,28 +9,23 @@ const userReturnSchema = {
   $id: `user`,
   type: `object`,
   properties: {
-    user: {
-      type: `object`,
-      properties: {
-        username: { type: `string` },
-        teams: {
-          type: `array`,
-          items: {
-            type: `string`,
-          },
-        },
-        bids: {
-          type: `array`,
-          maxItems: 5,
-          items: {
-            type: `string`,
-          },
-        },
-        isEligible: { type: `boolean` },
-        role: { type: `string`, enum: [`USER`, `ADMIN`] },
-        year: { type: `number`, minimum: 1, maximum: 5 },
+    username: { type: `string` },
+    teams: {
+      type: `array`,
+      items: {
+        type: `string`,
       },
     },
+    bids: {
+      type: `array`,
+      maxItems: 5,
+      items: {
+        type: `string`,
+      },
+    },
+    isEligible: { type: `boolean` },
+    role: { type: `string`, enum: [`USER`, `ADMIN`] },
+    year: { type: `number`, minimum: 1, maximum: 5 },
   },
 };
 
