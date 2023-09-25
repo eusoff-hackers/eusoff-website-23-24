@@ -4,15 +4,12 @@ const MODELS = `../../models`;
 const { resBuilder } = require(`${UTILS}/req_handler`);
 const { success, sendStatus } = require(`${UTILS}/req_handler`);
 const { logger } = require(`${UTILS}/logger`);
-const { User, userReturnSchema } = require(`${MODELS}/user`);
+const { User } = require(`${MODELS}/user`);
 
 const schema = {
   response: {
     200: resBuilder({
-      type: `object`,
-      properties: {
-        user: userReturnSchema,
-      },
+      $ref: `user`,
     }),
   },
 };
