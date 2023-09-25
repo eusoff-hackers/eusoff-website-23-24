@@ -6,9 +6,16 @@ function arrayLimit(arr) {
 }
 
 const userReturnSchema = {
+  $id: `#user`,
   type: `object`,
   properties: {
     username: { type: `string` },
+    teams: {
+      type: `array`,
+      items: {
+        type: `string`,
+      },
+    },
     bids: {
       type: `array`,
       maxItems: 5,
@@ -25,6 +32,10 @@ const userReturnSchema = {
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  teams: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, unique: true }],
+    default: [],
+  },
   bids: {
     type: [{ type: mongoose.Schema.Types.ObjectId, unique: true }],
     default: [],
