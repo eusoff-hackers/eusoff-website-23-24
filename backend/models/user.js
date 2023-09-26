@@ -47,6 +47,12 @@ const userSchema = new mongoose.Schema({
   year: { type: Number, min: 1, max: 5, required: true },
 });
 
+userSchema.query.format = async function () {
+  const res = (await this.findOne()).toObject();
+  res.bids = res.bids.map((bids) => bids.toString());
+  return res;
+};
+
 const User = mongoose.model(`User`, userSchema);
 
 module.exports = { User, userReturnSchema };

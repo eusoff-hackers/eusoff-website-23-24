@@ -27,7 +27,7 @@ async function handler(req, res) {
     }
 
     const { username } = user;
-    const newUser = await User.findOne({ username });
+    const newUser = await User.findOne({ username }).format();
     return await success(res, { user: newUser });
   } catch (error) {
     logger.error(`Login error: ${error.message}`, { error });
