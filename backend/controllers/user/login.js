@@ -11,6 +11,7 @@ const bcrypt = require(`bcryptjs`);
 const schema = {
   body: {
     type: `object`,
+    required: [`credentials`],
     properties: {
       credentials: {
         type: `object`,
