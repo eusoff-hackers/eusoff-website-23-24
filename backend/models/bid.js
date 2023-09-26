@@ -14,6 +14,13 @@ const bidSchema = new mongoose.Schema({
   priority: { type: Number, required: true },
 });
 
+bidSchema.query.format = async function () {
+  const res = (await this.findOne()).toObject();
+  res.user = res.user.toString();
+
+  return res;
+};
+
 const Bid = mongoose.model(`Bid`, bidSchema);
 
 module.exports = { Bid, bidReturnSchema };
