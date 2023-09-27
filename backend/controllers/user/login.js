@@ -11,6 +11,7 @@ const bcrypt = require(`bcryptjs`);
 const schema = {
   body: {
     type: `object`,
+    required: [`credentials`],
     properties: {
       credentials: {
         type: `object`,
@@ -28,17 +29,7 @@ const schema = {
       type: `object`,
       properties: {
         user: {
-          type: `object`,
-          properties: {
-            username: { type: `string` },
-            bids: {
-              type: `array`,
-              maxItems: 5,
-              items: {
-                type: `string`,
-              },
-            },
-          },
+          $ref: `user`,
         },
       },
     }),
@@ -50,7 +41,7 @@ async function handler(req, res) {
     const {
       credentials: { username, password },
     } = req.body;
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }).format();
 
     if (!user || (await bcrypt.compare(password, user.password)) === false) {
       return sendStatus(res, 401, `Invalid credentials.`);
