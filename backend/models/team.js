@@ -1,6 +1,6 @@
 const mongoose = require(`mongoose`);
 
-const teamReturnSchema = {
+const returnSchema = {
   $id: `team`,
   type: `object`,
   properties: {
@@ -20,4 +20,4 @@ teamSchema.query.format = async function () {
 
 const Team = mongoose.model(`Team`, teamSchema);
 
-module.exports = { Team, teamReturnSchema };
+module.exports = { Team, returnSchema };

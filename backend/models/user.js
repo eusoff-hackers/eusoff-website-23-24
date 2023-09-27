@@ -1,11 +1,14 @@
 const MAX_BIDS = 5;
 const mongoose = require(`mongoose`);
+const { logger, logAndThrow } = require(`../utils/logger`);
+const { Bid } = require('./bid');
+const { Team } = require('./team');
 
 function arrayLimit(arr) {
   return arr.length <= MAX_BIDS;
 }
 
-const userReturnSchema = {
+const returnSchema = {
   $id: `user`,
   type: `object`,
   properties: {
@@ -13,14 +16,14 @@ const userReturnSchema = {
     teams: {
       type: `array`,
       items: {
-        type: `string`,
+        $ref: `team`,
       },
     },
     bids: {
       type: `array`,
       maxItems: 5,
       items: {
-        type: `string`,
+        $ref: `bid`,
       },
     },
     isEligible: { type: `boolean` },
@@ -47,12 +50,31 @@ const userSchema = new mongoose.Schema({
   year: { type: Number, min: 1, max: 5, required: true },
 });
 
-userSchema.query.format = async function () {
-  const res = (await this.findOne()).toObject();
-  res.bids = res.bids.map((bids) => bids.toString());
-  return res;
+userSchema.query.format = async function format() {
+  try {
+    const res = (await this.findOne()).toObject();
+
+    const promises = [
+      Promise.allSettled(
+        res.bids.map(async (bid) => Bid.findById(bid).format()),
+      ),
+      Promise.allSettled(res.teams.map(async (team) => Team.findById(team))),
+    ];
+
+    const jobs = await Promise.allSettled(promises);
+    const primary = logAndThrow(jobs, `User format primary failed`);
+    const results = primary.map((job) =>
+      logAndThrow(job, `User format secondary failed`),
+    );
+
+    [res.bids, res.teams] = results;
+    return res;
+  } catch (error) {
+    logger.error(`User format error: ${error.message}`, { error });
+    throw new Error(`Format error`);
+  }
 };
 
 const User = mongoose.model(`User`, userSchema);
 
-module.exports = { User, userReturnSchema };
+module.exports = { User, returnSchema };
