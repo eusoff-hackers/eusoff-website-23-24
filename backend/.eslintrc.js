@@ -12,4 +12,5 @@ module.exports = {
     'import/no-dynamic-require': 0,
   },
   root: true,
+  ignorePatterns: `scripts/*`,
 };
