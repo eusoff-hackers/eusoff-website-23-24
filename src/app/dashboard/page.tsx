@@ -1,8 +1,24 @@
-import React from 'react'
+"use client"; // This is a client component 👈🏽
+
+import React, { useState } from 'react'
  
 import Link from "next/link"
+import Modal from '../components/Modal/modal';
 
-export default function Dashboard() {
+const Dashboard: React.FC = () => {
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
+
+  const openModal = (index: number) => {
+    setSelectedItemIndex(index);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedItemIndex(null);
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="h-screen w-full flex flex-col lg:flex-row">
@@ -81,12 +97,20 @@ export default function Dashboard() {
                 <div
                   key={index}
                   className="bg-gray-800 h-16 w-16 flex items-center justify-center text-white font-semibold text-xl"
+                  onClick = {() => openModal(index+1)}
                 >
-                  {index + 1}
+                       {index + 1}
                 </div>
         ))}
+
+         {isModalOpen && selectedItemIndex !== null && (
+        <Modal closeModal={closeModal} index={selectedItemIndex} />
+      )}
+
         </div>
       </main>
     </div>
   )
 }
+
+export default Dashboard;
