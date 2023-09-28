@@ -14,7 +14,7 @@ const jerseySchema = new mongoose.Schema({
   quota: { type: Number, requried: true, default: 3 },
 });
 
-jerseySchema.query.format = async function () {
+jerseySchema.query.format = async function format() {
   const res = (await this.findOne()).toObject();
 
   return res;
