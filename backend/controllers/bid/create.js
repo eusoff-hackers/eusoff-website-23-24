@@ -58,12 +58,7 @@ async function handler(req, res) {
       return await sendStatus(res, 400, `Invalid jersey number(s).`);
     }
 
-    const eligibilityJobs = await Promise.allSettled(
-      jerseys.map((jersey) => isEligible(user, jersey)),
-    );
-
-    const results = logAndThrow(eligibilityJobs);
-    if (results.some((r) => r === false)) {
+    if ((await isEligible(user, jerseys)) === false) {
       return await sendStatus(res, 400, `Not eligible for a bid.`);
     }
 

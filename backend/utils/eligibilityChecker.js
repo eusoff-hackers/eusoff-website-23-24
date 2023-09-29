@@ -1,6 +1,7 @@
 const MODELS = `../models`;
 
 const { Server } = require(`${MODELS}/server`);
+const { Ban } = require(`${MODELS}/ban`);
 
 async function isEligible(user, jersey) {
   if (
@@ -9,7 +10,20 @@ async function isEligible(user, jersey) {
   ) {
     return false;
   }
-  if (jersey);
+
+  const { teams } = user;
+  const bans = await Ban.find({
+    $and: [
+      {
+        $or: teams.map((team) => ({ team })),
+      },
+      {
+        $or: jersey.map((j) => ({ jersey: j._id })),
+      },
+    ],
+  });
+
+  if (bans.length !== 0) return false;
   return true;
 }
 
