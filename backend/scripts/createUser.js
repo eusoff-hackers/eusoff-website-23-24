@@ -10,8 +10,15 @@ async function run() {
   await mongoose.connect(env.MONGO_URI), console.log(`Connected Atlas.`);
 
   return User.create({
-    username: `C112`,
-    password: await bcrypt.hash(`smallcoock`, 10),
+    username: `C114`,
+    password: await bcrypt.hash(`bigcoock`, 10),
+    bids: [],
+    year: 1,
+    role: `USER`,
+    teams: [],
+    isEligible: false,
+    points: 12,
+    bidding_round: 2,
   });
 }
 
