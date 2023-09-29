@@ -60,7 +60,7 @@ userSchema.query.format = async function format() {
 
     const promises = [
       Promise.allSettled(
-        res.bids.map(async (bid) => Bid.findById(bid).format()),
+        res.bids.map(async (bid) => Bid.findById(bid).format(res.username)),
       ),
       Promise.allSettled(res.teams.map(async (team) => Team.findById(team))),
     ];
