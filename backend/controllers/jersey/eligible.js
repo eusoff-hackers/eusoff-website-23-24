@@ -4,6 +4,7 @@ const { resBuilder } = require(`${UTILS}/req_handler`);
 const { success, sendStatus } = require(`${UTILS}/req_handler`);
 const { logger } = require(`${UTILS}/logger`);
 const { getEligible } = require(`${UTILS}/eligibilityChecker`);
+const { auth } = require(`${UTILS}/auth`);
 
 const schema = {
   response: {
@@ -22,9 +23,6 @@ const schema = {
 async function handler(req, res) {
   try {
     const { user } = req.session;
-    if (!user) {
-      return await sendStatus(res, 401);
-    }
 
     const jerseys = await getEligible(user);
     return await success(res, { jerseys });
@@ -38,5 +36,6 @@ module.exports = {
   method: `GET`,
   url: `/eligible`,
   schema,
+  preHandler: auth,
   handler,
 };

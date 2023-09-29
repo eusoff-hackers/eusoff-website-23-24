@@ -5,8 +5,9 @@ const { resBuilder } = require(`${UTILS}/req_handler`);
 const { success, sendStatus } = require(`${UTILS}/req_handler`);
 const { logger, logAndThrow } = require(`${UTILS}/logger`);
 const { Jersey } = require(`${MODELS}/jersey`);
-const { User } = require(`${MODELS}/user`);
 const { Bid } = require('../../models/bid');
+
+const { auth } = require(`${UTILS}/auth`);
 
 const { isEligible } = require(`${UTILS}/eligibilityChecker`);
 
@@ -39,14 +40,7 @@ const schema = {
 
 async function handler(req, res) {
   try {
-    const { user: userSession } = req.session;
-    if (!userSession) {
-      return await sendStatus(res, 401);
-    }
-    const { username } = userSession;
-
-    const user = await User.findOne({ username });
-
+    const { user } = req.session;
     const { bids } = req.body;
 
     const jerseyParsingJobs = await Promise.allSettled(
@@ -85,5 +79,6 @@ module.exports = {
   method: `POST`,
   url: `/create`,
   schema,
+  preHandler: auth,
   handler,
 };

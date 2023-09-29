@@ -5,6 +5,7 @@ const { resBuilder } = require(`${UTILS}/req_handler`);
 const { success, sendStatus } = require(`${UTILS}/req_handler`);
 const { logger } = require(`${UTILS}/logger`);
 const { User } = require(`${MODELS}/user`);
+const { auth } = require(`${UTILS}/auth`);
 
 const schema = {
   response: {
@@ -22,13 +23,9 @@ const schema = {
 async function handler(req, res) {
   try {
     const { user } = req.session;
-    if (!user) {
-      return await sendStatus(res, 401);
-    }
+    const formatted = await User.findById(user._id).format();
 
-    const { username } = user;
-    const newUser = await User.findOne({ username }).format();
-    return await success(res, { user: newUser });
+    return await success(res, { user: formatted });
   } catch (error) {
     logger.error(`Login error: ${error.message}`, { error });
     return sendStatus(res, 500);
@@ -39,5 +36,6 @@ module.exports = {
   method: `GET`,
   url: `/info`,
   schema,
+  preHandler: auth,
   handler,
 };
