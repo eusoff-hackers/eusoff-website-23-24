@@ -7,6 +7,7 @@ const { logger, logAndThrow } = require(`${UTILS}/logger`);
 const { Jersey } = require(`${MODELS}/jersey`);
 const { User } = require(`${MODELS}/user`);
 const { Bid } = require('../../models/bid');
+const { Server } = require('../../models/server');
 
 const schema = {
   body: {
@@ -44,7 +45,10 @@ async function handler(req, res) {
     const { username } = userSession;
 
     const user = await User.findOne({ username });
-    if (user.isEligible === false) {
+    if (
+      user.isEligible === false ||
+      user.bidding_round !== (await Server.findOne({ key: `round` })).value
+    ) {
       return await sendStatus(res, 400, `Not eligible for a bid.`);
     }
 
@@ -60,10 +64,10 @@ async function handler(req, res) {
     }
 
     const newBids = jerseys.map((jersey, index) => ({
-        user: user._id,
-        jersey: jersey._id,
-        priority: index,
-      }));
+      user: user._id,
+      jersey: jersey._id,
+      priority: index,
+    }));
 
     await Bid.deleteMany({ user: user._id });
     const bidIds = (await Bid.create(newBids)).map((bid) => bid._id);
