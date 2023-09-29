@@ -7,7 +7,8 @@ const { logger, logAndThrow } = require(`${UTILS}/logger`);
 const { Jersey } = require(`${MODELS}/jersey`);
 const { User } = require(`${MODELS}/user`);
 const { Bid } = require('../../models/bid');
-const { Server } = require('../../models/server');
+
+const { isEligible } = require(`${UTILS}/eligibilityChecker`);
 
 const schema = {
   body: {
@@ -45,22 +46,25 @@ async function handler(req, res) {
     const { username } = userSession;
 
     const user = await User.findOne({ username });
-    if (
-      user.isEligible === false ||
-      user.bidding_round !== (await Server.findOne({ key: `round` })).value
-    ) {
-      return await sendStatus(res, 400, `Not eligible for a bid.`);
-    }
 
     const { bids } = req.body;
 
-    const jobs = await Promise.allSettled(
+    const jerseyParsingJobs = await Promise.allSettled(
       bids.map(async (bid) => Jersey.findOne({ number: bid.number })),
     );
 
-    const jerseys = logAndThrow(jobs);
+    const jerseys = logAndThrow(jerseyParsingJobs);
     if (jerseys.some((r) => r === null)) {
       return await sendStatus(res, 400, `Invalid jersey number(s).`);
+    }
+
+    const eligibilityJobs = await Promise.allSettled(
+      jerseys.map((jersey) => isEligible(user, jersey)),
+    );
+
+    const results = logAndThrow(eligibilityJobs);
+    if (results.some((r) => r === false)) {
+      return await sendStatus(res, 400, `Not eligible for a bid.`);
     }
 
     const newBids = jerseys.map((jersey, index) => ({
