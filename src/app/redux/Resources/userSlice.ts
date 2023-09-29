@@ -1,27 +1,23 @@
 'use client';
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store";
 
 export interface User {
-    username: string,
-    bids: any[],
+  username: string,
+  bids: any[],
 }
 
-const initialState: User = {
-    username: '',
-    bids: [],
-}
+const initialState: User | null = null;
 
 
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<User>) => action.payload,
+    setUser: (state, action ) => action.payload,
   },
 });
 
 export const { setUser } = userSlice.actions;
-export const selectUser = (state: User) => state;
+export const selectUser = (state: { user: User | null }) => state.user;
 export default userSlice.reducer;

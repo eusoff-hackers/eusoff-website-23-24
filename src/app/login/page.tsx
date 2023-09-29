@@ -3,13 +3,17 @@
 import React, { useState } from 'react'
 import { setUser } from '../redux/Resources/userSlice';
 import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/navigation';
 
 const axios = require('axios').default;
 
 export default function Login() {
+  const router = useRouter()
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  
+
 
   const handleSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,6 +33,7 @@ export default function Login() {
 
         console.log(newUser)
         dispatch(setUser(newUser));
+        router.replace("/dashboard");
       } else {
         console.error('Login failed');
       }

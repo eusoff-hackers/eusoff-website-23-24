@@ -7,13 +7,13 @@ import { selectUser } from '../redux/Resources/userSlice';
 import { useDispatch } from 'react-redux';
 
 export default function Page() {
-  const user = useSelector(state => state);
-  console.log(user)
+  const user = useSelector(selectUser);
+  console.log("This is the user: " + user)
 
   return (
     <div>
       <p>Dashboard</p>
-      <p>hi</p>
+      <p>{user?.username}</p>
     </div>
   )
 }
