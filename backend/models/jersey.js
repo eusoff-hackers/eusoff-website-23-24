@@ -1,8 +1,9 @@
 const mongoose = require(`mongoose`);
 
-const jerseyReturnSchema = {
+const returnSchema = {
   $id: `jersey`,
   type: `object`,
+  required: [`number`],
   properties: {
     number: { type: `number` },
     male_quota: { type: `number` },
@@ -16,7 +17,7 @@ const jerseySchema = new mongoose.Schema({
   female_quota: { type: Number, requried: true, default: 3 }
 });
 
-jerseySchema.query.format = async function () {
+jerseySchema.query.format = async function format() {
   const res = (await this.findOne()).toObject();
 
   return res;
@@ -24,4 +25,4 @@ jerseySchema.query.format = async function () {
 
 const Jersey = mongoose.model(`Jersey`, jerseySchema);
 
-module.exports = { Jersey, jerseyReturnSchema };
+module.exports = { Jersey, returnSchema };

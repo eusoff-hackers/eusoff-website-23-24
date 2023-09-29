@@ -10,6 +10,7 @@ module.exports = {
   },
   rules: {
     'import/no-dynamic-require': 0,
+    'no-underscore-dangle': ['error', { allow: ['_id'] }],
   },
   root: true,
   ignorePatterns: `scripts/*`,
