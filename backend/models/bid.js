@@ -5,6 +5,7 @@ const { Jersey } = require(`./jersey`);
 const returnSchema = {
   $id: `bid`,
   type: `object`,
+  required: [`jersey`],
   properties: {
     user: { type: `string` },
     jersey: { $ref: `jersey` },

@@ -1,4 +1,5 @@
 const user = require(`./user`);
+const bid = require(`./bid`);
 const { addSchemas } = require(`../models/fastify-schemas`);
 
 module.exports = async (fastify) => {
@@ -9,4 +10,5 @@ module.exports = async (fastify) => {
   });
 
   fastify.register(user, { prefix: `/user` });
+  fastify.register(bid, { prefix: `/bid` });
 };

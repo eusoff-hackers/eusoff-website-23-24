@@ -3,6 +3,7 @@ const mongoose = require(`mongoose`);
 const returnSchema = {
   $id: `jersey`,
   type: `object`,
+  required: [`number`],
   properties: {
     number: { type: `number` },
     quota: { type: `number` },
