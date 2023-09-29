@@ -28,7 +28,9 @@ const returnSchema = {
     },
     isEligible: { type: `boolean` },
     role: { type: `string`, enum: [`USER`, `ADMIN`] },
+    bidding_round: { type: `number`, minimum: 1, maximum: 4},
     year: { type: `number`, minimum: 1, maximum: 5 },
+    points: { type: `number`, minimum: 0, maximum: 99},
   },
 };
 
@@ -47,7 +49,9 @@ const userSchema = new mongoose.Schema({
   jersey: { type: Number, default: undefined },
   isEligible: { type: Boolean, default: false },
   role: { type: String, enum: [`USER`, `ADMIN`], default: `USER` },
+  bidding_round: { type: Number, min: 1, max: 4, required: true },
   year: { type: Number, min: 1, max: 5, required: true },
+  points: { type: Number, min: 0, max: 99, required: true },
 });
 
 userSchema.query.format = async function format() {
