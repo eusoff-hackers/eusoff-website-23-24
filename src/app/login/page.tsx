@@ -72,7 +72,7 @@ export default function Login() {
             </h2>
             <form onSubmit={(e) => handleSubmit(e)} className="w-full">
               <div id="input" className="flex flex-col w-full my-5">
-                <label for="username" className="text-gray-500 mb-2"
+                <label htmlFor="username" className="text-gray-500 mb-2"
                   >Username</label
                 >
                 <input
@@ -81,11 +81,11 @@ export default function Login() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Please insert your username"
-                  className="appearance-none border-2 border-gray-100 rounded-lg px-4 py-3 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600 focus:shadow-lg"
+                  className="appearance-none text-black border-2 border-gray-100 rounded-lg px-4 py-3 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600 focus:shadow-lg"
                 />
               </div>
               <div id="input" className="flex flex-col w-full my-5">
-                <label for="password" className="text-gray-500 mb-2"
+                <label htmlFor="password" className="text-gray-500 mb-2"
                   >Password</label
                 >
                 <input
@@ -94,7 +94,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Please insert your password"
-                  className="appearance-none border-2 border-gray-100 rounded-lg px-4 py-3 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600 focus:shadow-lg"
+                  className="appearance-none border-2 text-black border-gray-100 rounded-lg px-4 py-3 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600 focus:shadow-lg"
                 />
               </div>
               <div id="button" className="flex flex-col w-full my-5">
@@ -129,5 +129,5 @@ export default function Login() {
       </div>
     </div>
   </div>
-);
+)
 }
