@@ -19,7 +19,7 @@ export default function Login() {
   const handleSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/user/login', {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/login`, {
         credentials: {
           username,
           password,
@@ -32,7 +32,6 @@ export default function Login() {
           bids: response.data.data.user.bids
         }
 
-        console.log(newUser)
         dispatch(setUser(newUser));
         router.replace("/dashboard");
       } else {
