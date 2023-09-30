@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { setUser, selectUser } from '../redux/Resources/userSlice';
+import { setUser, selectUser, User } from '../redux/Resources/userSlice';
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
@@ -37,9 +37,15 @@ export default function Login() {
       });
 
       if (response.data.success) {
-        const newUser = {
-          username: response.data.data.user.username, 
-          bids: response.data.data.user.bids
+
+        console.log('This is the auth response' + JSON.stringify(response.data.data))
+        const newUser : User = {
+          username: response.data.data.user.username,
+          teams: response.data.data.user.teams,
+          bids: response.data.data.user.bids,
+          isEligible: response.data.data.user.isElligible,
+          role: response.data.data.user.role,
+          year: response.data.data.user.year,
         }
 
         dispatch(setUser(newUser));

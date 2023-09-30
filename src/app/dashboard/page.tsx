@@ -2,17 +2,22 @@
 
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { removeUser, selectUser } from '../redux/Resources/userSlice';
+import { removeUser, selectUser, User } from '../redux/Resources/userSlice';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
  
 import Link from "next/link"
 import Modal from '../components/Modal/modal';
 
+// Create an instance of axios with credentials 
+const axios = require('axios');
+const axiosWithCredentials = axios.create({
+  withCredentials: true,
+});
+
 const Dashboard: React.FC = () => {
   const user = useSelector(selectUser);
   const route = useRouter();
-  const axios = require('axios');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
@@ -30,17 +35,26 @@ const Dashboard: React.FC = () => {
 
   const logout = () => {
     dispatch(removeUser());
+    route.push('/');
   }
 
   //redirects user to home page if not logged in
-  useEffect(() => {
-    if (user == null) {
-      route.push("/");
-    }
-  });
+  // useEffect(() => {
+  //   const getUserInfo = async () => {
+  //     return await axiosWithCredentials
+  //       .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/info`)
+  //       .then(res => console.log(res.data.data)).catch(e => console.error(e));
+  //   }
+    
+  //   const response = getUserInfo();
+  // });
+
+  if (user == null) {
+    route.push("/");
+  }
 
   return (
-    user == null ? <div>Loading...</div> :
+    user == null ? <div>Loading...</div> : 
     <div className="h-screen w-full flex flex-col lg:flex-row">
       <nav className="w-full lg:w-64 bg-gray-800 text-white p-5">
         <h1 className="text-2xl mb-5">Dashboard</h1>
@@ -124,13 +138,13 @@ const Dashboard: React.FC = () => {
                 <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
                 <circle cx="12" cy="12" r="3" />
               </svg>
-              <button onClick={logout}>Logout</button>
+              Logout
             </Link>
           </li>
         </ul>
       </nav>
       <main className="flex-1 p-5 light:bg-white-800 text-black">
-        <h2 className="text-xl mb-5">Welcome back, User!</h2>
+        <h2 className="text-xl mb-5">Hello, {user.username}</h2>
         <p>Here is the overview of your account:</p>
         <div className="grid pt-4 pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
       {Array.from({ length: 100 }, (_, index) => (
