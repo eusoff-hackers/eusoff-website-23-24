@@ -1,4 +1,4 @@
-const {env} = process;
+const { env } = process;
 const LOG_LEVEL = env.NODE_ENV === 'production' ? 'warn' : 'info';
 
 const winston = require('winston');
@@ -29,4 +29,17 @@ const logger = winston.createLogger({
   ],
 });
 
-module.exports = { logger };
+function logAndThrow(jobs, message) {
+  const errors = jobs
+    .filter((j) => j.status !== 'fulfilled')
+    .map((j) => j.reason);
+  errors.forEach((error) =>
+    logger.error(`${message} ${error.message}`, { error }),
+  );
+  if (errors.length) {
+    throw new Error(message);
+  }
+  return jobs.filter((j) => j.status === 'fulfilled').map((j) => j.value);
+}
+
+module.exports = { logger, logAndThrow };
