@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
  
 import Link from "next/link"
 import Modal from '../components/Modal/modal';
+import BiddingTable from '../components/BiddingTable';
 
 // Create an instance of axios with credentials 
 const axios = require('axios');
@@ -21,15 +22,37 @@ export interface Bidding {
   }
 }
 
+//function to load saved biddings from localstorage
+const loadBiddings = () => {
+  try {
+      if (typeof window === `undefined`) return [];
+      const savedUserBiddings = localStorage.getItem('user_biddings');
+
+      if (!savedUserBiddings) return [];
+
+      const item = JSON.parse(savedUserBiddings);
+      return item
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
 const Dashboard: React.FC = () => {
   const user = useSelector(selectUser);
   const route = useRouter();
+  const dispatch = useDispatch();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
-  const [biddings, setBiddings] = useState<Bidding[]>([]);
-  const dispatch = useDispatch();
 
+  const userBiddings : Bidding[] = loadBiddings()
+  const [biddings, setBiddings] = useState<Bidding[]>(userBiddings);
+
+  // Saves changes to user_biddings in local storage
+  useEffect(() => {
+    localStorage.setItem('user_biddings', JSON.stringify(biddings))
+  }, [biddings])
 
   const openModal = (index: number) => {
     setSelectedItemIndex(index);
@@ -43,6 +66,7 @@ const Dashboard: React.FC = () => {
 
   const logout = () => {
     dispatch(removeUser());
+    localStorage.clear();
     route.push('/');
   }
 
@@ -153,10 +177,7 @@ const Dashboard: React.FC = () => {
       </nav>
       <main className="flex-1 p-5 light:bg-white-800 text-black">
         <h2 className="text-xl mb-5">Hello, {user.username}</h2>
-        <p>Here is your list of bids:</p>
-        <div>
-          {biddings.map((bidding, index) => (<div key={index}>Rank {index+1}: Jersey number {bidding.jersey.number}</div>))}
-        </div>
+        <BiddingTable biddings={biddings} setBiddings={setBiddings}/>
         <div className="grid pt-4 pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
       {Array.from({ length: 100 }, (_, index) => (
                 <div
