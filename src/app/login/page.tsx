@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { setUser, selectUser } from '../redux/Resources/userSlice';
-import { useSelector } from 'react-redux/es/hooks/useSelector'
+import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image'
@@ -13,9 +13,12 @@ export default function Login() {
   const user = useSelector(selectUser);
   const router = useRouter();
 
-  if (user !== null) {
-    router.push(`/dashboard`);
-  }
+  useEffect(() => {
+    if (user !== null) {
+      router.push(`/dashboard`);
+    }
+  });
+
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
