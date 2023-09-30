@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
-import { setUser } from '../redux/Resources/userSlice';
+import React, { useState, useEffect } from 'react'
+import { setUser, selectUser } from '../redux/Resources/userSlice';
+import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image'
@@ -9,7 +10,16 @@ import Image from 'next/image'
 const axios = require('axios').default;
 
 export default function Login() {
-  const router = useRouter()
+  const user = useSelector(selectUser);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user !== null) {
+      router.push(`/dashboard`);
+    }
+  });
+
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
@@ -19,7 +29,7 @@ export default function Login() {
   const handleSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/user/login', {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/login`, {
         credentials: {
           username,
           password,
@@ -32,7 +42,6 @@ export default function Login() {
           bids: response.data.data.user.bids
         }
 
-        console.log(newUser)
         dispatch(setUser(newUser));
         router.replace("/dashboard");
       } else {
@@ -112,9 +121,9 @@ export default function Login() {
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
                           d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
                         ></path>
                       </svg>
