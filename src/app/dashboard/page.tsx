@@ -3,14 +3,14 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux/es/hooks/useSelector'
 import { selectUser } from '../redux/Resources/userSlice';
-import { useRouter } from 'next/navigation';
- 
+import { useRouter } from 'next/navigation'; 
 import Link from "next/link"
 import Modal from '../components/Modal/modal';
 
 const Dashboard: React.FC = () => {
   const user = useSelector(selectUser);
   const route = useRouter();
+  const axios = require('axios');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
@@ -33,6 +33,11 @@ const Dashboard: React.FC = () => {
   if (user == null) {
     route.push("/");
   }
+
+  const userDetails = axios.get('http://localhost:3000/user/info')
+                        .then(console.log('success'))
+                        .catch(e => console.log(e));
+  console.log(userDetails);
 
   return (
     user == null ? <div>Loading...</div> :
