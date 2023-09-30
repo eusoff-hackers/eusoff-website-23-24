@@ -15,13 +15,21 @@ const axiosWithCredentials = axios.create({
   withCredentials: true,
 });
 
+export interface Bidding {
+  jersey: {
+    number: number
+  }
+}
+
 const Dashboard: React.FC = () => {
   const user = useSelector(selectUser);
   const route = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
+  const [biddings, setBiddings] = useState<Bidding[]>([]);
   const dispatch = useDispatch();
+
 
   const openModal = (index: number) => {
     setSelectedItemIndex(index);
@@ -145,7 +153,10 @@ const Dashboard: React.FC = () => {
       </nav>
       <main className="flex-1 p-5 light:bg-white-800 text-black">
         <h2 className="text-xl mb-5">Hello, {user.username}</h2>
-        <p>Here is the overview of your account:</p>
+        <p>Here is your list of bids:</p>
+        <div>
+          {biddings.map((bidding, index) => (<div key={index}>Rank {index+1}: Jersey number {bidding.jersey.number}</div>))}
+        </div>
         <div className="grid pt-4 pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
       {Array.from({ length: 100 }, (_, index) => (
                 <div
@@ -158,7 +169,7 @@ const Dashboard: React.FC = () => {
         ))}
 
          {isModalOpen && selectedItemIndex !== null && (
-        <Modal closeModal={closeModal} index={selectedItemIndex} />
+        <Modal closeModal={closeModal} index={selectedItemIndex} biddings={biddings} setBiddings={setBiddings}/>
       )}
 
         </div>
