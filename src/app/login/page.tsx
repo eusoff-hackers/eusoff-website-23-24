@@ -53,7 +53,7 @@ export default function Login() {
   };
 
   
-  return (
+  return(
 <div className="antialiased bg-gradient-to-br from-yellow-300 to-red-400">
     <div className="container px-6 mx-auto">
       <div
@@ -82,8 +82,7 @@ export default function Login() {
             <form onSubmit={(e) => handleSubmit(e)} className="w-full">
               <div id="input" className="flex flex-col w-full my-5">
                 <label htmlFor="username" className="text-gray-500 mb-2"
-                  >Username</label
-                >
+                  >Username</label>
                 <input
                   type="text"
                   id="username"
@@ -95,8 +94,7 @@ export default function Login() {
               </div>
               <div id="input" className="flex flex-col w-full my-5">
                 <label htmlFor="password" className="text-gray-500 mb-2"
-                  >Password</label
-                >
+                  >Password</label>
                 <input
                   type="password"
                   id="password"
