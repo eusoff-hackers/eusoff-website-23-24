@@ -1,6 +1,12 @@
+'use client'
+
 import LoginButton from "./components/LoginButton"
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+
+  const router = useRouter();
+  router.push(`/login`);
 
   return (
       <div className="h-screen w-full flex items-center justify-center bg-cover">

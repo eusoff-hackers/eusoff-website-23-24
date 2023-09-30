@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { setUser } from '../redux/Resources/userSlice';
+import { setUser, selectUser } from '../redux/Resources/userSlice';
+import { useSelector } from 'react-redux/es/hooks/useSelector'
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image'
@@ -9,7 +10,13 @@ import Image from 'next/image'
 const axios = require('axios').default;
 
 export default function Login() {
-  const router = useRouter()
+  const user = useSelector(selectUser);
+  const router = useRouter();
+
+  if (user !== null) {
+    router.push(`/dashboard`);
+  }
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
