@@ -26,7 +26,7 @@ const Dashboard: React.FC = () => {
   };
 
   const logout = () => {
-    sessionStorage.clear()
+    localStorage.clear()
   }
 
   //redirects user to home page if not logged in
