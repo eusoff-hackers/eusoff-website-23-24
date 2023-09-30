@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { setUser, selectUser } from '../redux/Resources/userSlice';
+import { setUser, selectUser, User } from '../redux/Resources/userSlice';
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
@@ -37,9 +37,15 @@ export default function Login() {
       });
 
       if (response.data.success) {
-        const newUser = {
-          username: response.data.data.user.username, 
-          bids: response.data.data.user.bids
+
+        console.log('This is the auth response' + JSON.stringify(response.data.data))
+        const newUser : User = {
+          username: response.data.data.user.username,
+          teams: response.data.data.user.teams,
+          bids: response.data.data.user.bids,
+          isEligible: response.data.data.user.isElligible,
+          role: response.data.data.user.role,
+          year: response.data.data.user.year,
         }
 
         dispatch(setUser(newUser));
@@ -53,7 +59,7 @@ export default function Login() {
   };
 
   
-  return (
+  return(
 <div className="antialiased bg-gradient-to-br from-yellow-300 to-red-400">
     <div className="container px-6 mx-auto">
       <div
@@ -82,8 +88,7 @@ export default function Login() {
             <form onSubmit={(e) => handleSubmit(e)} className="w-full">
               <div id="input" className="flex flex-col w-full my-5">
                 <label htmlFor="username" className="text-gray-500 mb-2"
-                  >Username</label
-                >
+                  >Username</label>
                 <input
                   type="text"
                   id="username"
@@ -95,8 +100,7 @@ export default function Login() {
               </div>
               <div id="input" className="flex flex-col w-full my-5">
                 <label htmlFor="password" className="text-gray-500 mb-2"
-                  >Password</label
-                >
+                  >Password</label>
                 <input
                   type="password"
                   id="password"
