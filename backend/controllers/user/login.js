@@ -41,6 +41,8 @@ async function handler(req, res) {
     const {
       credentials: { username, password },
     } = req.body;
+    console.log(username);
+    console.log(await User.findOne({ username }));
     const user = await User.findOne({ username }).format();
 
     if (!user || (await bcrypt.compare(password, user.password)) === false) {

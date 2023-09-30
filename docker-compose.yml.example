@@ -1,0 +1,74 @@
+version: "3.8"
+
+services:
+  backend:
+    image: "eusoff/backend:latest"
+    build: ./backend/
+    restart: unless-stopped
+    environment:
+      - WAIT_HOSTS=mongodb:27017
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+    env_file: ./backend/.env
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+    networks:
+      - mongodb_network
+      - backend
+  
+  frontend:
+    image: "eusoff/frontend:latest"
+    build: ./frontend/
+    restart: unless-stopped
+    env_file: ./frontend/.env
+    networks:
+      - frontend
+  
+  mongodb:
+    image: "mongodb/mongodb-community-server:6.0-ubi8"
+    restart: unless-stopped
+    environment:
+      - MONGODB_INITDB_ROOT_USERNAME=eusoff
+      - MONGODB_INITDB_ROOT_PASSWORD=smallcoock
+      - MONGODB_INITDB_DATABASE=db
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+      - ./mongod.conf:/etc/mongo/mongod.conf
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - mongodb_network
+    command: --config /etc/mongo/mongod.conf
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - 443:443
+      - 80:80
+    networks:
+      - backend
+      - frontend
+
+volumes:
+  mongodb:
+
+networks:
+  mongodb_network:
+    driver: bridge
+  backend:
+    driver: bridge
+    name: backend
+  frontend:
+    driver: bridge
+    name: frontend
+  
+

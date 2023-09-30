@@ -1,7 +1,7 @@
 "use client"; // This is a client component 👈🏽
 
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux/es/hooks/useSelector'
+import React, { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { removeUser, selectUser } from '../redux/Resources/userSlice';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
@@ -32,9 +32,11 @@ const Dashboard: React.FC = () => {
   }
 
   //redirects user to home page if not logged in
-  if (user == null) {
-    route.push("/");
-  }
+  useEffect(() => {
+    if (user == null) {
+      route.push("/");
+    }
+  });
 
   return (
     user == null ? <div>Loading...</div> :
