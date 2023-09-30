@@ -10,17 +10,18 @@ const saveState = (state: User | null) => {
       const serialisedState = JSON.stringify(state);
 
       // Save the serialised state to localStorage against the key 'app_state'
-      sessionStorage.setItem('user_state', serialisedState);
+      localStorage.setItem('user_state', serialisedState);
   } catch (err) {
       // Log errors here, or ignore
-      console.log(err);
+      console.error(err);
   }
 };
 
 // Checks if user is saved in session storage 
 const loadState = () => {
   try {
-      const serialisedState = sessionStorage.getItem('user_state');
+      if (typeof window === `undefined`) return null;
+      const serialisedState = localStorage.getItem('user_state');
       console.log("Session saved:" + serialisedState)
 
       // Passing undefined to createStore will result in our app getting the default state
@@ -30,8 +31,8 @@ const loadState = () => {
       const item = JSON.parse(serialisedState);
       return item
   } catch (err) {
-      console.log(err);
-      return null;
+    console.error(err);
+    return null;
   }
 };
 
