@@ -81,11 +81,11 @@ const InstructionsPage = () => {
 
               <li>Allocation of numbers is <strong>not</strong> based on a first come first serve basis. Numbers will be allocated after each round based on your ranking of the numbers and if you have points/senior priority.</li>
 
-              <li>You will be able to see the number of people who are bidding for each number, as well as the number's availability</li>
+              <li>You will be able to see the number of people who are bidding for each number, as well as the number&apos;s availability</li>
 
               <li>For each sport, you will be able to see the numbers bidded for by the rest of the people in the team (each person is identified only through their room number due to PDPA)</li>
 
-              <li>In the event that Eusoffians with the same bidding points bid for the same number, priority will be given to senior Eusoffians. If not, the top choice number will be given to a random person in the conflicting group. (If Tom, Jerry, and Moose put "20" as their top choice, the senior will get the number. But if all are of equal seniority the system will randomly select one of the 3 persons. The others will be given their next highest choices if possible) </li>
+              <li>In the event that Eusoffians with the same bidding points bid for the same number, priority will be given to senior Eusoffians. If not, the top choice number will be given to a random person in the conflicting group. (If Tom, Jerry, and Moose put &quot;20&quot; as their top choice, the senior will get the number. But if all are of equal seniority the system will randomly select one of the 3 persons. The others will be given their next highest choices if possible) </li>
 
               <li>There will be no sharing of numbers in the team sports below</li>
             
