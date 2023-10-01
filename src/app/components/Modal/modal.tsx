@@ -6,6 +6,8 @@ interface ModalProps {
   index: number;
   biddings: Bidding[];
   setBiddings: React.Dispatch<React.SetStateAction<Bidding[]>>;
+  setError: React.Dispatch<React.SetStateAction<string>>;
+  handleOpen: () => void;
 }
 
 const fetchList:any = (index: number) => {
@@ -16,24 +18,28 @@ const fetchPoints = () => {
     return 1;
 }
 
-const Modal: React.FC<ModalProps> = ({ closeModal, index, biddings, setBiddings }) => {
+const Modal: React.FC<ModalProps> = ({ closeModal, index, biddings, setBiddings, setError, handleOpen }) => {
 
   const createBid = (ind : number) => {
     console.log(biddings)
-
-    if (biddings.length > 4) { //number is 4 because when open modal for 5th number, will record 4 numbers in bidding
-      // Include a popup to tell user not to bid for more than 5 numbers
-      console.log("Cannot bid for more than 5 numbers")
-      return
-    } 
-
+    
     const duplicateArr = biddings.filter(bidding => bidding.jersey.number == ind);
-
+    
     if (duplicateArr.length !== 0) {
       // Include a popup to tell user to not bid for duplicates
       console.log("Cannot bid for duplicate numbers")
+      setError("Cannot bid for duplicate numbers")
+      handleOpen()
       return
     }
+    
+    if (biddings.length > 4) { //number is 4 because when open modal for 5th number, will record 4 numbers in bidding
+      // Include a popup to tell user not to bid for more than 5 numbers
+      console.log("Cannot bid for more than 5 numbers")
+      setError("Cannot bid for more than 5 numbers")
+      handleOpen()
+      return
+    } 
 
     const newBidding : Bidding = {
       jersey: {
