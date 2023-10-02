@@ -93,9 +93,11 @@ const Dashboard: React.FC = () => {
   //   const response = getUserInfo();
   // });
 
-  if (user == null) {
-    route.push("/");
-  }
+  useEffect(() => {
+    if (user == null) {
+      route.push('/');
+    }
+  }, [user, route]);
 
   return (
     user == null ? <div>Loading...</div> : 
