@@ -20,9 +20,7 @@ const fetchPoints = () => {
 
 const Modal: React.FC<ModalProps> = ({ closeModal, index, biddings, setBiddings, setError, handleOpen }) => {
 
-  const createBid = (ind : number) => {
-    console.log(biddings)
-    
+  const createBid = (ind : number) => {    
     const duplicateArr = biddings.filter(bidding => bidding.number == ind);
     
     if (duplicateArr.length !== 0) {
