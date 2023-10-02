@@ -13,18 +13,12 @@ import NavBar from '../components/NavBar';
 
 // Create an instance of axios with credentials 
 const axios = require('axios');
-const axiosWithCredentials = axios.create({
+export const axiosWithCredentials = axios.create({
   withCredentials: true,
 });
 
 export interface Bidding {
-  jersey: {
-    number: number
-  }
-}
-
-interface State extends SnackbarOrigin {
-  open: boolean;
+  number: number
 }
 
 //function to load saved biddings from localstorage
@@ -60,7 +54,6 @@ const Dashboard: React.FC = () => {
     jersey: dummyNumbers
   }
 
-
   const user = useSelector(selectUser);
   const route = useRouter();
 
@@ -90,7 +83,7 @@ const Dashboard: React.FC = () => {
     localStorage.setItem('user_biddings', JSON.stringify(biddings))
   }, [biddings])
 
-  // Does a call for elligible bids
+  // Does a call for elligible bids. API stil WIP
   // useEffect(() => {
   //   try {
   //     const response = axiosWithCredentials.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/jersey/eligible`);
