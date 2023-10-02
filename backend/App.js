@@ -20,27 +20,36 @@ const fastify = Fastify({
 
 const secret = env.SESSION_SECRET || crypto.randomBytes(128).toString(`base64`);
 
-fastify.register(cors, {
-  origin: env.FRONTEND_URL,
-  methods: ['GET', 'PUT', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],
-  credentials: true,
-  maxAge: 600,
-  exposedHeaders: ['*', 'Authorization'],
-});
+async function register() {
+  try {
+    fastify.register(cors, {
+      origin: env.FRONTEND_URL,
+      methods: ['GET', 'PUT', 'POST'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],
+      credentials: true,
+      maxAge: 600,
+      exposedHeaders: ['*', 'Authorization'],
+    });
 
-fastify.register(fastifyCookie);
-fastify.register(fastifySession, {
-  secret,
-  store: MongoStore.create({
-    mongoUrl: env.MONGO_URI,
-    ttl: 7 * 24 * 60 * 60,
-    autoRemove: `native`,
-  }),
-});
+    fastify.register(fastifyCookie);
+    fastify.register(fastifySession, {
+      secret,
+      store: MongoStore.create({
+        mongoUrl: env.MONGO_URI,
+        ttl: 7 * 24 * 60 * 60,
+        autoRemove: `native`,
+      }),
+    });
 
-fastify.addHook(`onRequest`, auth);
-fastify.register(router);
+    fastify.addHook(`onRequest`, auth);
+    fastify.register(router);
+  } catch (error) {
+    logger.error(`Error registering middlewares: ${error.message}`, { error });
+    process.exit(1);
+  }
+}
+
+register();
 
 async function run() {
   try {

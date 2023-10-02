@@ -1,8 +1,13 @@
 import React from 'react';
+import { Bidding } from '@/app/dashboard/page';
 
 interface ModalProps {
   closeModal: () => void;
   index: number;
+  biddings: Bidding[];
+  setBiddings: React.Dispatch<React.SetStateAction<Bidding[]>>;
+  setError: React.Dispatch<React.SetStateAction<string>>;
+  handleOpen: () => void;
 }
 
 const fetchList:any = (index: number) => {
@@ -13,7 +18,38 @@ const fetchPoints = () => {
     return 1;
 }
 
-const Modal: React.FC<ModalProps> = ({ closeModal, index }) => {
+const Modal: React.FC<ModalProps> = ({ closeModal, index, biddings, setBiddings, setError, handleOpen }) => {
+
+  const createBid = (ind : number) => {
+    console.log(biddings)
+    
+    const duplicateArr = biddings.filter(bidding => bidding.jersey.number == ind);
+    
+    if (duplicateArr.length !== 0) {
+      // Include a popup to tell user to not bid for duplicates
+      console.log("Cannot bid for duplicate numbers")
+      setError("Cannot bid for duplicate numbers")
+      handleOpen()
+      return
+    }
+    
+    if (biddings.length > 4) { //number is 4 because when open modal for 5th number, will record 4 numbers in bidding
+      // Include a popup to tell user not to bid for more than 5 numbers
+      console.log("Cannot bid for more than 5 numbers")
+      setError("Cannot bid for more than 5 numbers")
+      handleOpen()
+      return
+    } 
+
+    const newBidding : Bidding = {
+      jersey: {
+        number: ind
+      }
+    }
+
+    setBiddings([...biddings, newBidding])
+  }
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div className="absolute inset-0 bg-gray-900 opacity-50"></div>
@@ -45,6 +81,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal, index }) => {
             <h3 className=""> Current Points : {index}</h3>
         <button
           className="bg-blue-500 text-white px-2 py-2 rounded hover:bg-blue-600"
+          onClick={() => createBid(index)}
         >
           Bid
         </button>
