@@ -13,18 +13,12 @@ import NavBar from '../components/NavBar';
 
 // Create an instance of axios with credentials 
 const axios = require('axios');
-const axiosWithCredentials = axios.create({
+export const axiosWithCredentials = axios.create({
   withCredentials: true,
 });
 
 export interface Bidding {
-  jersey: {
-    number: number
-  }
-}
-
-interface State extends SnackbarOrigin {
-  open: boolean;
+  number: number
 }
 
 //function to load saved biddings from localstorage
@@ -44,6 +38,22 @@ const loadBiddings = () => {
 };
 
 const Dashboard: React.FC = () => {
+
+  // Dummy function to create array of eligible bids 
+  const dummyNumbers = [];
+  for (let i = 0; i <= 100; i++) {
+    if (i == 5 || i == 25 || i == 33 || i == 40) {
+      continue
+    } else {
+      dummyNumbers.push(i);
+    }
+  }
+
+  // Dummy data for eligible bids: 
+  const dummyEligibleBids = { 
+    jersey: dummyNumbers
+  }
+
   const user = useSelector(selectUser);
   const route = useRouter();
 
@@ -52,6 +62,7 @@ const Dashboard: React.FC = () => {
 
   const userBiddings : Bidding[] = loadBiddings()
   const [biddings, setBiddings] = useState<Bidding[]>(userBiddings);
+  const [allowedBids, setAllowedBids] = useState<number[]>([])
 
   const [error, setError] = useState('');
 
@@ -71,6 +82,21 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('user_biddings', JSON.stringify(biddings))
   }, [biddings])
+
+  // Does a call for elligible bids. API stil WIP
+  // useEffect(() => {
+  //   try {
+  //     const response = axiosWithCredentials.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/jersey/eligible`);
+
+  //     if (response.data.success) {
+  //       setAllowedBids(response.data.jersey)
+  //     }
+      
+  //   } catch (error) {
+  //     console.error('Error during getting allowed bids', error);
+  //   }
+
+  // }, [])
 
   const openModal = (index: number) => {
     setSelectedItemIndex(index);
@@ -118,14 +144,21 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="grid pt-4 pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
-      {Array.from({ length: 100 }, (_, index) => (
-                <div
-                  key={index}
-                  className="bg-gray-800 h-16 w-16 flex items-center justify-center text-white font-semibold text-xl"
-                  onClick = {() => openModal(index+1)}
-                >
-                       {index + 1}
-                </div>
+      {Array.from({ length: 100 }, (_, index) => ( dummyEligibleBids.jersey.includes(index + 1) ? 
+              (<div
+                key={index}
+                className="bg-gray-800 h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500"
+                onClick = {() => openModal(index+1)}
+              >
+                     {index + 1}
+              </div>) : 
+              (<div
+                key={index}
+                className="bg-red-500 h-16 w-16 flex items-center justify-center text-white font-semibold text-xl"
+                onClick = {() => null}
+              >
+                      {index + 1}
+              </div>)
         ))}
 
          {isModalOpen && selectedItemIndex !== null && (
