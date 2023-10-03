@@ -20,10 +20,8 @@ const fetchPoints = () => {
 
 const Modal: React.FC<ModalProps> = ({ closeModal, index, biddings, setBiddings, setError, handleOpen }) => {
 
-  const createBid = (ind : number) => {
-    console.log(biddings)
-    
-    const duplicateArr = biddings.filter(bidding => bidding.jersey.number == ind);
+  const createBid = (ind : number) => {    
+    const duplicateArr = biddings.filter(bidding => bidding.number == ind);
     
     if (duplicateArr.length !== 0) {
       // Include a popup to tell user to not bid for duplicates
@@ -42,9 +40,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal, index, biddings, setBiddings,
     } 
 
     const newBidding : Bidding = {
-      jersey: {
         number: ind
-      }
     }
 
     setBiddings([...biddings, newBidding])
