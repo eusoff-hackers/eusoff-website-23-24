@@ -5,9 +5,11 @@ const { resBuilder } = require(`${UTILS}/req_handler`);
 const { success, sendStatus } = require(`${UTILS}/req_handler`);
 const { logger, logAndThrow } = require(`${UTILS}/logger`);
 const { Jersey } = require(`${MODELS}/jersey`);
-const { User } = require(`${MODELS}/user`);
 const { Bid } = require('../../models/bid');
-const { Server } = require('../../models/server');
+
+const { auth } = require(`${UTILS}/auth`);
+
+const { isEligible } = require(`${UTILS}/eligibilityChecker`);
 
 const schema = {
   body: {
@@ -38,29 +40,20 @@ const schema = {
 
 async function handler(req, res) {
   try {
-    const { user: userSession } = req.session;
-    if (!userSession) {
-      return await sendStatus(res, 401);
-    }
-    const { username } = userSession;
-
-    const user = await User.findOne({ username });
-    if (
-      user.isEligible === false ||
-      user.bidding_round !== (await Server.findOne({ key: `round` })).value
-    ) {
-      return await sendStatus(res, 400, `Not eligible for a bid.`);
-    }
-
+    const { user } = req.session;
     const { bids } = req.body;
 
-    const jobs = await Promise.allSettled(
+    const jerseyParsingJobs = await Promise.allSettled(
       bids.map(async (bid) => Jersey.findOne({ number: bid.number })),
     );
 
-    const jerseys = logAndThrow(jobs);
+    const jerseys = logAndThrow(jerseyParsingJobs);
     if (jerseys.some((r) => r === null)) {
       return await sendStatus(res, 400, `Invalid jersey number(s).`);
+    }
+
+    if ((await isEligible(user, jerseys)) === false) {
+      return await sendStatus(res, 400, `Not eligible for a bid.`);
     }
 
     const newBids = jerseys.map((jersey, index) => ({
@@ -86,5 +79,6 @@ module.exports = {
   method: `POST`,
   url: `/create`,
   schema,
+  preHandler: auth,
   handler,
 };

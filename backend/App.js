@@ -12,8 +12,6 @@ const MongoStore = require('connect-mongo');
 const cors = require(`@fastify/cors`);
 const crypto = require(`crypto`);
 
-const { auth } = require(`./utils/auth`);
-
 const fastify = Fastify({
   logger: LOG_LEVEL,
 });
@@ -41,7 +39,7 @@ async function register() {
       }),
     });
 
-    fastify.addHook(`onRequest`, auth);
+    // fastify.addHook(`onRequest`, auth);
     fastify.register(router);
   } catch (error) {
     logger.error(`Error registering middlewares: ${error.message}`, { error });
