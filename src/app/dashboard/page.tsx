@@ -12,8 +12,8 @@ import BiddingTable from '../components/BiddingTable';
 import NavBar from '../components/NavBar';
 
 // Create an instance of axios with credentials 
-const axios = require('axios');
-export const axiosWithCredentials = axios.create({
+const axios = require('axios'); 
+const axiosWithCredentials = axios.create({
   withCredentials: true,
 });
 
@@ -57,6 +57,9 @@ const Dashboard: React.FC = () => {
   const user = useSelector(selectUser);
   const route = useRouter();
 
+  // Check if there is better fix for this.
+  const [isNav, setIsNav] = useState(false);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
 
@@ -82,6 +85,10 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('user_biddings', JSON.stringify(biddings))
   }, [biddings])
+
+  useEffect(() => {
+    setIsNav(true);
+  }, [])
 
   // Does a call for elligible bids. API stil WIP
   // useEffect(() => {
@@ -126,7 +133,7 @@ const Dashboard: React.FC = () => {
   return (
     user == null ? <div>Loading...</div> : 
     <div className="h-screen w-full flex flex-col lg:flex-row">
-      <NavBar/>
+      { isNav && <NavBar/>}
       <main className="flex-1 p-5 light:bg-white-800 text-black">
         <h2 className="text-xl mb-5">Hello, {user.username}</h2>
         <BiddingTable biddings={biddings} setBiddings={setBiddings}/>

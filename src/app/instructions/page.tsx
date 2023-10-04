@@ -1,9 +1,7 @@
 "use client"; // This is a client component 👈🏽
 
-import Link from 'next/link'
-
-import { useSelector } from 'react-redux'
-import { removeUser, selectUser, User } from '../redux/Resources/userSlice';
+import React, { useState, useEffect } from 'react'
+import { removeUser } from '../redux/Resources/userSlice';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import NavBar from '../components/NavBar';
@@ -11,7 +9,14 @@ import NavBar from '../components/NavBar';
 const InstructionsPage = () => {
   const route = useRouter();
 
+  const [isNav, setIsNav] = useState(false);
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setIsNav(true);
+  }, [])
+
 
   const logout = () => {
     dispatch(removeUser());
@@ -20,7 +25,7 @@ const InstructionsPage = () => {
 
   return (
     <div className="bg-gradient-to-tl from-slate-300 to-slate-200 h-full w-full flex flex-col lg:flex-row">
-      <NavBar/>
+      { isNav && <NavBar/> }
       <main className="bg-gradient-to-tl from-slate-300 to-slate-200 h-fit w-full">
         <article className="bg-slate-200 shadow-2xl py-5 p-2 border-4 lg:rounded-r-lg lg:rounded-bl-none rounded-b-lg  border-slate-800">
 

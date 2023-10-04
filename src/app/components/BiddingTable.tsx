@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react';
 import { Bidding } from '../dashboard/page';
-import axios from 'axios';
-import { axiosWithCredentials } from '../dashboard/page';
 
 interface BiddingList {
   biddings: Bidding[]
   setBiddings: React.Dispatch<React.SetStateAction<Bidding[]>>;
 }
+
+const axios = require('axios'); 
+const axiosWithCredentials = axios.create({
+  withCredentials: true,
+});
 
 const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings }) => {
 

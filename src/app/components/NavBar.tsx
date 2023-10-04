@@ -18,8 +18,9 @@ export default function NavBar() {
   }
 
   return (
-    <nav className="w-full lg:w-64 bg-gray-800 text-white p-5">
-        <h1 className="text-2xl mb-5">Dashboard</h1>
+    <div>
+      <nav className="w-full lg:w-64 bg-gray-800 text-white p-5">
+        <p className="text-2xl mb-5">Dashboard</p>
         <ul className="space-y-2">
           <li>
             <Link className="flex items-center gap-3 py-2" href="/dashboard">
@@ -105,5 +106,6 @@ export default function NavBar() {
           </li>
         </ul>
       </nav>
+    </div>
   )
 }
