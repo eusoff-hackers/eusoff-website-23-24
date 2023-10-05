@@ -33,9 +33,11 @@ const ProfilePage = () => {
     route.push('/');
   }
 
-  if (user == null) {
-    route.push("/");
-  }
+  useEffect(() => {
+    if (user == null) {
+      route.push('/');
+    }
+  }, [user, route]);
 
   return (
     user == null ? <div>Loading...</div> : 
