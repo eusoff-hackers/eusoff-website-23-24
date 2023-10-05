@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
 
 const axios = require('axios').default;
+axios.defaults.withCredentials = true;
 
 export default function LoginForm() {
   const user = useSelector(selectUser);

@@ -21,6 +21,13 @@ const ProfilePage = () => {
 
   const dispatch = useDispatch();
 
+  const [isNav, setIsNav] = useState(false);
+
+  useEffect(() => {
+    setIsNav(true);
+  }, [])
+
+
   const logout = () => {
     dispatch(removeUser());
     route.push('/');
@@ -35,7 +42,7 @@ const ProfilePage = () => {
   return (
     user == null ? <div>Loading...</div> : 
     <div className="bg-gradient-to-tl from-slate-200 to-slate-300 min-h-screen w-full flex flex-col lg:flex-row">
-      <NavBar/>
+      { isNav && <NavBar/> }
       <main className="bg-gradient-to-tl from-slate-200 to-slate-300 h-fit w-full">
         
         <div className="bg-gradient-to-r  from-cyan-500 to-blue-500 text-4xl text-zinc-950
