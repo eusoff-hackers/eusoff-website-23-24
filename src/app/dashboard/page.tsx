@@ -11,11 +11,6 @@ import Modal from '../components/Modal/modal';
 import BiddingTable from '../components/BiddingTable';
 import NavBar from '../components/NavBar';
 
-// Create an instance of axios with credentials 
-const axios = require('axios'); 
-const axiosWithCredentials = axios.create({
-  withCredentials: true,
-});
 
 export interface Bidding {
   number: number
@@ -37,23 +32,11 @@ const loadBiddings = () => {
   }
 };
 
+// Create an instance of axios with credentials 
+const axios = require('axios'); 
+axios.defaults.withCredentials = true;
+
 const Dashboard: React.FC = () => {
-
-  // Dummy function to create array of eligible bids 
-  const dummyNumbers = [];
-  for (let i = 0; i <= 100; i++) {
-    if (i == 5 || i == 25 || i == 33 || i == 40) {
-      continue
-    } else {
-      dummyNumbers.push(i);
-    }
-  }
-
-  // Dummy data for eligible bids: 
-  const dummyEligibleBids = { 
-    jersey: dummyNumbers
-  }
-
   const user = useSelector(selectUser);
   const route = useRouter();
 
@@ -81,6 +64,20 @@ const Dashboard: React.FC = () => {
     setError('')
   };
 
+  // Does a call for elligible bids. API stil WIP
+  const getEligibleBids = async () => { 
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/jersey/eligible`);
+
+      if (response.data.success) {
+        setAllowedBids(response.data.data.jerseys)
+      }
+      
+    } catch (error) {
+      console.error('Error during getting allowed bids', error);
+    }
+  }
+
   // Saves changes to user_biddings in local storage
   useEffect(() => {
     localStorage.setItem('user_biddings', JSON.stringify(biddings))
@@ -88,22 +85,8 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     setIsNav(true);
+    getEligibleBids(); // get all eligible bids when page renders
   }, [])
-
-  // Does a call for elligible bids. API stil WIP
-  // useEffect(() => {
-  //   try {
-  //     const response = axiosWithCredentials.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/jersey/eligible`);
-
-  //     if (response.data.success) {
-  //       setAllowedBids(response.data.jersey)
-  //     }
-      
-  //   } catch (error) {
-  //     console.error('Error during getting allowed bids', error);
-  //   }
-
-  // }, [])
 
   const openModal = (index: number) => {
     setSelectedItemIndex(index);
@@ -149,7 +132,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="grid pt-4 pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
-      {Array.from({ length: 100 }, (_, index) => ( dummyEligibleBids.jersey.includes(index + 1) ? 
+      {Array.from({ length: 100 }, (_, index) => ( allowedBids.includes(index + 1) ? 
               (<div
                 key={index}
                 className="bg-gray-800 h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500"
