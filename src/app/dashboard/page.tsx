@@ -1,11 +1,10 @@
 "use client"; // This is a client component 👈🏽
 
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { selectUser} from '../redux/Resources/userSlice';
+import { useDispatch, useSelector } from 'react-redux'
+import { selectUser, setUser, User } from '../redux/Resources/userSlice';
 import { useRouter } from 'next/navigation';
 import { Alert, Snackbar } from '@mui/material';
-import { SnackbarOrigin } from '@mui/material/Snackbar';
  
 import Modal from '../components/Modal/modal';
 import BiddingTable from '../components/BiddingTable';
@@ -39,6 +38,7 @@ axios.defaults.withCredentials = true;
 const Dashboard: React.FC = () => {
   const user = useSelector(selectUser);
   const route = useRouter();
+  const dispatch = useDispatch();
 
   // Check if there is better fix for this.
   const [isNav, setIsNav] = useState(false);
@@ -78,6 +78,28 @@ const Dashboard: React.FC = () => {
     }
   }
 
+  // Updates information on the page after 
+  const updateUser = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/info`);
+
+      if (response.data.success) {
+        const newUser : User = {
+          username: response.data.data.user.username,
+          teams: response.data.data.user.teams,
+          bids: response.data.data.user.bids,
+          isEligible: response.data.data.user.isElligible,
+          role: response.data.data.user.role,
+          year: response.data.data.user.year,
+        }
+        console.log("updated user")
+        dispatch(setUser(newUser));
+      }
+    } catch (error) {
+      console.error('Error during update', error);
+    }
+  }
+
   // Saves changes to user_biddings in local storage
   useEffect(() => {
     localStorage.setItem('user_biddings', JSON.stringify(biddings))
@@ -98,17 +120,7 @@ const Dashboard: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  //redirects user to home page if not logged in
-  // useEffect(() => {
-  //   const getUserInfo = async () => {
-  //     return await axiosWithCredentials
-  //       .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/info`)
-  //       .then(res => console.log(res.data.data)).catch(e => console.error(e));
-  //   }
-    
-  //   const response = getUserInfo();
-  // });
-
+  //If not authorised, then redirects the user
   if (user == null) {
     route.push("/");
   }
@@ -119,7 +131,7 @@ const Dashboard: React.FC = () => {
       { isNav && <NavBar/>}
       <main className="flex-1 p-5 light:bg-white-800 text-black">
         <h2 className="text-xl mb-5">Hello, {user.username}</h2>
-        <BiddingTable biddings={biddings} setBiddings={setBiddings}/>
+        <BiddingTable biddings={biddings} setBiddings={setBiddings} updateUser={updateUser}/>
         <div>
           {error == '' 
             ? <></> 

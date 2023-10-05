@@ -2,8 +2,9 @@ import React, { useEffect } from 'react';
 import { Bidding } from '../dashboard/page';
 
 interface BiddingList {
-  biddings: Bidding[]
+  biddings: Bidding[];
   setBiddings: React.Dispatch<React.SetStateAction<Bidding[]>>;
+  updateUser: () => void;
 }
 
 const axios = require('axios'); 
@@ -11,7 +12,7 @@ const axiosWithCredentials = axios.create({
   withCredentials: true,
 });
 
-const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings }) => {
+const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings, updateUser}) => {
 
   const deleteBid = (ind : number) => {
     const filteredList = biddings.filter(bidding => bidding.number != biddings[ind].number)
@@ -29,7 +30,7 @@ const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings }) => {
 
       if (response.data.success) {
         console.log('Successful bids')
-
+        updateUser()
       } else {
         console.error('Bids failed');
 
