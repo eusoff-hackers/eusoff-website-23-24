@@ -121,9 +121,11 @@ const Dashboard: React.FC = () => {
   };
 
   //If not authorised, then redirects the user
-  if (user == null) {
-    route.push("/");
-  }
+  useEffect(() => {
+    if (user == null) {
+      route.push('/');
+    }
+  }, [user, route]);
 
   return (
     user == null ? <div>Loading...</div> : 
