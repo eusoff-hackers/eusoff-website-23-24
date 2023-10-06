@@ -1,21 +1,15 @@
 "use client"; // This is a client component 👈🏽
 
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { selectUser} from '../redux/Resources/userSlice';
+import { useDispatch, useSelector } from 'react-redux'
+import { selectUser, setUser, User } from '../redux/Resources/userSlice';
 import { useRouter } from 'next/navigation';
 import { Alert, Snackbar } from '@mui/material';
-import { SnackbarOrigin } from '@mui/material/Snackbar';
  
 import Modal from '../components/Modal/modal';
 import BiddingTable from '../components/BiddingTable';
 import NavBar from '../components/NavBar';
 
-// Create an instance of axios with credentials 
-const axios = require('axios');
-export const axiosWithCredentials = axios.create({
-  withCredentials: true,
-});
 
 export interface Bidding {
   number: number
@@ -37,25 +31,17 @@ const loadBiddings = () => {
   }
 };
 
+// Create an instance of axios with credentials 
+const axios = require('axios'); 
+axios.defaults.withCredentials = true;
+
 const Dashboard: React.FC = () => {
-
-  // Dummy function to create array of eligible bids 
-  const dummyNumbers = [];
-  for (let i = 0; i <= 100; i++) {
-    if (i == 5 || i == 25 || i == 33 || i == 40) {
-      continue
-    } else {
-      dummyNumbers.push(i);
-    }
-  }
-
-  // Dummy data for eligible bids: 
-  const dummyEligibleBids = { 
-    jersey: dummyNumbers
-  }
-
   const user = useSelector(selectUser);
   const route = useRouter();
+  const dispatch = useDispatch();
+
+  // Check if there is better fix for this.
+  const [isNav, setIsNav] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
@@ -78,25 +64,51 @@ const Dashboard: React.FC = () => {
     setError('')
   };
 
+  // Does a call for elligible bids. API stil WIP
+  const getEligibleBids = async () => { 
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/jersey/eligible`);
+
+      if (response.data.success) {
+        setAllowedBids(response.data.data.jerseys)
+      }
+      
+    } catch (error) {
+      console.error('Error during getting allowed bids', error);
+    }
+  }
+
+  // Updates information on the page after 
+  const updateUser = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/info`);
+
+      if (response.data.success) {
+        const newUser : User = {
+          username: response.data.data.user.username,
+          teams: response.data.data.user.teams,
+          bids: response.data.data.user.bids,
+          isEligible: response.data.data.user.isElligible,
+          role: response.data.data.user.role,
+          year: response.data.data.user.year,
+        }
+        console.log("updated user")
+        dispatch(setUser(newUser));
+      }
+    } catch (error) {
+      console.error('Error during update', error);
+    }
+  }
+
   // Saves changes to user_biddings in local storage
   useEffect(() => {
     localStorage.setItem('user_biddings', JSON.stringify(biddings))
   }, [biddings])
 
-  // Does a call for elligible bids. API stil WIP
-  // useEffect(() => {
-  //   try {
-  //     const response = axiosWithCredentials.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/jersey/eligible`);
-
-  //     if (response.data.success) {
-  //       setAllowedBids(response.data.jersey)
-  //     }
-      
-  //   } catch (error) {
-  //     console.error('Error during getting allowed bids', error);
-  //   }
-
-  // }, [])
+  useEffect(() => {
+    setIsNav(true);
+    getEligibleBids(); // get all eligible bids when page renders
+  }, [])
 
   const openModal = (index: number) => {
     setSelectedItemIndex(index);
@@ -108,30 +120,18 @@ const Dashboard: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  //redirects user to home page if not logged in
-  // useEffect(() => {
-  //   const getUserInfo = async () => {
-  //     return await axiosWithCredentials
-  //       .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/info`)
-  //       .then(res => console.log(res.data.data)).catch(e => console.error(e));
-  //   }
-    
-  //   const response = getUserInfo();
-  // });
-
-  useEffect(() => {
-    if (user == null) {
-      route.push('/');
-    }
-  }, [user, route]);
+  //If not authorised, then redirects the user
+  if (user == null) {
+    route.push("/");
+  }
 
   return (
     user == null ? <div>Loading...</div> : 
     <div className="h-screen w-full flex flex-col lg:flex-row">
-      <NavBar/>
+      { isNav && <NavBar/>}
       <main className="flex-1 p-5 light:bg-white-800 text-black">
         <h2 className="text-xl mb-5">Hello, {user.username}</h2>
-        <BiddingTable biddings={biddings} setBiddings={setBiddings}/>
+        <BiddingTable biddings={biddings} setBiddings={setBiddings} updateUser={updateUser}/>
         <div>
           {error == '' 
             ? <></> 
@@ -144,7 +144,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="grid pt-4 pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
-      {Array.from({ length: 100 }, (_, index) => ( dummyEligibleBids.jersey.includes(index + 1) ? 
+      {Array.from({ length: 100 }, (_, index) => ( allowedBids.includes(index + 1) ? 
               (<div
                 key={index}
                 className="bg-gray-800 h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500"
