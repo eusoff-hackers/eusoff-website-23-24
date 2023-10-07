@@ -10,6 +10,7 @@ const returnSchema = {
 
 const teamSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true, index: 1 },
+  shareable: { type: Boolean, required: true },
 });
 
 teamSchema.query.format = async function format() {
