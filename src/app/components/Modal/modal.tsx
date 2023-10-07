@@ -4,6 +4,7 @@ import { Bidding } from '@/app/dashboard/page';
 interface ModalProps {
   closeModal: () => void;
   index: number;
+  points: number;
   biddings: Bidding[];
   setBiddings: React.Dispatch<React.SetStateAction<Bidding[]>>;
   setError: React.Dispatch<React.SetStateAction<string>>;
@@ -18,7 +19,7 @@ const fetchPoints = () => {
     return 1;
 }
 
-const Modal: React.FC<ModalProps> = ({ closeModal, index, biddings, setBiddings, setError, handleOpen }) => {
+const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setBiddings, setError, handleOpen }) => {
 
   const createBid = (ind : number) => {    
     const duplicateArr = biddings.filter(bidding => bidding.number == ind);
@@ -74,10 +75,10 @@ const Modal: React.FC<ModalProps> = ({ closeModal, index, biddings, setBiddings,
         </div>
         <p className="mb-4">List of top bidders.</p>
         <div className="grid grid-flow-row-dense grid-rows-1 grid-cols-2">
-            <h3 className=""> Current Points : {index}</h3>
+            <h3 className=""> Current Points : {points}</h3>
         <button
           className="bg-blue-500 text-white px-2 py-2 rounded hover:bg-blue-600"
-          onClick={() => createBid(index)}
+          onClick={() => {createBid(index); closeModal();}}
         >
           Bid
         </button>

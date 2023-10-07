@@ -91,6 +91,7 @@ const Dashboard: React.FC = () => {
           isEligible: response.data.data.user.isElligible,
           role: response.data.data.user.role,
           year: response.data.data.user.year,
+          points: response.data.data.user.points
         }
         console.log("updated user")
         dispatch(setUser(newUser));
@@ -129,8 +130,8 @@ const Dashboard: React.FC = () => {
 
   return (
     user == null ? <div>Loading...</div> : 
-    <div className="h-screen w-full flex flex-col lg:flex-row">
-      { isNav && <NavBar/>}
+    <div className="w-full flex flex-col lg:flex-row">
+      {isNav && <NavBar/>}
       <main className="flex-1 p-5 light:bg-white-800 text-black">
         <h2 className="text-xl mb-5">Hello, {user.username}</h2>
         <BiddingTable biddings={biddings} setBiddings={setBiddings} updateUser={updateUser}/>
@@ -149,7 +150,10 @@ const Dashboard: React.FC = () => {
       {Array.from({ length: 100 }, (_, index) => ( allowedBids.includes(index + 1) ? 
               (<div
                 key={index}
-                className="bg-gray-800 h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500"
+                className= {`${user.bids.filter(item => item.jersey.number === index + 1).length === 1 
+                            ? "bg-green-400" 
+                            : "bg-gray-800"} 
+                            h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500`} 
                 onClick = {() => openModal(index+1)}
               >
                      {index + 1}
@@ -164,7 +168,7 @@ const Dashboard: React.FC = () => {
         ))}
 
          {isModalOpen && selectedItemIndex !== null && (
-        <Modal closeModal={closeModal} index={selectedItemIndex} biddings={biddings} setBiddings={setBiddings} 
+        <Modal closeModal={closeModal} index={selectedItemIndex} points={user.points} biddings={biddings} setBiddings={setBiddings} 
           setError={setError}
           handleOpen={handleOpen}
           />
