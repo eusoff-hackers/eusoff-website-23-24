@@ -28,10 +28,10 @@ const returnSchema = {
     },
     isEligible: { type: `boolean` },
     role: { type: `string`, enum: [`USER`, `ADMIN`] },
-    bidding_round: { type: `number`, minimum: 1, maximum: 4},
+    bidding_round: { type: `number`, minimum: 1, maximum: 4 },
     year: { type: `number`, minimum: 1, maximum: 5 },
-    points: { type: `number`, minimum: 0, maximum: 99},
-    allocatedNumber: { type: `number`, minimum: 0, maximum: 99},
+    points: { type: `number`, minimum: 0, maximum: 99 },
+    allocatedNumber: { type: `number`, minimum: 0, maximum: 99 },
     gender: { type: `string`, enum: [`Male`, `Female`] },
   },
 };
@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema({
   bidding_round: { type: Number, min: 1, max: 4, required: true },
   year: { type: Number, min: 1, max: 5, required: true },
   points: { type: Number, min: 0, max: 99, required: true },
-  allocatedNumber: { type: Number, min: 0, max: 99, required: true },
+  allocatedNumber: { type: Number, min: 0, max: 99 },
   gender: { type: String, enum: [`Male`, `Female`] },
 });
 
