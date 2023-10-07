@@ -9,19 +9,13 @@ const { Jersey } = require(`../models/jersey`);
 const { Bid } = require(`../models/bid`);
 const { isEligible } = require(`../utils/eligibilityChecker`);
 
-async function jerseyBidCount(jerseyNumber, bid_priority) {
+async function jerseyBidCount(jersey, bid_priority) {
     await mongoose.connect(env.MONGO_URI);
 
-    const get_bids = { priority: bid_priority } ;
+    const get_bids = { priority: bid_priority, jersey: jersey } ;
     const bids = await Bid.find(get_bids);
-    const number_of_bids = 0;
     
-    bids.forEach(bid => {
-        if (bid.jersey = jerseyNumber) {
-            number_of_bids++
-        }
-    })
-    return number_of_bids;
+    return bids.length;
 }
 
 async function run() {
@@ -40,8 +34,8 @@ async function run() {
             jerseyArray.sort(function(a, b){return jerseyBidCount(a, bid_priority) - jerseyBidCount(b, bid_priority)});
             jerseyArray.reverse();
 
-            jerseyArray.forEach(async (jerseyNumber) => {
-                const get_bids = { jersey : jerseyNumber, priority : bid_priority };
+            jerseyArray.forEach(async (jersey) => {
+                const get_bids = { jersey : jersey, priority : bid_priority };
                 const bids = await Bid.find(get_bids);
                 const bidders = [];
                 bids.forEach( (bid) => {
@@ -58,19 +52,46 @@ async function run() {
                     }
                 });
 
-                while ( Array.isArray(eligible_bidders) && eligible_bidders.length ) {
-                    /* need another way to check when to end loop cos must check the genders of the people left in the list also */
-                    if (jerseyNumber.male_quota == 0 && jerseyNumber.female_quota == 0) {
+                const changes = true
+
+                while ( changes ) {
+                    if (jersey.male_quota == 0 && jersey.female_quota == 0) {
                         break;
                     } else {
-                        const person = eligible_bidders.pop();
-                        /* findOneAndUpdate the database for this person, then do the same for the jersey to subtract quota*/
+                        changes = false;
+                        eligible_bidders = eligible_bidders.filter(isEligible);
+                        if ( Array.isArray(eligible_bidders) && eligible_bidders.length ) {
+                            const person = eligible_bidders.pop();
+                            const updated_person = User.findOneAndUpdate(
+                                { username: person.username },
+                                { allocatedNumber: jersey.number },
+                                { isEligible: false },
+                                { new: true },
+                            );
+                            if ( person.gender == `Male`) {
+                                jersey.male_quota -= 1;
+                            } else {
+                                jersey.female_quota -= 1;
+                            }
+                            /*create ban object for teams user is in*/
+                            updated_person.teams.forEach( (team) => {
+                                const bannableTeams = ['Basketball M', 'Basketball F', 'Floorball M', 'Floorball M', 'Frisbee', 'Handball M', 'Handball F', 'Soccer M', 'Soccer F', 'Softball', 'Touch Rugby M', 'Touch Rugby M', 'Volleyball M', 'Volleyball F']
+                                if ( bannableTeams.includes(team.name) ) {
+                                    const newBan = new Ban({
+                                        jersey: jersey,
+                                        team: team,
+                                      });
+                                    newBan.save();
+                                }
+                            });
+                            changes = true;
+                        }  
                     }
-                };
-            })
+                }
+            });
         }
     }
 }
   
   
-  run();
+run();

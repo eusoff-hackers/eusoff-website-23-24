@@ -32,6 +32,7 @@ const returnSchema = {
     year: { type: `number`, minimum: 1, maximum: 5 },
     points: { type: `number`, minimum: 0, maximum: 99},
     allocatedNumber: { type: `number`, minimum: 0, maximum: 99},
+    gender: { type: `string`, enum: [`Male`, `Female`] },
   },
 };
 
@@ -54,6 +55,7 @@ const userSchema = new mongoose.Schema({
   year: { type: Number, min: 1, max: 5, required: true },
   points: { type: Number, min: 0, max: 99, required: true },
   allocatedNumber: { type: Number, min: 0, max: 99, required: true },
+  gender: { type: String, enum: [`Male`, `Female`] },
 });
 
 userSchema.query.format = async function format() {
