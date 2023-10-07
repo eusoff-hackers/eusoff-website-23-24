@@ -6,15 +6,22 @@ const returnSchema = {
   required: [`number`],
   properties: {
     number: { type: `number` },
-    male_quota: { type: `number` },
-    female_quota: { type: `number` },
+    quota: {
+      type: `object`,
+      properties: {
+        Male: { type: `number` },
+        Female: { type: `number` },
+      },
+    },
   },
 };
 
 const jerseySchema = new mongoose.Schema({
   number: { type: Number, required: true, unique: true, index: 1 },
-  male_quota: { type: Number, required: true, default: 3 },
-  female_quota: { type: Number, required: true, default: 3 },
+  quota: {
+    Male: { type: Number, required: true, default: 3 },
+    Female: { type: Number, required: true, default: 3 },
+  },
 });
 
 jerseySchema.query.format = async function format() {
