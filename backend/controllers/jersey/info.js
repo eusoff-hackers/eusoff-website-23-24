@@ -41,22 +41,26 @@ const schema = {
 async function getJerseyInfo(jersey) {
   const bidders = await Bid.find({ jersey: jersey._id });
   const biddersInfo = logAndThrow(
-    await Promise.allSettled(bidders.map((bid) => User.findById(bid.user))),
+    await Promise.allSettled(
+      bidders.map((bid) => User.findById(bid.user).format()),
+    ),
   );
 
   const Male = biddersInfo
     .filter((bidder) => bidder.gender === `Male`)
-    .map(({ username, points }) => ({
+    .map(({ username, points, teams }) => ({
       username,
       points,
+      teams,
     }))
     .sort((a, b) => b.points - a.points);
 
   const Female = biddersInfo
     .filter((bidder) => bidder.gender === `Female`)
-    .map(({ username, points }) => ({
+    .map(({ username, points, teams }) => ({
       username,
       points,
+      teams,
     }))
     .sort((a, b) => b.points - a.points);
 
