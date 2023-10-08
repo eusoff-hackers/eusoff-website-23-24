@@ -134,6 +134,8 @@ async function run() {
       await allocate(sortedJerseys[i], bid_priority);
     }
   }
+
+  console.log(`Allocation complete :) I hope it's correct?`);
 }
 
 run();
