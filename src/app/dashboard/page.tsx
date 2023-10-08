@@ -19,10 +19,10 @@ export interface Bidding {
 const loadBiddings = () => {
   try {
       if (typeof window === `undefined`) return [];
-      const savedUserBiddings = localStorage.getItem('user_biddings');
-
+      let savedUserBiddings = localStorage.getItem('user_biddings');
+      
       if (!savedUserBiddings) return [];
-
+    
       const item = JSON.parse(savedUserBiddings);
       return item
   } catch (err) {
@@ -46,7 +46,7 @@ const Dashboard: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
 
-  const userBiddings : Bidding[] = loadBiddings()
+  const userBiddings : Bidding[] = []
   const [biddings, setBiddings] = useState<Bidding[]>(userBiddings);
   const [allowedBids, setAllowedBids] = useState<number[]>([])
 
@@ -101,6 +101,11 @@ const Dashboard: React.FC = () => {
     }
   }
 
+  // set biddings to the biddings the user has previously made
+  const setPreviousBids = () => {
+    user != null ? setBiddings(JSON.parse("["+String(user.bids.map(item => `\{\"number\":${item.jersey.number}\}`))+"]")) : false;
+  }
+
   // Saves changes to user_biddings in local storage
   useEffect(() => {
     localStorage.setItem('user_biddings', JSON.stringify(biddings))
@@ -109,6 +114,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     setIsNav(true);
     getEligibleBids(); // get all eligible bids when page renders
+    setPreviousBids(); // set bids in bidding table when page renders
   }, [])
 
   const openModal = (index: number) => {
@@ -145,7 +151,6 @@ const Dashboard: React.FC = () => {
               </Snackbar>
           }
         </div>
-
         <div className="grid pt-4 pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
       {Array.from({ length: 100 }, (_, index) => ( allowedBids.includes(index + 1) ? 
               (<div
