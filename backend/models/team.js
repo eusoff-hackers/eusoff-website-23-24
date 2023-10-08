@@ -5,6 +5,7 @@ const returnSchema = {
   type: `object`,
   properties: {
     name: { type: `string` },
+    shareable: { type: `boolean` },
   },
 };
 
