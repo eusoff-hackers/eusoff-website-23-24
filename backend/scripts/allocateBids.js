@@ -133,7 +133,6 @@ async function run() {
     for (let i = 0; i < sortedJerseys.length; i++) {
       await allocate(sortedJerseys[i], bid_priority);
     }
-    return;
   }
 }
 
