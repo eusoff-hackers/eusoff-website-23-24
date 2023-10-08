@@ -14,6 +14,7 @@ const returnSchema = {
       },
     },
   },
+  additionalProperties: false,
 };
 
 const jerseySchema = new mongoose.Schema({
