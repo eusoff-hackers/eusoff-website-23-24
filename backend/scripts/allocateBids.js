@@ -1,6 +1,6 @@
-const env = process.env;
+'use strict';
 
-console.log(env);
+const env = process.env;
 
 const mongoose = require(`mongoose`);
 const { User } = require(`../models/user`);
@@ -8,6 +8,7 @@ const { Team } = require(`../models/team`);
 const { Jersey } = require(`../models/jersey`);
 const { Bid } = require(`../models/bid`);
 const { Ban } = require(`../models/ban`);
+const { Server } = require(`../models/server`);
 const { isEligible } = require(`../utils/eligibilityChecker`);
 const { logAndThrow } = require('../utils/logger');
 
@@ -16,6 +17,15 @@ async function jerseyBidCount(jersey, bid_priority) {
   const bids = await Bid.find(get_bids);
 
   return bids.length;
+}
+
+async function checkRemaining() {
+  console.log(`Checking users that have not been allocated a jersey`);
+
+  const users = await User.find({ isEligible: true });
+  console.log(
+    `Users that do not have a jersey: ${users.map((u) => u.username)}`,
+  );
 }
 
 async function allocate(jersey, bid_priority) {
@@ -65,8 +75,11 @@ async function allocate(jersey, bid_priority) {
           { allocatedNumber: jersey.number, isEligible: false },
           { new: true },
         );
-
-        jersey.quota[bidder.gender] -= 1;
+        if ((await Server.findOne({ key: `round` })).value === 1) {
+          jersey.quota[bidder.gender] = 0;
+        } else {
+          jersey.quota[bidder.gender] -= 1;
+        }
         await jersey.save();
 
         /*create ban object for teams user is in*/
@@ -136,6 +149,8 @@ async function run() {
   }
 
   console.log(`Allocation complete :) I hope it's correct?`);
+
+  await checkRemaining();
 }
 
 run();
