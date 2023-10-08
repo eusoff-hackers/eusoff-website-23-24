@@ -16,6 +16,8 @@ async function userEligible(user) {
 
 async function isEligible(user, jersey) {
   const { teams } = user;
+  if (teams.length === 0 || jersey.length === 0) return true;
+
   const bans = await Ban.find({
     $and: [
       {

@@ -6,6 +6,7 @@ const returnSchema = {
   properties: {
     name: { type: `string` },
   },
+  additionalProperties: false,
 };
 
 const teamSchema = new mongoose.Schema({

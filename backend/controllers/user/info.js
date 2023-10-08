@@ -27,7 +27,7 @@ async function handler(req, res) {
 
     return await success(res, { user: formatted });
   } catch (error) {
-    logger.error(`Login error: ${error.message}`, { error });
+    logger.error(`User info error: ${error.message}`, { error });
     return sendStatus(res, 500);
   }
 }

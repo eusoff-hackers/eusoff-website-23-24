@@ -11,6 +11,7 @@ const returnSchema = {
     jersey: { $ref: `jersey` },
     priority: { type: `number` },
   },
+  additionalProperties: false,
 };
 
 const bidSchema = new mongoose.Schema({

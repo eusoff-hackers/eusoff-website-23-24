@@ -34,6 +34,7 @@ const returnSchema = {
     allocatedNumber: { type: `number`, minimum: 0, maximum: 99 },
     gender: { type: `string`, enum: [`Male`, `Female`] },
   },
+  additionalProperties: false,
 };
 
 const userSchema = new mongoose.Schema({
