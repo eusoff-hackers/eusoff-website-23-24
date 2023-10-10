@@ -4,6 +4,7 @@ import { Bidding } from '@/app/dashboard/page';
 interface ModalProps {
   closeModal: () => void;
   index: number;
+  points: number;
   biddings: Bidding[];
   setBiddings: React.Dispatch<React.SetStateAction<Bidding[]>>;
   setError: React.Dispatch<React.SetStateAction<string>>;
@@ -19,7 +20,7 @@ interface User{
 const axios = require('axios'); 
 axios.defaults.withCredentials = true;
 
-const Modal: React.FC<ModalProps> = ({ closeModal, index, biddings, setBiddings, setError, handleOpen }) => {
+const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setBiddings, setError, handleOpen }) => {
   
   const [bidders,setBidders] = useState(null);
 
@@ -39,7 +40,6 @@ const Modal: React.FC<ModalProps> = ({ closeModal, index, biddings, setBiddings,
   useEffect(()=>{
     fetchList(index);
   },[index])
-
 
 
   const createBid = (ind : number) => {    
@@ -133,10 +133,10 @@ const Modal: React.FC<ModalProps> = ({ closeModal, index, biddings, setBiddings,
         </div>
         }
         <div className="grid grid-flow-row-dense grid-rows-1 grid-cols-2">
-            <h3 className=""> Current Points : {index}</h3>
+            <h3 className=""> Current Points : {points}</h3>
         <button
           className="bg-blue-500 text-white px-2 py-2 rounded hover:bg-blue-600"
-          onClick={() => createBid(index)}
+          onClick={() => {createBid(index); closeModal();}}
         >
           Bid
         </button>

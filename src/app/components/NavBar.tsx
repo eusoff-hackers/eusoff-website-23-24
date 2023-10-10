@@ -19,7 +19,7 @@ export default function NavBar() {
 
   return (
     <div>
-      <nav className="w-full lg:w-64 bg-gray-800 text-white p-5">
+      <nav className="h-full w-full sticky top-0 lg:w-64 bg-gray-800 text-white p-5">
         <p className="text-2xl mb-5">Dashboard</p>
         <ul className="space-y-2">
           <li>
