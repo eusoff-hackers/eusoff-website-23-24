@@ -17,6 +17,8 @@
     "bcryptjs": "^2.4.3",
     "connect-mongo": "^5.0.0",
     "crypto": "^1.0.1",
+    "csv": "^6.3.5",
+    "csv-parser": "^3.0.0",
     "env-cmd": "^10.1.0",
     "fastify": "^4.23.2",
     "mongoose": "^7.5.2",
