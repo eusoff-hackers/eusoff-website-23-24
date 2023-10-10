@@ -135,12 +135,13 @@ const Dashboard: React.FC = () => {
 
 
   return (
-    user == null ? <div>Loading...</div> : 
-    <div className="w-full flex flex-col lg:flex-row">
-      {isNav && <NavBar/>}
-      <main className="flex-1 p-5 light:bg-white-800 text-black">
+    user == null ? (<div>Loading...</div>) : 
+    (<div className="h-screen w-full flex flex-col lg:flex-row">
+      { isNav && <NavBar/>}
+      <div className="flex-1 p-5 light:bg-white-800 text-black">
         <h2 className="text-xl mb-5">Hello, {user.username}</h2>
-        <BiddingTable biddings={biddings} setBiddings={setBiddings} updateUser={updateUser}/>
+
+        { biddings.length>0 && <BiddingTable biddings={biddings} setBiddings={setBiddings} updateUser={updateUser}/> }
         <div>
           {error == '' 
             ? <></> 
@@ -152,7 +153,7 @@ const Dashboard: React.FC = () => {
           }
         </div>
         <div className="grid pt-4 pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
-      {Array.from({ length: 100 }, (_, index) => ( allowedBids.includes(index + 1) ? 
+          {Array.from({ length: 100 }, (_, index) => ( allowedBids.includes(index + 1) ? 
               (<div
                 key={index}
                 className= {`${user.bids.filter(item => item.jersey.number === index + 1).length === 1 
@@ -162,8 +163,7 @@ const Dashboard: React.FC = () => {
                 onClick = {() => openModal(index+1)}
               >
                      {index + 1}
-              </div>) : 
-              (<div
+              </div>) :             (<div
                 key={index}
                 className="bg-red-500 h-16 w-16 flex items-center justify-center text-white font-semibold text-xl"
                 onClick = {() => null}
@@ -174,14 +174,15 @@ const Dashboard: React.FC = () => {
 
          {isModalOpen && selectedItemIndex !== null && (
         <Modal closeModal={closeModal} index={selectedItemIndex} points={user.points} biddings={biddings} setBiddings={setBiddings} 
+
           setError={setError}
           handleOpen={handleOpen}
           />
-      )}
+        )}
 
         </div>
-      </main>
-    </div>
+      </div>
+    </div>)
   )
 }
 
