@@ -8,7 +8,8 @@ export interface User {
   bids: any[],
   isEligible: boolean,
   role: string, 
-  year: number
+  year: number,
+  points: number
 }
 
 const initialState: User | null = null;

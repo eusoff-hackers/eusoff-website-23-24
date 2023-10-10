@@ -33,11 +33,11 @@ const ProfilePage = () => {
     route.push('/');
   }
 
-  useEffect(() => {
-    if (user == null) {
-      route.push('/');
-    }
-  }, [user, route]);
+
+  if (user == null) {
+    route.push('/');
+  }
+
 
   return (
     user == null ? <div>Loading...</div> : 
@@ -57,10 +57,10 @@ const ProfilePage = () => {
             logged in as <br /> <b>{user.username}</b>
           </h1>
           <br />
-          <h2 className="text-green-500 font-bold hover:text-green-600" > 
+          <h2 className="text-green-500 hover:text-green-600" > 
             <b>Points</b> 
             <br /> 
-            {-1}
+            {user.points}
           </h2>
           <br />
           <h2 className="text-orange-500 font-bold">

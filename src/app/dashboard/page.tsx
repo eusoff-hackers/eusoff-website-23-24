@@ -19,10 +19,10 @@ export interface Bidding {
 const loadBiddings = () => {
   try {
       if (typeof window === `undefined`) return [];
-      const savedUserBiddings = localStorage.getItem('user_biddings');
-
+      let savedUserBiddings = localStorage.getItem('user_biddings');
+      
       if (!savedUserBiddings) return [];
-
+    
       const item = JSON.parse(savedUserBiddings);
       return item
   } catch (err) {
@@ -46,7 +46,7 @@ const Dashboard: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
 
-  const userBiddings : Bidding[] = loadBiddings()
+  const userBiddings : Bidding[] = []
   const [biddings, setBiddings] = useState<Bidding[]>(userBiddings);
   const [allowedBids, setAllowedBids] = useState<number[]>([])
 
@@ -91,6 +91,7 @@ const Dashboard: React.FC = () => {
           isEligible: response.data.data.user.isElligible,
           role: response.data.data.user.role,
           year: response.data.data.user.year,
+          points: response.data.data.user.points
         }
         console.log("updated user")
         dispatch(setUser(newUser));
@@ -98,6 +99,11 @@ const Dashboard: React.FC = () => {
     } catch (error) {
       console.error('Error during update', error);
     }
+  }
+
+  // set biddings to the biddings the user has previously made
+  const setPreviousBids = () => {
+    user != null ? setBiddings(JSON.parse("["+String(user.bids.map(item => `\{\"number\":${item.jersey.number}\}`))+"]")) : false;
   }
 
   // Saves changes to user_biddings in local storage
@@ -108,6 +114,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     setIsNav(true);
     getEligibleBids(); // get all eligible bids when page renders
+    setPreviousBids(); // set bids in bidding table when page renders
   }, [])
 
   const openModal = (index: number) => {
@@ -121,17 +128,20 @@ const Dashboard: React.FC = () => {
   };
 
   //If not authorised, then redirects the user
+
   if (user == null) {
-    route.push("/");
+    route.push('/');
   }
 
+
   return (
-    user == null ? <div>Loading...</div> : 
-    <div className="h-screen w-full flex flex-col lg:flex-row">
+    user == null ? (<div>Loading...</div>) : 
+    (<div className="h-screen w-full flex flex-col lg:flex-row">
       { isNav && <NavBar/>}
-      <main className="flex-1 p-5 light:bg-white-800 text-black">
+      <div className="flex-1 p-5 light:bg-white-800 text-black">
         <h2 className="text-xl mb-5">Hello, {user.username}</h2>
-        <BiddingTable biddings={biddings} setBiddings={setBiddings} updateUser={updateUser}/>
+
+        { biddings.length>0 && <BiddingTable biddings={biddings} setBiddings={setBiddings} updateUser={updateUser}/> }
         <div>
           {error == '' 
             ? <></> 
@@ -142,17 +152,18 @@ const Dashboard: React.FC = () => {
               </Snackbar>
           }
         </div>
-
         <div className="grid pt-4 pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
-      {Array.from({ length: 100 }, (_, index) => ( allowedBids.includes(index + 1) ? 
+          {Array.from({ length: 100 }, (_, index) => ( allowedBids.includes(index + 1) ? 
               (<div
                 key={index}
-                className="bg-gray-800 h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500"
+                className= {`${user.bids.filter(item => item.jersey.number === index + 1).length === 1 
+                            ? "bg-green-400" 
+                            : "bg-gray-800"} 
+                            h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500`} 
                 onClick = {() => openModal(index+1)}
               >
                      {index + 1}
-              </div>) : 
-              (<div
+              </div>) :             (<div
                 key={index}
                 className="bg-red-500 h-16 w-16 flex items-center justify-center text-white font-semibold text-xl"
                 onClick = {() => null}
@@ -162,15 +173,16 @@ const Dashboard: React.FC = () => {
         ))}
 
          {isModalOpen && selectedItemIndex !== null && (
-        <Modal closeModal={closeModal} index={selectedItemIndex} biddings={biddings} setBiddings={setBiddings} 
+        <Modal closeModal={closeModal} index={selectedItemIndex} points={user.points} biddings={biddings} setBiddings={setBiddings} 
+
           setError={setError}
           handleOpen={handleOpen}
           />
-      )}
+        )}
 
         </div>
-      </main>
-    </div>
+      </div>
+    </div>)
   )
 }
 

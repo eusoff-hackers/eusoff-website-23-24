@@ -43,7 +43,8 @@ const savedUser : User | null = oldState == null ? null : {
   teams: oldState.teams,
   isEligible: oldState.isEligible,
   role: oldState.role,
-  year: oldState.year
+  year: oldState.year,
+  points: oldState.points
 }
 console.log("This is saved user :" + JSON.stringify(savedUser))
 

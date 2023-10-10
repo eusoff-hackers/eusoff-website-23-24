@@ -1,24 +1,46 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Bidding } from '@/app/dashboard/page';
 
 interface ModalProps {
   closeModal: () => void;
   index: number;
+  points: number;
   biddings: Bidding[];
   setBiddings: React.Dispatch<React.SetStateAction<Bidding[]>>;
   setError: React.Dispatch<React.SetStateAction<string>>;
   handleOpen: () => void;
 }
 
-const fetchList:any = (index: number) => {
-    return 1;
+interface User{
+  username: string,
+  teams: any[],
+  points: number,
 }
 
-const fetchPoints = () => {
-    return 1;
-}
+const axios = require('axios'); 
+axios.defaults.withCredentials = true;
 
-const Modal: React.FC<ModalProps> = ({ closeModal, index, biddings, setBiddings, setError, handleOpen }) => {
+const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setBiddings, setError, handleOpen }) => {
+  
+  const [bidders,setBidders] = useState(null);
+
+    const fetchList:any = async (index: number) => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/jersey/info`);
+        
+        if (response.data.success) {
+           console.log(response.data.data[index])
+           setBidders(response.data.data[index])
+        }
+      } catch (error) {
+        console.error('Error during update', error);
+      }
+  }
+
+  useEffect(()=>{
+    fetchList(index);
+  },[index])
+
 
   const createBid = (ind : number) => {    
     const duplicateArr = biddings.filter(bidding => bidding.number == ind);
@@ -72,12 +94,49 @@ const Modal: React.FC<ModalProps> = ({ closeModal, index, biddings, setBiddings,
             </svg>
             </button>
         </div>
-        <p className="mb-4">List of top bidders.</p>
+        { bidders != null && 
+        <div className="mb-4">
+          {(bidders.Male.length>0 || bidders.Female.length>0) ? (
+             <table className="min-w-full border-collapse border border-gray-300">
+                <tbody>
+                  <tr className="bg-gray-100">
+                    <th className="px-4 py-2">Category</th>
+                    <th className="px-4 py-2">Name</th>
+                    <th className="px-4 py-2">Points</th>
+                  </tr>
+                
+
+                  {Object.keys(bidders).map((category, index:number) => (
+                    bidders[category].length > 0 && (
+                    <>
+                      <tr  key={index}>
+                      <td className="px-4 py-2 font-bold">{category}</td>
+                      <td className="px-4 py-2"></td>
+                      <td className="px-4 py-2"></td>
+                      </tr>
+                      {bidders[category].map((item:User,subIndex:number) => (
+                        <tr className="mx-2" key={subIndex}>
+                          <td className="px-4 py-2"></td>
+                          <td className="px-4 py-2">{item.username}</td>
+                          <td className="px-4 py-2">{item.points}</td>
+                        </tr>
+                      ))}
+                  </>
+                  )
+                  ))}
+                </tbody>
+              </table>
+           ) : (
+            <p> No Bids Found!!!</p>
+           )
+          }
+        </div>
+        }
         <div className="grid grid-flow-row-dense grid-rows-1 grid-cols-2">
-            <h3 className=""> Current Points : {index}</h3>
+            <h3 className=""> Current Points : {points}</h3>
         <button
           className="bg-blue-500 text-white px-2 py-2 rounded hover:bg-blue-600"
-          onClick={() => createBid(index)}
+          onClick={() => {createBid(index); closeModal();}}
         >
           Bid
         </button>
