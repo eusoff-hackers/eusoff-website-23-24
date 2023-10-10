@@ -8,9 +8,13 @@ const router = require(`./routes/router`);
 const fastifySession = require('@fastify/session');
 const fastifyCookie = require('@fastify/cookie');
 const MongoStore = require('connect-mongo');
+const IORedis = require('ioredis');
 
+const redis = require(`@fastify/redis`);
+const caching = require(`@fastify/caching`);
 const cors = require(`@fastify/cors`);
 const crypto = require(`crypto`);
+const abcache = require('abstract-cache');
 
 const fastify = Fastify({
   logger: LOG_LEVEL,
@@ -38,6 +42,19 @@ async function register() {
         autoRemove: `native`,
       }),
     });
+
+    const redisClient = new IORedis({ host: `${env.REDIS_URL}` });
+
+    const abcacheClient = abcache({
+      useAwait: true,
+      driver: {
+        name: 'abstract-cache-redis',
+        options: { client: redisClient },
+      },
+    });
+
+    fastify.register(redis, { client: redisClient });
+    fastify.register(caching, { cache: abcacheClient });
 
     // fastify.addHook(`onRequest`, auth);
     fastify.register(router);
