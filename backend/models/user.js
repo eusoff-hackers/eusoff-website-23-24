@@ -41,11 +41,11 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   teams: {
-    type: [{ type: mongoose.Schema.Types.ObjectId, unique: true }],
+    type: [{ type: mongoose.Schema.Types.ObjectId /* unique: true */ }],
     default: [],
   },
   bids: {
-    type: [{ type: mongoose.Schema.Types.ObjectId, unique: true }],
+    type: [{ type: mongoose.Schema.Types.ObjectId /* unique: true */ }],
     default: [],
     validate: [arrayLimit, `{PATH} exceeds limit of 5 bids.`],
   },

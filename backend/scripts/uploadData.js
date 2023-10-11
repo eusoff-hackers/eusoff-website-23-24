@@ -4,7 +4,7 @@ const readline = require('readline');
 const fs = require('fs');
 const csv = require('csv-parser');
 const bcrypt = require('bcrypt');
-const crypto = require('crypto');
+const xkpasswd = require('xkpasswd');
 const { User } = require(`../models/user`);
 
 const rl = readline.createInterface({
@@ -19,27 +19,43 @@ async function run() {
     const csvFilePath = '../csv_files/';
     // './2324_jersey_bidding.csv'
 
+    const doubleRooms = [];
+
     fs.createReadStream(csvFilePath + csvFileName)
+      .on('error', (err) => {
+        console.error('Error reading the CSV file:', err);
+      })
       .pipe(csv())
       .on('data', async (row) => {
+        let roomNo = row['Room no'];
+        const isDoubleRoom = row['Room Type'] === 'Double';
+
+        if (isDoubleRoom && doubleRooms.includes(roomNo)) {
+          roomNo += 'b'; // not the first time we see this room
+        } else if (isDoubleRoom) {
+          doubleRooms.push(roomNo);
+          roomNo += 'a'; // first time
+        }
+
         const userData = {
           gender: row['Gender'],
           year: parseInt(row['Year of Study'].charAt(0), 10),
-          username: row['Room no'],
+          username: roomNo,
           bidding_round: 4 - parseInt(row['IHG 2324'], 10),
           points: parseInt(row['Total points'], 10),
-          password: await generatePassword(row['Room no'], row['Email']), // Added email in
+          password: await generatePassword(roomNo, row['Email']), // Added email in
         };
 
         const user = new User(userData);
 
-        user.save((err) => {
-          if (err) {
-            console.error('Error saving user:', err);
-          } else {
-            console.log('User saved successfully:', user);
-          }
-        });
+        user
+          .save()
+          .then((savedUser) => {
+            console.log('User saved successfully:', savedUser.username);
+          })
+          .catch((err) => {
+            console.error('Error saving user to MongoDB:', err);
+          });
       })
       .on('end', () => {
         console.log('User data uploaded.');
@@ -49,28 +65,21 @@ async function run() {
   });
 }
 
-async function generatePassword(room_no, email) {
+async function generatePassword(roomNo, email) {
   const SALT_ROUNDS = 10;
-  const originalPassword = room_no + generateRandomString(7);
+  const originalPassword =
+    roomNoo + '-' + xkpasswd({ complexity: 1, separators: '-' });
 
   // NEED UPDATE FILENAME
   const writeStream = fs.createWriteStream(
     '../csv_files/sample_user_pass.csv',
     { flags: 'a' },
   );
-  writeStream.write(`"${room_no}", "${originalPassword}", "${email}"\n`);
+  writeStream.write(`"${roomNo}", "${originalPassword}", "${email}"\n`);
   writeStream.end();
 
   const hashedPw = await bcrypt.hash(originalPassword, SALT_ROUNDS);
   return hashedPw;
-}
-
-// Helper function to make random string
-function generateRandomString(length) {
-  return crypto
-    .randomBytes(Math.ceil(length / 2))
-    .toString('hex')
-    .slice(0, length);
 }
 
 run();
