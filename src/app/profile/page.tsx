@@ -21,11 +21,22 @@ const ProfilePage = () => {
 
   const dispatch = useDispatch();
 
+  const [isClient, setIsClient] = useState(false);
   const [isNav, setIsNav] = useState(false);
 
   useEffect(() => {
     setIsNav(true);
   }, [])
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (user == null) {
+        route.push('/');
+    }
+  }, [user, route]);
 
 
   const logout = () => {
@@ -34,13 +45,8 @@ const ProfilePage = () => {
   }
 
 
-  if (user == null) {
-    route.push('/');
-  }
-
-
   return (
-    user == null ? <div>Loading...</div> : 
+    !isClient || user == null ? <div>Loading...</div> : 
     <div className="bg-gradient-to-tl from-slate-200 to-slate-300 min-h-screen w-full flex flex-col lg:flex-row">
       { isNav && <NavBar/> }
       <main className="bg-gradient-to-tl from-slate-200 to-slate-300 h-fit w-full">
