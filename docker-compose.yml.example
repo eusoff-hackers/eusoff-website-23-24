@@ -13,11 +13,13 @@ services:
     env_file: ./backend/.env
     depends_on:
       - mongodb
+      - redis
     links:
       - mongodb
     networks:
       - mongodb_network
       - backend
+      - redis
   
   frontend:
     image: "eusoff/frontend:latest"
@@ -44,6 +46,14 @@ services:
       - mongodb_network
     command: --config /etc/mongo/mongod.conf
 
+  redis:
+    image: redis:7.2.1
+    restart: unless-stopped
+    networks:
+      - redis
+    volumes:
+      - redis:/data
+    
   nginx:
     image: nginx:latest
     volumes:
@@ -60,9 +70,12 @@ services:
 
 volumes:
   mongodb:
+  redis:
 
 networks:
   mongodb_network:
+    driver: bridge
+  redis:
     driver: bridge
   backend:
     driver: bridge
