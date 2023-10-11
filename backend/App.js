@@ -10,6 +10,7 @@ const fastifyCookie = require('@fastify/cookie');
 const MongoStore = require('connect-mongo');
 const IORedis = require('ioredis');
 
+const RedisStore = require(`connect-redis`).default;
 const { MongoClient } = require(`mongodb`);
 const redis = require(`@fastify/redis`);
 const caching = require(`@fastify/caching`);
@@ -50,14 +51,6 @@ async function register() {
     });
 
     fastify.register(fastifyCookie);
-    fastify.register(fastifySession, {
-      secret,
-      store: MongoStore.create({
-        mongoUrl: env.MONGO_URI,
-        ttl: 7 * 24 * 60 * 60,
-        autoRemove: `native`,
-      }),
-    });
 
     if (env.REDIS_URL) {
       const redisClient = new IORedis({ host: `${env.REDIS_URL}` });
@@ -72,6 +65,14 @@ async function register() {
 
       fastify.register(redis, { client: redisClient });
       fastify.register(caching, { cache: abcacheClient });
+
+      fastify.register(fastifySession, {
+        secret,
+        store: new RedisStore({
+          client: redisClient,
+          ttl: 14 * 24 * 60 * 60,
+        }),
+      });
     } else {
       const client = new MongoClient(env.MONGO_URI);
       await client.connect();
@@ -85,6 +86,15 @@ async function register() {
       });
 
       fastify.register(caching, { cache: abcacheClient });
+
+      fastify.register(fastifySession, {
+        secret,
+        store: MongoStore.create({
+          mongoUrl: env.MONGO_URI,
+          ttl: 14 * 24 * 60 * 60,
+          autoRemove: `native`,
+        }),
+      });
     }
 
     // fastify.addHook(`onRequest`, auth);
