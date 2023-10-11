@@ -70,7 +70,7 @@ async function handler(req, res) {
 
     return await success(res);
   } catch (error) {
-    logger.error(`Login error: ${error.message}`, { error });
+    logger.error(`Bid creation error: ${error.message}`, { error });
     return sendStatus(res, 500);
   }
 }

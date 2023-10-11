@@ -27,7 +27,7 @@ async function handler(req, res) {
     const jerseys = await getEligible(user);
     return await success(res, { jerseys });
   } catch (error) {
-    logger.error(`Login error: ${error.message}`, { error });
+    logger.error(`Jersey eligible error: ${error.message}`, { error });
     return sendStatus(res, 500);
   }
 }
