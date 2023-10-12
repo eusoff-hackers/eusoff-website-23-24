@@ -11,6 +11,7 @@ const { Ban } = require(`../models/ban`);
 const { Server } = require(`../models/server`);
 const { isEligible } = require(`../utils/eligibilityChecker`);
 const { logAndThrow } = require('../utils/logger');
+const { backup } = require(`./backup`);
 
 async function jerseyBidCount(jersey, bid_priority) {
   const get_bids = { priority: bid_priority, jersey: jersey._id };
@@ -120,7 +121,9 @@ async function allocate(jersey, bid_priority) {
 }
 
 async function run() {
+  console.log(env.MONGO_URI);
   await mongoose.connect(env.MONGO_URI), console.log(`Connected Atlas.`);
+  await backup(mongoose.connection.name);
 
   for (let bid_priority = 0; bid_priority < 5; bid_priority++) {
     const get_jerseys = {
