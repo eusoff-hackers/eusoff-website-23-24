@@ -26,6 +26,17 @@ async function checkRemaining() {
   console.log(
     `Users that do not have a jersey: ${users.map((u) => u.username)}`,
   );
+
+  logAndThrow(
+    await Promise.allSettled(
+      users.map(async (user) => {
+        user.bidding_round += 1;
+        await user.save();
+      }),
+    ),
+  );
+
+  console.log(`Moved all unallocated users to next round.`);
 }
 
 async function allocate(jersey, bid_priority) {
