@@ -133,7 +133,7 @@ async function addTeams() {
 async function generatePassword(roomNo, email) {
   const SALT_ROUNDS = 10;
   const originalPassword =
-    roomNoo + '-' + xkpasswd({ complexity: 1, separators: '-' });
+    roomNo + '-' + xkpasswd({ complexity: 1, separators: '-' });
 
   // NEED UPDATE FILENAME
   const writeStream = fs.createWriteStream(
