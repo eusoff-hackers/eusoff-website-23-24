@@ -1,21 +1,131 @@
 "use client"; // This is a client component 👈🏽
 
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { removeUser, selectUser } from '../redux/Resources/userSlice';
+import { useDispatch, useSelector } from 'react-redux'
+import { selectUser, setUser, User } from '../redux/Resources/userSlice';
 import { useRouter } from 'next/navigation';
-import { useDispatch } from 'react-redux';
+import { Alert, Snackbar } from '@mui/material';
  
-import Link from "next/link"
 import Modal from '../components/Modal/modal';
+import BiddingTable from '../components/BiddingTable';
+import NavBar from '../components/NavBar';
+
+
+export interface Bidding {
+  number: number
+}
+
+//function to load saved biddings from localstorage
+const loadBiddings = () => {
+  try {
+      if (typeof window === `undefined`) return [];
+      let savedUserBiddings = localStorage.getItem('user_biddings');
+      
+      if (!savedUserBiddings) return [];
+    
+      const item = JSON.parse(savedUserBiddings);
+      return item
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+// Create an instance of axios with credentials 
+const axios = require('axios'); 
+axios.defaults.withCredentials = true;
 
 const Dashboard: React.FC = () => {
   const user = useSelector(selectUser);
   const route = useRouter();
+  const dispatch = useDispatch();
+
+  // Check if there is better fix for this.
+  const [isNav, setIsNav] = useState(false);
+  
+  const [isClient, setIsClient] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
-  const dispatch = useDispatch();
+
+  const userBiddings : Bidding[] = []
+  const [biddings, setBiddings] = useState<Bidding[]>(userBiddings);
+  const [allowedBids, setAllowedBids] = useState<number[]>([])
+
+  const [error, setError] = useState('');
+
+  //state for the Snackbar component
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+    setError('')
+  };
+
+  // Does a call for elligible bids. API stil WIP
+  const getEligibleBids = async () => { 
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/jersey/eligible`);
+
+      if (response.data.success) {
+        setAllowedBids(response.data.data.jerseys)
+      }
+      
+    } catch (error) {
+      console.error('Error during getting allowed bids', error);
+    }
+  }
+
+  // Updates information on the page after 
+  const updateUser = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/info`);
+
+      if (response.data.success) {
+        const newUser : User = {
+          username: response.data.data.user.username,
+          teams: response.data.data.user.teams,
+          bids: response.data.data.user.bids,
+          isEligible: response.data.data.user.isElligible,
+          role: response.data.data.user.role,
+          year: response.data.data.user.year,
+          points: response.data.data.user.points
+        }
+        console.log("updated user")
+        dispatch(setUser(newUser));
+      }
+    } catch (error) {
+      console.error('Error during update', error);
+    }
+  }
+
+  // set biddings to the biddings the user has previously made
+  const setPreviousBids = () => {
+    user != null ? setBiddings(JSON.parse("["+String(user.bids.map(item => `\{\"number\":${item.jersey.number}\}`))+"]")) : false;
+  }
+
+  // Saves changes to user_biddings in local storage
+  useEffect(() => {
+    localStorage.setItem('user_biddings', JSON.stringify(biddings))
+  }, [biddings])
+
+  useEffect(() => {
+    setIsNav(true);
+    setIsClient(true); // indicate that client has been rendered
+    getEligibleBids(); // get all eligible bids when page renders
+    setPreviousBids(); // set bids in bidding table when page renders
+  }, [])
+
+  //If not authorised, then redirects the user
+  useEffect(() => {
+    if (user == null) {
+        route.push('/');
+    }
+  }, [user, route]);
 
   const openModal = (index: number) => {
     setSelectedItemIndex(index);
@@ -27,128 +137,57 @@ const Dashboard: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const logout = () => {
-    dispatch(removeUser());
-  }
 
-  //redirects user to home page if not logged in
-  useEffect(() => {
-    if (user == null) {
-      route.push("/");
-    }
-  });
 
   return (
-    user == null ? <div>Loading...</div> :
-    <div className="h-screen w-full flex flex-col lg:flex-row">
-      <nav className="w-full lg:w-64 bg-gray-800 text-white p-5">
-        <h1 className="text-2xl mb-5">Dashboard</h1>
-        <ul className="space-y-2">
-          <li>
-            <Link className="flex items-center gap-3 py-2" href="#">
-              <svg
-                className=" h-5 w-5"
-                fill="none"
-                height="24"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                width="24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
-              </svg>
-              <span>Home</span>
-            </Link>
-          </li>
-          <li>
-            <Link className="flex items-center gap-3 py-2" href="#">
-              <svg
-                className=" h-5 w-5"
-                fill="none"
-                height="24"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                width="24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-              <span>Users</span>
-            </Link>
-          </li>
-          <li>
-            <Link className="flex items-center gap-3 py-2" href="#">
-              <svg
-                className=" h-5 w-5"
-                fill="none"
-                height="24"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                width="24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-              <span>Settings</span>
-            </Link>
-          </li>
-          <li>
-            <Link className="flex items-center gap-3 py-2" onClick={logout} href="/">
-              <svg
-                className=" h-5 w-5"
-                fill="none"
-                height="24"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                width="24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-              <button onClick={logout}>Logout</button>
-            </Link>
-          </li>
-        </ul>
-      </nav>
-      <main className="flex-1 p-5 light:bg-white-800 text-black">
-        <h2 className="text-xl mb-5">Welcome back, User!</h2>
-        <p>Here is the overview of your account:</p>
+    !isClient || user == null ? (<div>Loading...</div>) : 
+    (<div className="h-screen w-full flex flex-col lg:flex-row">
+      { isNav && <NavBar/>}
+      <div className="flex-1 p-5 light:bg-white-800 text-black">
+        <h2 className="text-xl mb-5">Hello, {user.username}</h2>
+
+        { biddings.length>0 && <BiddingTable biddings={biddings} setBiddings={setBiddings} updateUser={updateUser}/> }
+        <div>
+          {error == '' 
+            ? <></> 
+            : <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                  {error}
+                </Alert>
+              </Snackbar>
+          }
+        </div>
         <div className="grid pt-4 pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
-      {Array.from({ length: 100 }, (_, index) => (
-                <div
-                  key={index}
-                  className="bg-gray-800 h-16 w-16 flex items-center justify-center text-white font-semibold text-xl"
-                  onClick = {() => openModal(index+1)}
-                >
-                       {index + 1}
-                </div>
+          {Array.from({ length: 100 }, (_, index) => ( allowedBids.includes(index + 1) ? 
+              (<div
+                key={index}
+                className= {`${user.bids.filter(item => item.jersey.number === index + 1).length === 1 
+                            ? "bg-green-400" 
+                            : "bg-gray-800"} 
+                            h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500`} 
+                onClick = {() => openModal(index+1)}
+              >
+                     {index + 1}
+              </div>) :             (<div
+                key={index}
+                className="bg-red-500 h-16 w-16 flex items-center justify-center text-white font-semibold text-xl"
+                onClick = {() => null}
+              >
+                      {index + 1}
+              </div>)
         ))}
 
          {isModalOpen && selectedItemIndex !== null && (
-        <Modal closeModal={closeModal} index={selectedItemIndex} />
-      )}
+        <Modal closeModal={closeModal} index={selectedItemIndex} points={user.points} biddings={biddings} setBiddings={setBiddings} 
+
+          setError={setError}
+          handleOpen={handleOpen}
+          />
+        )}
 
         </div>
-      </main>
-    </div>
+      </div>
+    </div>)
   )
 }
 

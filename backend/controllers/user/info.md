@@ -1,31 +1,12 @@
-# Login
+# User Info
 
-Used to login to an account.
+Used to get user info on a logged in account.
 
-**URL**: `/user/login`
+**URL**: `/user/info`
 
-**Method**: `POST`
+**Method**: `GET`
 
-**Auth required**: No
-
-## Body
-
-### Constraints
-
-- **credentials** `(object)` &mdash; The account credentials:
-  - **username** `(string)` &mdash; The account's username.
-  - **password** `(string)` &mdash; The account's password.
-
-### Example
-
-```json
-{
-  "credentials": {
-    "username": "C112",
-    "password": "securepassword1234"
-  }
-}
-```
+**Auth required**: Yes
 
 ## Success Response
 
@@ -37,8 +18,12 @@ Used to login to an account.
 - **data**? `(object)` &mdash; If successful, the requested data:
   - **user** `(object)` &mdash; The account details:
     - **username** `(string)` &mdash; The user's username.
+    - **teams** `(array)` &mdash; The user's teams.
     - **bids** `(array)` &mdash; The user's current bids.
       - TBC
+    - **isEligible** `(boolean)` &mdash; Whether the user is eligible for a bid.
+    - **role** `(string)` &mdash; The user's role.
+    - **year** `(integer)` &mdash; Year user is enrolled in (1 - 4).
     - Other functionalities TBC
 
 
@@ -50,7 +35,11 @@ Used to login to an account.
     "data": {
         "user": {
             "username": "C112",
-            "bids": []
+            "teams": [],
+            "bids": [],
+            "isEligible": false,
+            "role": "USER",
+            "year": 1
         }
     }
 }
@@ -60,6 +49,5 @@ Used to login to an account.
 
 | **Condition**                  | **Code**                    | **Message**                    |
 | ------------------------------ | --------------------------- | ------------------------------ |
-| Invalid credentials            | `401 Unauthorized`          | `Invalid Credentials.`         |
-| Incomplete credentials         | `400 Bad Request`           | `body/credentials must have required property.`         |
+| Not logged in                  | `401 Unauthorized`          |                                |
 | Internal error                 | `500 INTERNAL SERVER ERROR` |                                |
