@@ -42,6 +42,8 @@ const Dashboard: React.FC = () => {
 
   // Check if there is better fix for this.
   const [isNav, setIsNav] = useState(false);
+  
+  const [isClient, setIsClient] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
@@ -113,9 +115,17 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     setIsNav(true);
+    setIsClient(true); // indicate that client has been rendered
     getEligibleBids(); // get all eligible bids when page renders
     setPreviousBids(); // set bids in bidding table when page renders
   }, [])
+
+  //If not authorised, then redirects the user
+  useEffect(() => {
+    if (user == null) {
+        route.push('/');
+    }
+  }, [user, route]);
 
   const openModal = (index: number) => {
     setSelectedItemIndex(index);
@@ -127,15 +137,10 @@ const Dashboard: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  //If not authorised, then redirects the user
-
-  if (user == null) {
-    route.push('/');
-  }
 
 
   return (
-    user == null ? (<div>Loading...</div>) : 
+    !isClient || user == null ? (<div>Loading...</div>) : 
     (<div className="h-screen w-full flex flex-col lg:flex-row">
       { isNav && <NavBar/>}
       <div className="flex-1 p-5 light:bg-white-800 text-black">
