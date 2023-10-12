@@ -7,6 +7,7 @@ const { logger, logAndThrow } = require(`${UTILS}/logger`);
 const { Bid } = require(`${MODELS}/bid`);
 const { Jersey } = require(`${MODELS}/jersey`);
 const { User } = require(`${MODELS}/user`);
+const { checkCache, setCache } = require(`${UTILS}/cache_handler`);
 
 const schema = {
   response: {
@@ -73,6 +74,7 @@ async function handler(req, res) {
     const data = logAndThrow(
       await Promise.allSettled(jerseys.map(getJerseyInfo)),
     );
+
     return await success(res, data);
   } catch (error) {
     logger.error(`Jersey info error: ${error.message}`, { error });
@@ -84,5 +86,7 @@ module.exports = {
   method: `GET`,
   url: `/info`,
   schema,
+  preHandler: checkCache,
   handler,
+  onSend: setCache,
 };
