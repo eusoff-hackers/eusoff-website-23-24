@@ -7,69 +7,82 @@ const bcrypt = require('bcrypt');
 const xkpasswd = require('xkpasswd');
 const { User } = require(`../models/user`);
 const { Team } = require('../models/team');
-
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-// Map with name as the key and room number as the value
-const nameToRoomNoMap = {};
+// GLOBAL VARIABLES
+const csvFilePath = '../csv_files/';
+const nameToRoomNoMap = {}; // Map with name as the key and room number as the value
+let userPassCSV = ''; // Store the CSV filename to save user passwords to
 
 async function makeUsers() {
   await mongoose.connect(env.MONGO_URI), console.log(`Connected Atlas.`);
 
-  rl.question('Please enter name of csv file: ', (csvFileName) => {
-    const csvFilePath = '../csv_files/';
-    // './2324_jersey_bidding.csv'
+  userPassCSV = await rl.question(
+    'Please enter the csv file name to save user passwords to: ',
+  );
 
-    const doubleRooms = [];
+  rl.question(
+    'Please enter the csv filename to create users: ',
+    (csvFileName) => {
+      // './2324_jersey_bidding.csv'
 
-    fs.createReadStream(csvFilePath + csvFileName)
-      .on('error', (err) => {
-        console.error('Error reading the CSV file:', err);
-      })
-      .pipe(csv())
-      .on('data', async (row) => {
-        let roomNo = row['Room no'];
-        const isDoubleRoom = row['Room Type'] === 'Double';
+      const doubleRooms = [];
 
-        if (isDoubleRoom && doubleRooms.includes(roomNo)) {
-          roomNo += 'b'; // not the first time we see this room
-        } else if (isDoubleRoom) {
-          doubleRooms.push(roomNo);
-          roomNo += 'a'; // first time
-        }
+      let processing = 0;
 
-        const userData = {
-          gender: row['Gender'],
-          year: parseInt(row['Year of Study'].charAt(0), 10),
-          username: roomNo,
-          bidding_round: 4 - parseInt(row['IHG 2324'], 10),
-          points: parseInt(row['Total points'], 10),
-          password: await generatePassword(roomNo, row['Email']), // Added email in
-        };
+      const stream = fs
+        .createReadStream(csvFilePath + csvFileName)
+        .on('error', (err) => {
+          console.error('Error reading the CSV file:', err);
+        })
+        .pipe(csv())
+        .on('data', async (row) => {
+          let roomNo = row['Room no'];
+          const isDoubleRoom = row['Room Type'] === 'Double';
 
-        nameToRoomNoMap[row['Name Preferred']] = roomNo;
+          if (isDoubleRoom && doubleRooms.includes(roomNo)) {
+            roomNo += 'b'; // not the first time we see this room
+          } else if (isDoubleRoom) {
+            doubleRooms.push(roomNo);
+            roomNo += 'a'; // first time
+          }
 
-        const user = new User(userData);
+          const userData = {
+            gender: row['Gender'],
+            year: parseInt(row['Year of Study'].charAt(0), 10),
+            username: roomNo,
+            bidding_round: 4 - parseInt(row['IHG 2324'], 10),
+            points: parseInt(row['Total points'], 10),
+            password: await generatePassword(roomNo, row['Email']), // Added email in
+          };
 
-        user
-          .save()
-          .then((savedUser) => {
-            console.log('User saved successfully:', savedUser.username);
-          })
-          .catch((err) => {
-            console.error('Error saving user to MongoDB:', err);
-          });
-      })
-      .on('end', () => {
-        console.log('User data uploaded.');
-      });
+          nameToRoomNoMap[row['Name Preferred']] = roomNo;
 
-    rl.close();
-    addTeams();
-  });
+          const user = new User(userData);
+
+          try {
+            await user.save();
+            console.log('User saved successfully:', user.username);
+          } catch (error) {
+            console.error('Error saving user to MongoDB:', error);
+          }
+
+          processing--;
+
+          if (processing === 0) {
+            stream.emit(`finalEnd`);
+          }
+        })
+        .on('finalEnd', () => {
+          console.log('User data uploaded.');
+          addTeams();
+        });
+      rl.close();
+    },
+  );
 }
 
 async function addTeams() {
@@ -81,8 +94,6 @@ async function addTeams() {
   newRl.question(
     'Please enter name of csv file with sports: ',
     (csvFileName) => {
-      const csvFilePath = '../csv_files/';
-
       // Map with roomNo as the key and sports array as the value
       let roomNoToSportsMap = {};
 
@@ -103,24 +114,24 @@ async function addTeams() {
         })
         .on('end', async () => {
           for (const roomNo in roomNoToSportsMap) {
-            const user = await User.findOne({ username: roomNo });
-
+            let teams = [];
             for (const sport of roomNoToSportsMap[roomNo]) {
               const team = await Team.findOne({ name: sport });
-
-              if (team && user) {
-                user.teams.push(team._id);
+              if (team) {
+                teams.push(team._id);
               }
             }
 
-            user
-              .save()
-              .then(() => {
-                console.log(`Updated teams for user: ${roomNo}`);
-              })
-              .catch((err) => {
-                console.error(`Error updating user ${roomNo}:`, err);
-              });
+            try {
+              const newUser = await User.findOneAndUpdate(
+                { username: roomNo },
+                { teams },
+                { new: true },
+              );
+              console.log(`Updated teams for user: ${newUser.username}`);
+            } catch (error) {
+              console.error(`Error updating user ${roomNo}:`, error);
+            }
           }
           console.log('User data updated with teams.');
         });
@@ -135,11 +146,9 @@ async function generatePassword(roomNo, email) {
   const originalPassword =
     roomNo + '-' + xkpasswd({ complexity: 1, separators: '-' });
 
-  // NEED UPDATE FILENAME
-  const writeStream = fs.createWriteStream(
-    '../csv_files/sample_user_pass.csv',
-    { flags: 'a' },
-  );
+  const writeStream = fs.createWriteStream(csvFilePath + userPassCSV, {
+    flags: 'a',
+  });
   writeStream.write(`${roomNo},${originalPassword},${email}\n`);
   writeStream.end();
 
