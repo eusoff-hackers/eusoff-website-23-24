@@ -11,19 +11,13 @@ const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
-
+let writeStream;
 // GLOBAL VARIABLES
 const csvFilePath = '../csv_files/';
 const nameToRoomNoMap = {}; // Map with name as the key and room number as the value
 let userPassCSV = ''; // Store the CSV filename to save user passwords to
 
 async function makeUsers() {
-  await mongoose.connect(env.MONGO_URI), console.log(`Connected Atlas.`);
-  
-  userPassCSV = await rl.question(
-    'Please enter the csv file name to save user passwords to: ',
-  );
-
   rl.question(
     'Please enter the csv filename to create users: ',
     (csvFileName) => {
@@ -40,6 +34,7 @@ async function makeUsers() {
         })
         .pipe(csv())
         .on('data', async (row) => {
+          processing++;
           let roomNo = row['Room no'];
           const isDoubleRoom = row['Room Type'] === 'Double';
 
@@ -119,6 +114,8 @@ async function addTeams() {
               const team = await Team.findOne({ name: sport });
               if (team) {
                 teams.push(team._id);
+              } else {
+                console.error(`WARNING, CANNOT FIND TEAM: ${sport}.`);
               }
             }
 
@@ -146,14 +143,25 @@ async function generatePassword(roomNo, email) {
   const originalPassword =
     roomNo + '-' + xkpasswd({ complexity: 1, separators: '-' });
 
-  const writeStream = fs.createWriteStream(csvFilePath + userPassCSV, {
-    flags: 'a',
-  });
   writeStream.write(`${roomNo},${originalPassword},${email}\n`);
-  writeStream.end();
 
   const hashedPw = await bcrypt.hash(originalPassword, SALT_ROUNDS);
   return hashedPw;
 }
 
-makeUsers();
+async function run() {
+  await mongoose.connect(env.MONGO_URI), console.log(`Connected Atlas.`);
+  rl.question(
+    'Please enter the csv file name to save user passwords to: ',
+    (a) => {
+      userPassCSV = a;
+      writeStream = fs.createWriteStream(csvFilePath + userPassCSV, {
+        flags: 'a',
+      });
+      writeStream.write(`username,password,email\n`);
+      makeUsers();
+    },
+  );
+}
+
+run();
