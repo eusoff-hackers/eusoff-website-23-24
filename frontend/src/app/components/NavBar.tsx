@@ -1,15 +1,6 @@
 'use client'
 
-<<<<<<<< HEAD:frontend/src/app/dashboard/page.tsx
-import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { removeUser, selectUser } from '../redux/Resources/userSlice';
-import { useRouter } from 'next/navigation';
-import { useDispatch } from 'react-redux';
- 
-========
 import React from 'react'
->>>>>>>> 465bc82c2703246f4ab8a3537e79c230826239dc:frontend/src/app/components/NavBar.tsx
 import Link from "next/link"
 import { useDispatch } from 'react-redux'
 import { removeUser } from '../redux/Resources/userSlice'
@@ -22,20 +13,9 @@ export default function NavBar() {
 
   const logout = () => {
     dispatch(removeUser());
-<<<<<<<< HEAD:frontend/src/app/dashboard/page.tsx
-  }
-
-  //redirects user to home page if not logged in
-  useEffect(() => {
-    if (user == null) {
-      route.push("/");
-    }
-  });
-========
     localStorage.clear();
     route.push('/');
   }
->>>>>>>> 465bc82c2703246f4ab8a3537e79c230826239dc:frontend/src/app/components/NavBar.tsx
 
   return (
     <div>
