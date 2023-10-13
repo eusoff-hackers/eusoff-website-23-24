@@ -55,11 +55,11 @@ async function send(mails) {
                                       <p style="margin: 0; color: #666; line-height: 1.6;"><strong>Password:</strong> ${password}</p>
                                   </div>
                                   <p style="margin-bottom: 30px; color: #666; line-height: 1.6;">
-                                      <a href=${process.env.WEB_URL} style="background-color: #333; color: #f7f7f7; padding: 10px 15px; border-radius: 5px; text-decoration: none;">Visit the Website</a>
+                                      <a href="${process.env.WEB_URL}" style="background-color: #333; color: #f7f7f7; padding: 10px 15px; border-radius: 5px; text-decoration: none;">Visit the Website</a>
                                   </p>
                                   <p style="margin-bottom: 30px; color: #aaa; line-height: 1.6;">If you are not the intended recipient of this email, please reply to this email immediately.</p>
                                   <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 20px 0;">
-                                  <p style="margin-bottom: 0; color: #aaa; line-height: 1.6;">Best Regards,<br>[Your Company]</p>
+                                  <p style="margin-bottom: 0; color: #aaa; line-height: 1.6;">Happy Bidding,<br>Eusoff Hackers</p>
                               </td>
                           </tr>
                       </table>
