@@ -25,12 +25,14 @@ async function makeUsers() {
 
     const doubleRooms = [];
 
-    fs.createReadStream(csvFilePath + csvFileName)
+    let processing = 0;
+    const stream = fs.createReadStream(csvFilePath + csvFileName)
       .on('error', (err) => {
         console.error('Error reading the CSV file:', err);
       })
       .pipe(csv())
       .on('data', async (row) => {
+        processing++;
         let roomNo = row['Room no'];
         const isDoubleRoom = row['Room Type'] === 'Double';
 
@@ -103,24 +105,23 @@ async function addTeams() {
         })
         .on('end', async () => {
           for (const roomNo in roomNoToSportsMap) {
-            const user = await User.findOne({ username: roomNo });
+            const teams = [];
+            
 
             for (const sport of roomNoToSportsMap[roomNo]) {
               const team = await Team.findOne({ name: sport });
 
               if (team && user) {
-                user.teams.push(team._id);
+                teams.push(team._id);
               }
             }
 
-            user
-              .save()
-              .then(() => {
-                console.log(`Updated teams for user: ${roomNo}`);
-              })
-              .catch((err) => {
-                console.error(`Error updating user ${roomNo}:`, err);
-              });
+            try {
+              const newUser = await User.findOneAndUpdate({username: roomNo}, {teams}, {new: true});
+              console.log(`Updated teams for user: ${newUser.username}`);
+            } catch (error) {
+              console.error(`Error updating user ${roomNo}:`, error);
+            }
           }
           console.log('User data updated with teams.');
         });
