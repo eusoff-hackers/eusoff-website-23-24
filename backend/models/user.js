@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema({
   jersey: { type: Number, default: undefined },
   isEligible: { type: Boolean, default: false },
   role: { type: String, enum: [`USER`, `ADMIN`], default: `USER` },
-  bidding_round: { type: Number, min: 1, max: 4, required: true },
+  bidding_round: { type: Number, min: 1, max: 5, required: true },
   year: { type: Number, min: 1, max: 5, required: true },
   points: { type: Number, min: 0, max: 99, required: true },
   allocatedNumber: { type: Number, min: 0, max: 99 },
