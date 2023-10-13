@@ -19,7 +19,7 @@ let userPassCSV = ''; // Store the CSV filename to save user passwords to
 
 async function makeUsers() {
   await mongoose.connect(env.MONGO_URI), console.log(`Connected Atlas.`);
-
+  
   userPassCSV = await rl.question(
     'Please enter the csv file name to save user passwords to: ',
   );
