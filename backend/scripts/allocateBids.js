@@ -55,6 +55,13 @@ async function checkRemaining() {
 }
 
 async function allocateUser(bidder, jersey) {
+  if (!(await isEligible(bidder, [jersey]))) {
+    console.error(
+      `\x1b[31m%s\x1b[0m`,
+      `WARNING: cancelling allocation of ineligible user: ${bidder.username}.`,
+    );
+    return;
+  }
   console.log(`Allocating jersey ${jersey.number} to ${bidder.username}`);
 
   const updated_bidder = await User.findOneAndUpdate(
