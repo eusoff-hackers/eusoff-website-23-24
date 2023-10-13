@@ -57,6 +57,7 @@ const userSchema = new mongoose.Schema({
   points: { type: Number, min: 0, max: 99, required: true },
   allocatedNumber: { type: Number, min: 0, max: 99 },
   gender: { type: String, enum: [`Male`, `Female`] },
+  email: { type: String },
 });
 
 userSchema.query.format = async function format() {
