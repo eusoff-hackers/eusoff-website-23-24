@@ -1,12 +1,21 @@
+const mongoose = require(`mongoose`);
 const { User } = require(`../models/user`);
 const { Server } = require(`../models/server`);
-const mongoose = require(`mongoose`);
 
 async function run() {
+  console.log(process.env.MONGO_URI);
   await mongoose.connect(process.env.MONGO_URI);
-  const current_round = await Server.findOne({ key: `round` });
+
+  const db = mongoose.connection;
+  console.log(await User.find({}));
+  console.log(`Connected Atlas.`);
+
+  const current_round = (await Server.findOne({ key: `round` })).value;
   const allocated = await User.find({
-    $or: [{ bidding_round: 5 }, { bidding_round: current_round.value }],
+    $and: [
+      { $or: [{ bidding_round: 5 }, { bidding_round: current_round }] },
+      { isEligible: false },
+    ],
   });
 }
 run();
