@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "env-cmd -f ./.env.dev node App.js",
+    "prod": "env-cmd -f ./.env node App.js",
     "prepare": "cd .. && husky install backend/.husky"
   },
   "author": "Eusoff Hackers",
@@ -16,6 +17,7 @@
     "@fastify/cors": "^8.4.0",
     "@fastify/redis": "^6.1.1",
     "@fastify/session": "^10.5.0",
+    "bcrypt": "^5.1.1",
     "abstract-cache": "^1.0.1",
     "abstract-cache-mongo": "^2.0.2",
     "abstract-cache-redis": "^2.0.0",
@@ -23,12 +25,16 @@
     "connect-mongo": "^5.0.0",
     "connect-redis": "^7.1.0",
     "crypto": "^1.0.1",
+    "csv": "^6.3.5",
+    "csv-parser": "^3.0.0",
     "env-cmd": "^10.1.0",
+    "express-session": "^1.17.3",
     "fastify": "^4.23.2",
     "ioredis": "^5.3.2",
     "mongoose": "^7.5.2",
     "winston": "^3.10.0",
-    "winston-mongodb": "^5.1.1"
+    "winston-mongodb": "^5.1.1",
+    "xkpasswd": "^1.0.5"
   },
   "devDependencies": {
     "eslint": "^8.50.0",
