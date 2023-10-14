@@ -141,7 +141,7 @@ const Dashboard: React.FC = () => {
 
   return (
     !isClient || user == null ? (<div>Loading...</div>) : 
-    (<div className="h-screen w-full flex flex-col lg:flex-row">
+    (<div className="w-full flex flex-col lg:flex-row">
       { isNav && <NavBar/>}
       <div className="flex-1 p-5 light:bg-white-800 text-black">
         <h2 className="text-xl mb-5">Hello, {user.username}</h2>
