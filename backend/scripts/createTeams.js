@@ -7,7 +7,7 @@ const { Team } = require(`../models/team`);
 
 async function run() {
   await mongoose.connect(env.MONGO_URI), console.log(`Connected Atlas.`);
-
+  
   const teamData = [
     { name: 'Badminton M', shareable: true },
     { name: 'Badminton F', shareable: true },
@@ -42,18 +42,17 @@ async function run() {
   ];
 
   const teamsToCreate = [];
-  for (let i = 0; i < 30; i++) {
-    const teamInfo = teamData[i % teamData.length];
-    const team = new Team(teamInfo);
-    teamsToCreate.push(team);
-  }
+    for (let i = 0; i < 30; i++) {
+      const teamInfo = teamData[i % teamData.length];
+      const team = new Team(teamInfo);
+      teamsToCreate.push(team);
+    }
 
-  Team.insertMany(teamsToCreate)
-    .then(() => {
-      console.log('Created 30 teams.');
+    Team.insertMany(teamsToCreate).then(() => {
+        console.log('Created 30 teams.');
     })
     .catch((error) => {
-      console.error('Error creating teams: ', error);
+        console.error('Error creating teams: ', error);
     });
 }
 
