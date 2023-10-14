@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react';
 import { Bidding } from '../dashboard/page';
+import { ToastMessage } from '../dashboard/page';
 
 interface BiddingList {
   biddings: Bidding[];
   setBiddings: React.Dispatch<React.SetStateAction<Bidding[]>>;
   updateUser: () => void;
+  setToast: React.Dispatch<React.SetStateAction<ToastMessage>>;
+  handleOpen: () => void;
 }
 
 const axios = require('axios'); 
@@ -12,7 +15,7 @@ const axiosWithCredentials = axios.create({
   withCredentials: true,
 });
 
-const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings, updateUser}) => {
+const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings, updateUser, setToast, handleOpen}) => {
 
   const deleteBid = (ind : number) => {
     const filteredList = biddings.filter(bidding => bidding.number != biddings[ind].number)
@@ -30,10 +33,13 @@ const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings, updateUse
 
       if (response.data.success) {
         console.log('Successful bids')
+        setToast({ message:"Bids submitted", severity:"success"})
+        handleOpen()
         updateUser()
       } else {
         console.error('Bids failed');
-
+        setToast({ message:"Bids failed to be submitted", severity:"error"})
+        handleOpen()
       }
     } catch (error) {
       console.error('Error during form submission', error);
@@ -43,8 +49,8 @@ const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings, updateUse
 
   return (
     <div>
-      <div className="flex items-center space-x-4 pb-2">
-        <h2 className="text-xl font-semibold py-2">Here are the list of your biddings:</h2>
+      <div className="flex items-center space-x-4 py-2">
+        <h2 className="text-xl font-semibold py-2">Submit new bids:</h2>
         { biddings.length == 0 ? <></> : 
         <button
           type="submit"
@@ -53,6 +59,9 @@ const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings, updateUse
         >
           Submit
         </button>}
+        <div>
+          <p className='rounded-lg bg-yellow-200 text-yellow-800 text-sm font-bold p-2'>Ensure you click submit to make changes to your bids</p>
+        </div>
       </div>
       <table className="min-w-full bg-white divide-y divide-gray-200">
         <thead className="bg-gray-800 text-white">

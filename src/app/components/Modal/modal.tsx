@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Bidding } from '@/app/dashboard/page';
+import { Bidding, ToastMessage } from '@/app/dashboard/page';
 
 interface ModalProps {
   closeModal: () => void;
@@ -7,7 +7,7 @@ interface ModalProps {
   points: number;
   biddings: Bidding[];
   setBiddings: React.Dispatch<React.SetStateAction<Bidding[]>>;
-  setError: React.Dispatch<React.SetStateAction<string>>;
+  setToast: React.Dispatch<React.SetStateAction<ToastMessage>>;
   handleOpen: () => void;
 }
 
@@ -20,7 +20,7 @@ interface User{
 const axios = require('axios'); 
 axios.defaults.withCredentials = true;
 
-const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setBiddings, setError, handleOpen }) => {
+const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setBiddings, setToast, handleOpen }) => {
   
   const [bidders,setBidders] = useState(null);
 
@@ -48,7 +48,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setB
     if (duplicateArr.length !== 0) {
       // Include a popup to tell user to not bid for duplicates
       console.log("Cannot bid for duplicate numbers")
-      setError("Cannot bid for duplicate numbers")
+      setToast({ message:"Cannot bid for duplicate numbers", severity: "error"})
       handleOpen()
       return
     }
@@ -56,7 +56,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setB
     if (biddings.length > 4) { //number is 4 because when open modal for 5th number, will record 4 numbers in bidding
       // Include a popup to tell user not to bid for more than 5 numbers
       console.log("Cannot bid for more than 5 numbers")
-      setError("Cannot bid for more than 5 numbers")
+      setToast({ message:"Cannot bid for more than 5 numbers", severity: "error"})
       handleOpen()
       return
     } 
