@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react';
 import { Bidding } from '../dashboard/page';
+import { ToastMessage } from '../dashboard/page';
 
 interface BiddingList {
   biddings: Bidding[];
   setBiddings: React.Dispatch<React.SetStateAction<Bidding[]>>;
   updateUser: () => void;
+  setToast: React.Dispatch<React.SetStateAction<ToastMessage>>;
+  handleOpen: () => void;
 }
 
 const axios = require('axios'); 
@@ -12,7 +15,7 @@ const axiosWithCredentials = axios.create({
   withCredentials: true,
 });
 
-const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings, updateUser}) => {
+const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings, updateUser, setToast, handleOpen}) => {
 
   const deleteBid = (ind : number) => {
     const filteredList = biddings.filter(bidding => bidding.number != biddings[ind].number)
@@ -30,10 +33,13 @@ const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings, updateUse
 
       if (response.data.success) {
         console.log('Successful bids')
+        setToast({ message:"Bids submitted", severity:"success"})
+        handleOpen()
         updateUser()
       } else {
         console.error('Bids failed');
-
+        setToast({ message:"Bids failed to be submitted", severity:"error"})
+        handleOpen()
       }
     } catch (error) {
       console.error('Error during form submission', error);

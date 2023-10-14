@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectUser, setUser, User } from '../redux/Resources/userSlice';
 import { useRouter } from 'next/navigation';
-import { Alert, Snackbar } from '@mui/material';
+import { Alert, Snackbar, AlertColor } from '@mui/material';
  
 import Modal from '../components/Modal/modal';
 import BiddingTable from '../components/BiddingTable';
@@ -13,6 +13,11 @@ import NavBar from '../components/NavBar';
 
 export interface Bidding {
   number: number
+}
+
+export interface ToastMessage {
+  message: String, 
+  severity: AlertColor, // Possible to create enum in the future 
 }
 
 //function to load saved biddings from localstorage
@@ -52,7 +57,8 @@ const Dashboard: React.FC = () => {
   const [biddings, setBiddings] = useState<Bidding[]>(userBiddings);
   const [allowedBids, setAllowedBids] = useState<number[]>([])
 
-  const [error, setError] = useState('');
+  // State to manage error toast throughout app
+  const [toast, setToast] = useState<ToastMessage>({message:"", severity:"error"});
 
   //state for the Snackbar component
   const [open, setOpen] = React.useState(false);
@@ -63,7 +69,7 @@ const Dashboard: React.FC = () => {
 
   const handleClose = () => {
     setOpen(false)
-    setError('')
+    setToast({message:"", severity:"error"})
   };
 
   // Does a call for elligible bids. API stil WIP
@@ -80,7 +86,7 @@ const Dashboard: React.FC = () => {
     }
   }
 
-  // Updates information on the page after 
+  // Updates information on the page after bids are submitted 
   const updateUser = async () => {
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/info`);
@@ -146,13 +152,16 @@ const Dashboard: React.FC = () => {
       <div className="flex-1 p-5 light:bg-white-800 text-black">
         <h2 className="text-xl mb-5">Hello, {user.username}</h2>
 
-        { biddings.length>0 && <BiddingTable biddings={biddings} setBiddings={setBiddings} updateUser={updateUser}/> }
+        { biddings.length>0 && <BiddingTable biddings={biddings} setBiddings={setBiddings} 
+          updateUser={updateUser} 
+          setToast={setToast}
+          handleOpen={handleOpen}/>}
         <div>
-          {error == '' 
+          {toast.message == "" 
             ? <></> 
             : <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                  {error}
+                <Alert onClose={handleClose} severity={toast.severity} sx={{ width: '100%' }}>
+                  {toast.message}
                 </Alert>
               </Snackbar>
           }
@@ -179,8 +188,7 @@ const Dashboard: React.FC = () => {
 
          {isModalOpen && selectedItemIndex !== null && (
         <Modal closeModal={closeModal} index={selectedItemIndex} points={user.points} biddings={biddings} setBiddings={setBiddings} 
-
-          setError={setError}
+          setToast={setToast}
           handleOpen={handleOpen}
           />
         )}
