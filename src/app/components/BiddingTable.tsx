@@ -49,8 +49,8 @@ const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings, updateUse
 
   return (
     <div>
-      <div className="flex items-center space-x-4 pb-2">
-        <h2 className="text-xl font-semibold py-2">Here are the list of your biddings:</h2>
+      <div className="flex items-center space-x-4 py-2">
+        <h2 className="text-xl font-semibold py-2">Submit new bids:</h2>
         { biddings.length == 0 ? <></> : 
         <button
           type="submit"
@@ -59,6 +59,9 @@ const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings, updateUse
         >
           Submit
         </button>}
+        <div>
+          <p className='rounded-lg bg-yellow-200 text-yellow-800 text-sm font-bold p-2'>Ensure you click submit to make changes to your bids</p>
+        </div>
       </div>
       <table className="min-w-full bg-white divide-y divide-gray-200">
         <thead className="bg-gray-800 text-white">
