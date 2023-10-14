@@ -43,7 +43,8 @@ export default function LoginForm() {
           isEligible: response.data.data.user.isElligible,
           role: response.data.data.user.role,
           year: response.data.data.user.year,
-          points: response.data.data.user.points
+          points: response.data.data.user.points,
+          allocatedNumber: response.data.data.user.allocatedNumber
         }
 
         dispatch(setUser(newUser));

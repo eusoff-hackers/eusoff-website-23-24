@@ -10,6 +10,7 @@ export interface User {
   role: string, 
   year: number,
   points: number
+  allocatedNumber: number
 }
 
 const initialState: User | null = null;

@@ -27,7 +27,7 @@ const InstructionsPage = () => {
     <div className="bg-gradient-to-tl  h-full w-full flex flex-col lg:flex-row">
       { isNav && <NavBar/> }
       <main className="bg-gradient-to-tl h-fit w-full">
-        <article className="bg-slate-100 shadow-2xl py-5 p-2 border-4 lg:rounded-r-lg lg:rounded-bl-none rounded-b-lg font-mono border-slate-800">
+        <article className="bg-slate-200 shadow-2xl py-5 p-2 border-4 lg:rounded-r-lg lg:rounded-bl-none rounded-b-lg font-mono border-slate-800">
 
           {/*-------------General Information-----------*/}
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8 stroke-red-400 m-2">
@@ -139,7 +139,7 @@ const InstructionsPage = () => {
           {/*-------------General Information-----------*/}
 
           {/*-------------FAQ-----------*/}
-          <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-messages stroke-blue-300 w-10 h-10 m-2" width="40" height="40" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-messages stroke-blue-300 w-10 h-10 m-2" width="40" height="40" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
             <path d="M21 14l-3 -3h-7a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h9a1 1 0 0 1 1 1v10"></path>
             <path d="M14 15v2a1 1 0 0 1 -1 1h-7l-3 3v-10a1 1 0 0 1 1 -1h2"></path>

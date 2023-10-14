@@ -44,7 +44,8 @@ const savedUser : User | null = oldState == null ? null : {
   isEligible: oldState.isEligible,
   role: oldState.role,
   year: oldState.year,
-  points: oldState.points
+  points: oldState.points,
+  allocatedNumber: oldState.allocatedNumber
 }
 console.log("This is saved user :" + JSON.stringify(savedUser))
 
