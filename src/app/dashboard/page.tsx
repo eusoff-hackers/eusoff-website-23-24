@@ -197,10 +197,10 @@ const Dashboard: React.FC = () => {
             </div>
         </div>
         
-        { biddings.length>0 && <BiddingTable biddings={biddings} setBiddings={setBiddings} 
+        { biddings.length>0 ? <BiddingTable biddings={biddings} setBiddings={setBiddings} 
           updateUser={updateUser} 
           setToast={setToast}
-          handleOpen={handleOpen}/>}
+          handleOpen={handleOpen}/> : <div className='text-xl pt-2'>Click on a number to start making a bid...</div>}
         <div>
           {toast.message == "" 
             ? <></> 
