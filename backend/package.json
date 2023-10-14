@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "env-cmd -f ./.env.dev node App.js",
-    "prepare": "cd .. && husky install backend/.husky"
+    "prepare": "cd .. && husky install backend/.husky",
+    "prod": "env-cmd -f ./.env node App.js"
   },
   "author": "Eusoff Hackers",
   "license": "ISC",
