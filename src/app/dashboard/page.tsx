@@ -9,6 +9,7 @@ import { Alert, Snackbar, AlertColor } from '@mui/material';
 import Modal from '../components/Modal/modal';
 import BiddingTable from '../components/BiddingTable';
 import NavBar from '../components/NavBar';
+import { AxiosError } from 'axios';
 
 
 export interface Bidding {
@@ -106,7 +107,15 @@ const Dashboard: React.FC = () => {
         dispatch(setUser(newUser));
       }
     } catch (error) {
-      console.error('Error during update', error);
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+
+        if(axiosError.response.status == 401) {
+          console.error('Session Expired'); 
+          route.push('/');
+        }
+      }
+      console.error(`Error during update. ${error}`, error);
     }
   }
 
@@ -125,6 +134,7 @@ const Dashboard: React.FC = () => {
     setIsClient(true); // indicate that client has been rendered
     getEligibleBids(); // get all eligible bids when page renders
     setPreviousBids(); // set bids in bidding table when page renders
+    updateUser(); // Makes a get request each time page is refreshed to check if cookie still exist
     console.log("Saved user: " + JSON.stringify(user));
   }, [])
 
