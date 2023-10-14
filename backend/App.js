@@ -42,7 +42,7 @@ async function run() {
 async function register() {
   try {
     fastify.register(cors, {
-      origin: env.FRONTEND_URL,
+      origin: env.FRONTEND_URL.split(','),
       methods: ['GET', 'PUT', 'POST'],
       allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token'],
       credentials: true,
