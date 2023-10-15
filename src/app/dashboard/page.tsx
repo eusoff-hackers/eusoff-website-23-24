@@ -9,6 +9,7 @@ import { Alert, Snackbar, AlertColor } from '@mui/material';
 import Modal from '../components/Modal/modal';
 import BiddingTable from '../components/BiddingTable';
 import NavBar from '../components/NavBar';
+import Loading from '../components/Loading';
 
 
 export interface Bidding {
@@ -149,7 +150,7 @@ const Dashboard: React.FC = () => {
 
 
   return (
-    !isClient || user == null ? (<div>Loading...</div>) : 
+    !isClient || user == null ? <Loading /> : 
     (<div className="w-full flex flex-col lg:flex-row">
       { isNav && <NavBar/>}
       <div className="flex-1 p-5 light:bg-white-800 text-black">

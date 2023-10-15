@@ -8,6 +8,7 @@ import { removeUser, selectUser, User } from '../redux/Resources/userSlice';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import NavBar from '../components/NavBar';
+import Loading from '../components/Loading';
 
 const axios = require('axios');
 const axiosWithCredentials = axios.create({
@@ -46,12 +47,12 @@ const ProfilePage = () => {
 
 
   return (
-    !isClient || user == null ? <div>Loading...</div> : 
+    !isClient || user == null ? <Loading /> : 
     <div className="bg-gradient-to-tl from-slate-200 to-slate-300 min-h-screen w-full flex flex-col lg:flex-row">
       { isNav && <NavBar/> }
       <main className="h-fit w-full">
         
-        <div className="bg-gradient-to-r  from-cyan-500 to-blue-500 text-4xl text-zinc-950
+        <div className="bg-gradient-to-r from-cyan-500 to-blue-500 text-4xl text-zinc-950
                         font-mono m-0 p-2 font-bold uppercase hover:shadow-2xl text-center">
           Profile
         </div>
@@ -84,6 +85,12 @@ const ProfilePage = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-green-500">Points</td>
                     <td className="px-6 py-4 whitespace-nowrap text-base text-gray-800">{user.points}</td>
                   </tr>
+
+                  <tr>
+                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-green-600">Bidding Round</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-base text-gray-800">{user.round}</td>
+                  </tr>
+
                   <tr>
                     <td className="px-6 py-4 whitespace-nowrap text-base font-bold  text-orange-500">Current Bids</td> 
                     <td className="py-5 grid grid-flow-row gap-y-1">
