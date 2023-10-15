@@ -7,6 +7,7 @@ const { logger, logAndThrow } = require(`${UTILS}/logger`);
 const { Bid } = require(`${MODELS}/bid`);
 const { Jersey } = require(`${MODELS}/jersey`);
 const { User } = require(`${MODELS}/user`);
+const { checkCache, setCache } = require(`${UTILS}/cache_handler`);
 
 const schema = {
   response: {
@@ -70,9 +71,20 @@ async function getJerseyInfo(jersey) {
 async function handler(req, res) {
   try {
     const jerseys = await Jersey.find(); // Fetch all jerseys
-    const data = logAndThrow(
-      await Promise.allSettled(jerseys.map(getJerseyInfo)),
+    const jerseyData = logAndThrow(
+      await Promise.allSettled(
+        jerseys.map(async (jersey) => {
+          const info = await getJerseyInfo(jersey);
+          return { number: jersey.number, info };
+        }),
+      ),
     );
+
+    const data = jerseyData.reduce(
+      (a, v) => ({ ...a, [v.number]: v.info }),
+      {},
+    );
+
     return await success(res, data);
   } catch (error) {
     logger.error(`Jersey info error: ${error.message}`, { error });
@@ -84,5 +96,7 @@ module.exports = {
   method: `GET`,
   url: `/info`,
   schema,
+  preHandler: checkCache,
   handler,
+  onSend: setCache,
 };

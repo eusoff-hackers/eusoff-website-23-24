@@ -27,7 +27,9 @@ function resBuilder(obj) {
     properties: {
       success: { type: `boolean` },
       data: obj,
+      cached_at: { type: `number` },
     },
+    additionalProperties: false,
   };
 }
 

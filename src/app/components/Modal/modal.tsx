@@ -9,7 +9,7 @@ interface ModalProps {
   setBiddings: React.Dispatch<React.SetStateAction<Bidding[]>>;
   setToast: React.Dispatch<React.SetStateAction<ToastMessage>>;
   handleOpen: () => void;
-  bidders: any[];
+  currentList: any[];
 }
 
 interface User{
@@ -21,9 +21,46 @@ interface User{
 const axios = require('axios'); 
 axios.defaults.withCredentials = true;
 
-const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setBiddings, setToast, handleOpen, bidders }) => {
+const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setBiddings, setToast, handleOpen, currentList}) => {
   
-  console.log(bidders)
+  const [bidders,setBidders] = useState(null)
+
+  const compareLists = ( list: any[]) : boolean => {
+    for (let i = 0; i < currentList.length; i++) {
+      for (let j = 0; j < list.length; j++) {
+        if ((currentList[i].name)==(list[j].name)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  const getNames = (list:any[]): string => {
+    let names: string[] = [];
+    for (let j = 0; j < list.length; j++) {
+        names.push(list[j].name);
+     }
+
+    return names.join(', ');
+  }
+
+  const fetchList:any = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/jersey/info`);
+      
+      if (response.data.success) {
+          console.log(response.data)
+         await setBidders(response.data.data[index])
+      }
+    } catch (error) {
+      console.error('Error during update', error);
+    }
+}
+
+useEffect(()=>{
+  fetchList(index)
+},[])
 
   const createBid = (ind : number) => {    
     const duplicateArr = biddings.filter(bidding => bidding.number == ind);
@@ -54,7 +91,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setB
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div className="absolute inset-0 bg-gray-900 opacity-50"></div>
-      <div className="w-96 bg-white p-6 rounded-lg z-10 relative">
+      <div className="w-max bg-white p-6 rounded-lg z-10 relative">
         <div className='flex content-between'>
             <h2 className="text-2xl font-semibold py-2 mb-4">Bidding List</h2>
             <button
@@ -86,6 +123,8 @@ const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setB
                     <th className="px-4 py-2">Category</th>
                     <th className="px-4 py-2">Name</th>
                     <th className="px-4 py-2">Points</th>
+                    <th className="px-4 py-2">Sports</th>
+
                   </tr>
                 
 
@@ -98,10 +137,11 @@ const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setB
                       <td className="px-4 py-2"></td>
                       </tr>
                       {bidders[category].map((item:User,subIndex:number) => (
-                        <tr className="mx-2" key={subIndex}>
-                          <td className="px-4 py-2"></td>
+                        <tr className={`mx-2 text-${compareLists(item.teams) ? "red" : "black"}-500`}  key={subIndex}>
+                        <td className="px-4 py-2"></td>
                           <td className="px-4 py-2">{item.username}</td>
                           <td className="px-4 py-2">{item.points}</td>
+                          <td className="px-4 py-2">{getNames(item.teams)}</td>
                         </tr>
                       ))}
                   </>
