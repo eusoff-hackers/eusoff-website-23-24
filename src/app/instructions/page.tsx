@@ -74,7 +74,7 @@ const InstructionsPage = () => {
 
               <li>Rank the jersey numbers you wish to bid for, and hit the Submit button. You should see a confirmation message when the system registers your bids.</li>
 
-              <li>If you wish to delete your bids, remember to press Submit as well.</li>
+              <li>If you wish to delete or re-order your bids, you will need to press Submit again after making those changes.</li>
             </ol>
 
             <br/>
@@ -83,7 +83,7 @@ const InstructionsPage = () => {
 
               <li>Since there are more Eusoffians than unique jersey numbers, the numbers will be shared, but only to a certain limit, and with some exceptions. </li>
 
-              <li>#1 - #9 will <strong>not</strong> be shared.</li>
+              <li>#0 - #9 will <strong>not</strong> be shared.</li>
 
               <li>All numbers in Round 1 will <strong>not</strong> be shared. Only one person of each gender can get a specific number, eg. If Jason (M), Lily (F) and Anna (F) all bid for #17 in Round 1, only Jason and one of Lily or Anna will get it. </li>
 
@@ -124,7 +124,7 @@ const InstructionsPage = () => {
                   <li>Seniority </li>
               </ol>
 
-              <li>In the event of a tie in the above criteria, the top choice number will be given to a <strong>random</strong> person in the conflicting group. For instance, If Tom, Jerry, and Mike #20 as their top choice, the same bidding points, and are all in year 2, the system will randomly select one of the three bidders. The others will be given their next highest choices if possible. </li>
+              <li>In the event of a tie in the above criteria, the top choice number will be given to a <strong>random</strong> person in the conflicting group. For instance, If Tom, Jerry, and Mike bid #20 as their top choice, the same bidding points, and are all in year 2, the system will randomly select one of the three bidders. The others will be given their next highest choices if possible. </li>
 
               <li>Allocation of numbers is <strong>not</strong> based on a first come first serve basis. </li>
               
@@ -154,7 +154,7 @@ const InstructionsPage = () => {
             
             2. I did not get the number I wanted. Can I try again in later rounds?
             <ul className="list-disc list-outside font-normal ml-8 space-y-2">
-              <li>No. </li>
+              <li>No. You will be assigned one of your five choices after your round ends, and there will not be any changes thereafter. Try to bid as strategically as you can! </li>
             </ul>
             <br />
 
