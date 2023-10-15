@@ -41,6 +41,10 @@ async function handler(req, res) {
     const {
       credentials: { username, password },
     } = req.body;
+
+    if (!(await User.exists({ username }))) {
+      return await sendStatus(res, 401, `Invalid credentials`);
+    }
     const user = await User.findOne({ username }).format();
 
     if (!user || (await bcrypt.compare(password, user.password)) === false) {

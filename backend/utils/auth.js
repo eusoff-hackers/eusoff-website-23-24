@@ -27,4 +27,14 @@ async function login(user, req) {
   }
 }
 
-module.exports = { login, auth };
+async function logout(req) {
+  try {
+    await session.regenerate(req);
+    return await session.save(req);
+  } catch (error) {
+    logger.error(`Failed regenerating user session: ${error.message}`);
+    throw new Error(`Failed to regenerate session.`);
+  }
+}
+
+module.exports = { login, auth, logout };

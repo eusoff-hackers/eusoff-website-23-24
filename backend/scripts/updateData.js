@@ -11,13 +11,12 @@ const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
-let writeStream;
 // GLOBAL VARIABLES
 const csvFilePath = '../csv_files/';
 const nameToRoomNoMap = {}; // Map with name as the key and room number as the value
 let userPassCSV = ''; // Store the CSV filename to save user passwords to
 
-async function makeUsers() {
+async function updateUsers() {
   rl.question(
     'Please enter the csv filename to create users: ',
     (csvFileName) => {
@@ -51,16 +50,15 @@ async function makeUsers() {
             username: roomNo,
             bidding_round: 4 - parseInt(row['IHG 2324'], 10),
             points: parseInt(row['Total points'], 10),
-            password: await generatePassword(roomNo, row['Email']), // Added email in,
             email: row['Email'],
           };
 
           nameToRoomNoMap[row['Name Preferred']] = roomNo;
-
-          const user = new User(userData);
-
           try {
-            await user.save();
+            const user = await User.findOneAndUpdate(
+              { username: userData.username },
+              userData,
+            );
             console.log('User saved successfully:', user.username);
           } catch (error) {
             console.error('Error saving user to MongoDB:', error);
@@ -139,30 +137,9 @@ async function addTeams() {
   );
 }
 
-async function generatePassword(roomNo, email) {
-  const SALT_ROUNDS = 10;
-  const originalPassword =
-    roomNo + '-' + xkpasswd({ complexity: 1, separators: '-' });
-
-  writeStream.write(`${roomNo},${originalPassword},${email}\n`);
-
-  const hashedPw = await bcrypt.hash(originalPassword, SALT_ROUNDS);
-  return hashedPw;
-}
-
 async function run() {
   await mongoose.connect(env.MONGO_URI), console.log(`Connected Atlas.`);
-  rl.question(
-    'Please enter the csv file name to save user passwords to: ',
-    (a) => {
-      userPassCSV = a;
-      writeStream = fs.createWriteStream(csvFilePath + userPassCSV, {
-        flags: 'a',
-      });
-      writeStream.write(`username,password,email\n`);
-      makeUsers();
-    },
-  );
+  updateUsers();
 }
 
 run();

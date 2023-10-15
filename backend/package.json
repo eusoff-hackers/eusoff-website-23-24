@@ -31,7 +31,9 @@
     "express-session": "^1.17.3",
     "fastify": "^4.23.2",
     "ioredis": "^5.3.2",
+    "mongodb-snapshot": "^1.4.1",
     "mongoose": "^7.5.2",
+    "nodemailer": "^6.9.6",
     "winston": "^3.10.0",
     "winston-mongodb": "^5.1.1",
     "xkpasswd": "^1.0.5"
