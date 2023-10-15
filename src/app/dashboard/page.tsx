@@ -215,22 +215,22 @@ const Dashboard: React.FC = () => {
         </div>
         <Legend/>
         <div className="grid  pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
-          {Array.from({ length: 99 }, (_, index) => ( allowedBids.includes(index + 1) ? 
+          {Array.from({ length: 100 }, (_, index) => ( allowedBids.includes(index) ? 
               (<div
                 key={index}
-                className= {`${user.bids.filter(item => item.jersey.number === index + 1).length === 1 
+                className= {`${user.bids.filter(item => item.jersey.number === index).length === 1 
                             ? "bg-green-400" 
                             : "bg-gray-800"} 
                             h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500`} 
-                onClick = {() => openModal(index+1)}
+                onClick = {() => openModal(index)}
               >
-                     {index + 1}
+                     {index}
               </div>) :             (<div
                 key={index}
                 className="bg-red-500 h-16 w-16 flex items-center justify-center text-white font-semibold text-xl"
                 onClick = {() => null}
               >
-                      {index + 1}
+                      {index}
               </div>)
         ))}
 
