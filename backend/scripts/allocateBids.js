@@ -120,7 +120,6 @@ async function allocate(jersey, bid_priority) {
 }
 
 async function run() {
-  console.log(env.MONGO_URI);
   await mongoose.connect(env.MONGO_URI), console.log(`Connected Atlas.`);
 
   for (let bid_priority = 0; bid_priority < 5; bid_priority++) {
