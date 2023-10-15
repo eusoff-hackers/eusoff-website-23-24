@@ -211,7 +211,7 @@ const Dashboard: React.FC = () => {
               (<div
                 key={index}
                 className= {`${user.bids.filter(item => item.jersey.number === index + 1).length === 1 
-                            ? `bg-gradient-to-r from-red-500 to-green-500 to-${(numBidders[index]/20*100)}%`  
+                            ? `bg-gradient-to-r from-gray-800 to-green-500 to-${(numBidders[index]/20*100)}%`  
                             : "bg-gray-800"}
                             h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500`} 
                 onClick = {() => openModal(index+1)}
