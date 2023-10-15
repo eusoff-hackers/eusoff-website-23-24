@@ -10,7 +10,8 @@ import Modal from '../components/Modal/modal';
 import BiddingTable from '../components/BiddingTable';
 import NavBar from '../components/NavBar';
 import Loading from '../components/Loading';
-
+import { AxiosError } from 'axios';
+import Legend from '../components/Legend';
 
 export interface Bidding {
   number: number
@@ -108,7 +109,15 @@ const Dashboard: React.FC = () => {
         dispatch(setUser(newUser));
       }
     } catch (error) {
-      console.error('Error during update', error);
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+
+        if(axiosError.response.status == 401) {
+          console.error('Session Expired'); 
+          route.push('/');
+        }
+      }
+      console.error(`Error during update. ${error}`, error);
     }
   }
 
@@ -127,6 +136,7 @@ const Dashboard: React.FC = () => {
     setIsClient(true); // indicate that client has been rendered
     getEligibleBids(); // get all eligible bids when page renders
     setPreviousBids(); // set bids in bidding table when page renders
+    updateUser(); // Makes a get request each time page is refreshed to check if cookie still exist
     console.log("Saved user: " + JSON.stringify(user));
   }, [])
 
@@ -188,11 +198,10 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
         </div>
-        
-        { biddings.length>0 && <BiddingTable biddings={biddings} setBiddings={setBiddings} 
+        { biddings.length>0 ? <BiddingTable biddings={biddings} setBiddings={setBiddings} 
           updateUser={updateUser} 
           setToast={setToast}
-          handleOpen={handleOpen}/>}
+          handleOpen={handleOpen}/> : <div>Click on a number on the table to start a bid</div>}
         <div>
           {toast.message == "" 
             ? <></> 
@@ -203,8 +212,9 @@ const Dashboard: React.FC = () => {
               </Snackbar>
           }
         </div>
-        <div className="grid pt-4 pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
-          {Array.from({ length: 100 }, (_, index) => ( allowedBids.includes(index + 1) ? 
+        <Legend/>
+        <div className="grid  pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
+          {Array.from({ length: 99 }, (_, index) => ( allowedBids.includes(index + 1) ? 
               (<div
                 key={index}
                 className= {`${user.bids.filter(item => item.jersey.number === index + 1).length === 1 
