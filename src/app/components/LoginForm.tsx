@@ -46,6 +46,7 @@ export default function LoginForm() {
           role: response.data.data.user.role,
           year: response.data.data.user.year,
           points: response.data.data.user.points,
+          allocatedNumber: response.data.data.user.allocatedNumber,
           round: response.data.data.user.bidding_round
         }
 

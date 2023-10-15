@@ -9,9 +9,9 @@ import { Alert, Snackbar, AlertColor } from '@mui/material';
 import Modal from '../components/Modal/modal';
 import BiddingTable from '../components/BiddingTable';
 import NavBar from '../components/NavBar';
+import Loading from '../components/Loading';
 import { AxiosError } from 'axios';
 import Legend from '../components/Legend';
-
 
 export interface Bidding {
   number: number
@@ -102,6 +102,7 @@ const Dashboard: React.FC = () => {
           role: response.data.data.user.role,
           year: response.data.data.user.year,
           points: response.data.data.user.points,
+          allocatedNumber: response.data.data.user.allocatedNumber,
           round: response.data.data.user.bidding_round
         }
         console.log("updated user")
@@ -159,8 +160,8 @@ const Dashboard: React.FC = () => {
 
 
   return (
-    !isClient || user == null ? (<div>Loading...</div>) : 
-    (<div className="h-screen w-full flex flex-col lg:flex-row">
+    !isClient || user == null ? <Loading /> : 
+    (<div className="w-full flex flex-col lg:flex-row">
       { isNav && <NavBar/>}
       <div className="flex-1 p-5 light:bg-white-800 text-black">
         <div className="border-b-2 pb-2">
