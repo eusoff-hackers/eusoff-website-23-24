@@ -51,7 +51,8 @@ async function makeUsers() {
             username: roomNo,
             bidding_round: 4 - parseInt(row['IHG 2324'], 10),
             points: parseInt(row['Total points'], 10),
-            password: await generatePassword(roomNo, row['Email']), // Added email in
+            password: await generatePassword(roomNo, row['Email']), // Added email in,
+            email: row['Email'],
           };
 
           nameToRoomNoMap[row['Name Preferred']] = roomNo;
