@@ -5,6 +5,7 @@ import { setUser, selectUser, User } from '../redux/Resources/userSlice';
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
 
 const axios = require('axios').default;
 axios.defaults.withCredentials = true;
@@ -21,6 +22,7 @@ export default function LoginForm() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
 
   const handleSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
@@ -49,10 +51,14 @@ export default function LoginForm() {
 
         dispatch(setUser(newUser));
         router.replace("/dashboard");
-      } else {
-        console.error('Login failed');
-      }
+      } 
     } catch (error) {
+      const axiosError = error as AxiosError;
+
+        if(axiosError.response.status == 401) {
+          setError("Invalid username or password")
+          console.error("Unauthorised")
+        }
       console.error('Error during login', error);
     }
   };
@@ -87,6 +93,7 @@ export default function LoginForm() {
             className="appearance-none border-2 text-black border-gray-100 rounded-lg px-4 py-3 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600 focus:shadow-lg"
           />
         </div>
+        { error == '' ? <></> : <div className='font-bold text-red-500'>{error}!</div>} 
         <div id="button" className="flex flex-col w-full my-5">
           <button
             type="submit"

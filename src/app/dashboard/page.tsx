@@ -10,6 +10,7 @@ import Modal from '../components/Modal/modal';
 import BiddingTable from '../components/BiddingTable';
 import NavBar from '../components/NavBar';
 import { AxiosError } from 'axios';
+import Legend from '../components/Legend';
 
 
 export interface Bidding {
@@ -196,11 +197,10 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
         </div>
-        
         { biddings.length>0 ? <BiddingTable biddings={biddings} setBiddings={setBiddings} 
           updateUser={updateUser} 
           setToast={setToast}
-          handleOpen={handleOpen}/> : <div className='text-xl pt-2'>Click on a number to start making a bid...</div>}
+          handleOpen={handleOpen}/> : <div>Click on a number on the table to start a bid</div>}
         <div>
           {toast.message == "" 
             ? <></> 
@@ -211,8 +211,9 @@ const Dashboard: React.FC = () => {
               </Snackbar>
           }
         </div>
-        <div className="grid pt-4 pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
-          {Array.from({ length: 100 }, (_, index) => ( allowedBids.includes(index + 1) ? 
+        <Legend/>
+        <div className="grid  pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
+          {Array.from({ length: 99 }, (_, index) => ( allowedBids.includes(index + 1) ? 
               (<div
                 key={index}
                 className= {`${user.bids.filter(item => item.jersey.number === index + 1).length === 1 
