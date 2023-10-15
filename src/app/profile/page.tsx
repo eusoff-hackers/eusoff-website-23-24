@@ -68,8 +68,8 @@ const ProfilePage = () => {
             </h1>
           </div>
 
-          <div className="min-w-full overflow-x-auto inline-block pt-4 md:pt-0 align-middle">
-            <div className="border-2 border-indigo-950 rounded-lg">
+          <div className="min-w-full inline-block pt-4 md:pt-0 align-middle">
+            <div className="border-2 overflow-hidden border-indigo-950 rounded-lg">
               <table className="min-w-full shadow divide-y divide-gray-400">
                 <tbody className="divide-y divide-gray-400">
                   <tr>
