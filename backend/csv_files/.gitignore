@@ -1,0 +1,5 @@
+*.csv
+*.csv*
+!sample_data.csv
+!sample_teamdata.csv
+
