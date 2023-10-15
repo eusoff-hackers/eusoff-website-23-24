@@ -5,6 +5,7 @@ import { setUser, selectUser, User } from '../redux/Resources/userSlice';
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
 
 const axios = require('axios').default;
 axios.defaults.withCredentials = true;
@@ -21,6 +22,7 @@ export default function LoginForm() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
 
   const handleSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
@@ -40,18 +42,24 @@ export default function LoginForm() {
           username: response.data.data.user.username,
           teams: response.data.data.user.teams,
           bids: response.data.data.user.bids,
-          isEligible: response.data.data.user.isElligible,
+          isEligible: response.data.data.user.isEligible,
           role: response.data.data.user.role,
           year: response.data.data.user.year,
-          points: response.data.data.user.points
+          points: response.data.data.user.points,
+          allocatedNumber: response.data.data.user.allocatedNumber,
+          round: response.data.data.user.bidding_round
         }
 
         dispatch(setUser(newUser));
         router.replace("/dashboard");
-      } else {
-        console.error('Login failed');
-      }
+      } 
     } catch (error) {
+      const axiosError = error as AxiosError;
+
+        if(axiosError.response.status == 401) {
+          setError("Invalid username or password")
+          console.error("Unauthorised")
+        }
       console.error('Error during login', error);
     }
   };
@@ -86,6 +94,7 @@ export default function LoginForm() {
             className="appearance-none border-2 text-black border-gray-100 rounded-lg px-4 py-3 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600 focus:shadow-lg"
           />
         </div>
+        { error == '' ? <></> : <div className='font-bold text-red-500'>{error}!</div>} 
         <div id="button" className="flex flex-col w-full my-5">
           <button
             type="submit"

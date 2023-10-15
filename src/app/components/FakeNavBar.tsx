@@ -7,23 +7,13 @@ import { removeUser } from '../redux/Resources/userSlice'
 import { useRouter } from 'next/navigation'
 
 export default function NavBar() {
-
-  const route = useRouter()
-  const dispatch = useDispatch()
-
-  const logout = () => {
-    dispatch(removeUser());
-    localStorage.clear();
-    route.push('/');
-  }
-
   return (
     <div>
       <nav className="h-full w-full sticky top-0 lg:w-64 bg-gray-800 text-white p-5">
         <p className="text-2xl mb-5">Dashboard</p>
         <ul className="space-y-2">
           <li className="hover:translate-x-1">
-            <Link className="flex items-center gap-3 py-2" href="/dashboard">
+            <Link className="flex items-center gap-3 py-2" href="">
               <svg
                 className=" h-5 w-5"
                 fill="none"
@@ -43,7 +33,7 @@ export default function NavBar() {
             </Link>
           </li>
           <li className="hover:translate-x-1">
-            <Link className="flex items-center gap-3 py-2" href="/profile">
+            <Link className="flex items-center gap-3 py-2" href="">
               <svg
                 className=" h-5 w-5"
                 fill="none"
@@ -65,7 +55,7 @@ export default function NavBar() {
             </Link>
           </li>
           <li className="hover:translate-x-1">
-            <Link className="flex items-center gap-3 py-2" href="/instructions">
+            <Link className="flex items-center gap-3 py-2" href="">
               <svg
                   className="h-5 w-5"
                   fill="none"
@@ -87,7 +77,7 @@ export default function NavBar() {
             </Link>
           </li>
           <li className="hover:translate-x-1">
-            <Link className="flex items-center gap-3 py-2" onClick={logout} href="/">
+            <Link className="flex items-center gap-3 py-2" href="">
               <svg
                 className=" h-5 w-5"
                 fill="none"
