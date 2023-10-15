@@ -60,6 +60,9 @@ const Dashboard: React.FC = () => {
   // State to manage error toast throughout app
   const [toast, setToast] = useState<ToastMessage>({message:"", severity:"error"});
 
+   const [bidders,setBidders] = useState(null);
+   const [numBidders,setNumBidders] = useState<number[]>(Array(100).fill(0))
+
   //state for the Snackbar component
   const [open, setOpen] = React.useState(false);
 
@@ -108,6 +111,42 @@ const Dashboard: React.FC = () => {
       console.error('Error during update', error);
     }
   }
+    // calculates the number of bidders
+    const getNumBidders = () => {
+      if (bidders == null) {
+        return;
+      }
+      let res: number[] = []
+      
+       for (let i = 0; i < 100; i++) {
+        res.push(bidders[i].Male.Length+bidders[i].Female.Length);
+      }
+
+      setNumBidders(res)
+    }
+
+   // makes a call to the backend 
+   const fetchList:any = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/jersey/info`);
+        
+        if (response.data.success) {
+            console.log(response.data)
+           await setBidders(response.data.data)
+          getNumBidders()
+        }
+      } catch (error) {
+        console.error('Error during update', error);
+      }
+  }
+
+  useEffect(()=>{
+      const interval = setInterval(() => {
+    fetchList()
+  }, 300000);
+
+  return () => clearInterval(interval);
+  },[])
 
   // set biddings to the biddings the user has previously made
   const setPreviousBids = () => {
@@ -124,6 +163,7 @@ const Dashboard: React.FC = () => {
     setIsClient(true); // indicate that client has been rendered
     getEligibleBids(); // get all eligible bids when page renders
     setPreviousBids(); // set bids in bidding table when page renders
+    fetchList(); 
   }, [])
 
   //If not authorised, then redirects the user
@@ -171,8 +211,8 @@ const Dashboard: React.FC = () => {
               (<div
                 key={index}
                 className= {`${user.bids.filter(item => item.jersey.number === index + 1).length === 1 
-                            ? "bg-green-400" 
-                            : "bg-gray-800"} 
+                            ? `bg-gradient-to-r from-red-500 to-green-500 to-${(numBidders[index]/20*100)}%`  
+                            : "bg-gray-800"}
                             h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500`} 
                 onClick = {() => openModal(index+1)}
               >
@@ -190,6 +230,7 @@ const Dashboard: React.FC = () => {
         <Modal closeModal={closeModal} index={selectedItemIndex} points={user.points} biddings={biddings} setBiddings={setBiddings} 
           setToast={setToast}
           handleOpen={handleOpen}
+          bidders={bidders[selectedItemIndex]}
           />
         )}
 

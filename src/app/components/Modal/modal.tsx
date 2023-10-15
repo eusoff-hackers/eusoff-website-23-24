@@ -9,6 +9,7 @@ interface ModalProps {
   setBiddings: React.Dispatch<React.SetStateAction<Bidding[]>>;
   setToast: React.Dispatch<React.SetStateAction<ToastMessage>>;
   handleOpen: () => void;
+  bidders: any[];
 }
 
 interface User{
@@ -20,27 +21,9 @@ interface User{
 const axios = require('axios'); 
 axios.defaults.withCredentials = true;
 
-const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setBiddings, setToast, handleOpen }) => {
+const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setBiddings, setToast, handleOpen, bidders }) => {
   
-  const [bidders,setBidders] = useState(null);
-
-    const fetchList:any = async (index: number) => {
-      try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/jersey/info`);
-        
-        if (response.data.success) {
-           console.log(response.data.data[index])
-           setBidders(response.data.data[index])
-        }
-      } catch (error) {
-        console.error('Error during update', error);
-      }
-  }
-
-  useEffect(()=>{
-    fetchList(index);
-  },[index])
-
+  console.log(bidders)
 
   const createBid = (ind : number) => {    
     const duplicateArr = biddings.filter(bidding => bidding.number == ind);
