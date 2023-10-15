@@ -49,16 +49,39 @@ const BiddingTable : React.FC<BiddingList> = ({ biddings, setBiddings, updateUse
 
   return (
     <div>
-      <div className="flex items-center space-x-4 pb-2">
-        <h2 className="text-xl font-semibold py-2">Here are the list of your biddings:</h2>
-        { biddings.length == 0 ? <></> : 
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-2 py-2 rounded hover:bg-blue-600 focus:outline-none"
-          onClick={e => handleSubmit(e)}
-        >
-          Submit
-        </button>}
+      <div className="flex items-center justify-between space-x-4 py-2">
+        <h2 className="text-xl font-semibold py-2">Submit new bids:</h2>
+        <div className='flex space-x-2 items-center justify-between'>
+          <div className='flex rounded-lg text-orange-400 text-sm font-bold p-2'>
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12" y2="16" />
+            </svg>
+            <p className="pl-2">Ensure you click submit to confirm changes</p>
+          </div>
+          
+          { biddings.length == 0 ? <></> : 
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-2 py-2 rounded hover:bg-blue-600 focus:outline-none"
+            onClick={e => handleSubmit(e)}
+          >
+            Submit
+          </button>}
+        </div>
+
       </div>
       <table className="min-w-full bg-white divide-y divide-gray-200">
         <thead className="bg-gray-800 text-white">

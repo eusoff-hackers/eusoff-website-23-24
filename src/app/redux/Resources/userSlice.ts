@@ -9,7 +9,8 @@ export interface User {
   isEligible: boolean,
   role: string, 
   year: number,
-  points: number
+  points: number,
+  round: number
 }
 
 const initialState: User | null = null;

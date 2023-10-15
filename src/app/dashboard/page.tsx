@@ -9,6 +9,8 @@ import { Alert, Snackbar, AlertColor } from '@mui/material';
 import Modal from '../components/Modal/modal';
 import BiddingTable from '../components/BiddingTable';
 import NavBar from '../components/NavBar';
+import { AxiosError } from 'axios';
+import Legend from '../components/Legend';
 
 
 export interface Bidding {
@@ -96,16 +98,25 @@ const Dashboard: React.FC = () => {
           username: response.data.data.user.username,
           teams: response.data.data.user.teams,
           bids: response.data.data.user.bids,
-          isEligible: response.data.data.user.isElligible,
+          isEligible: response.data.data.user.isEligible,
           role: response.data.data.user.role,
           year: response.data.data.user.year,
-          points: response.data.data.user.points
+          points: response.data.data.user.points,
+          round: response.data.data.user.bidding_round
         }
         console.log("updated user")
         dispatch(setUser(newUser));
       }
     } catch (error) {
-      console.error('Error during update', error);
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+
+        if(axiosError.response.status == 401) {
+          console.error('Session Expired'); 
+          route.push('/');
+        }
+      }
+      console.error(`Error during update. ${error}`, error);
     }
   }
 
@@ -124,6 +135,8 @@ const Dashboard: React.FC = () => {
     setIsClient(true); // indicate that client has been rendered
     getEligibleBids(); // get all eligible bids when page renders
     setPreviousBids(); // set bids in bidding table when page renders
+    updateUser(); // Makes a get request each time page is refreshed to check if cookie still exist
+    console.log("Saved user: " + JSON.stringify(user));
   }, [])
 
   //If not authorised, then redirects the user
@@ -150,12 +163,44 @@ const Dashboard: React.FC = () => {
     (<div className="h-screen w-full flex flex-col lg:flex-row">
       { isNav && <NavBar/>}
       <div className="flex-1 p-5 light:bg-white-800 text-black">
-        <h2 className="text-xl mb-5">Hello, {user.username}</h2>
-
-        { biddings.length>0 && <BiddingTable biddings={biddings} setBiddings={setBiddings} 
+        <div className="border-b-2 pb-2">
+          <h2 className="text-2xl font-bold mb-2">Hello, {user.username}</h2>
+            <div className='space-y-2'>
+              <div className='bg-gray-200 rounded-lg px-2 py-1'>
+                <p className="font-bold">Your current CCAs:</p>
+                <div> 
+                  {user.teams.map((team, ind) => 
+                  <div className="flex items-center justify-between" key={ind}>
+                    <ul>{ind + 1}. {team.name}</ul>
+                    {team.shareable ? <p>Cannot Share Number</p> : <p>Can Share Number</p>}
+                  </div>
+                  )}
+            
+                </div>
+              </div>
+              <div className="flex flex-row bg-gray-200 rounded-lg px-2 py-1 items-center justify-between">
+                <p className="font-bold">Your current bids:&nbsp;</p>
+                <div className='flex flex-row'>
+                  {user.bids.map((bid, ind) => {
+                    if(ind == user.bids.length - 1) {
+                      return <p key={ind}>{bid.jersey.number}</p>
+                    } else {
+                      return <p key={ind}>{bid.jersey.number},&nbsp;</p>
+                    }
+                  })}
+                </div>
+              </div>
+              <div className={`flex flex-row rounded-lg px-2 py-1 items-center justify-between 
+                ${user.isEligible ? "bg-green-300" : "bg-orange-300"}`}>
+                <p className='font-bold'>Bidding Status:</p>
+                {user.isEligible ? <p>You Are Allowed To Bid</p> : <p>Your round is {user.round}. Please wait for round</p>}
+              </div>
+            </div>
+        </div>
+        { biddings.length>0 ? <BiddingTable biddings={biddings} setBiddings={setBiddings} 
           updateUser={updateUser} 
           setToast={setToast}
-          handleOpen={handleOpen}/>}
+          handleOpen={handleOpen}/> : <div>Click on a number on the table to start a bid</div>}
         <div>
           {toast.message == "" 
             ? <></> 
@@ -166,8 +211,9 @@ const Dashboard: React.FC = () => {
               </Snackbar>
           }
         </div>
-        <div className="grid pt-4 pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
-          {Array.from({ length: 100 }, (_, index) => ( allowedBids.includes(index + 1) ? 
+        <Legend/>
+        <div className="grid  pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
+          {Array.from({ length: 99 }, (_, index) => ( allowedBids.includes(index + 1) ? 
               (<div
                 key={index}
                 className= {`${user.bids.filter(item => item.jersey.number === index + 1).length === 1 
