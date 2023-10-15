@@ -68,8 +68,8 @@ const ProfilePage = () => {
             </h1>
           </div>
 
-          <div className="min-w-full overflow-x-auto inline-block pt-4 md:pt-0 align-middle">
-            <div className="border-2 border-indigo-950 rounded-lg">
+          <div className="min-w-full inline-block pt-4 md:pt-0 align-middle">
+            <div className="border-2 overflow-hidden border-indigo-950 rounded-lg">
               <table className="min-w-full shadow divide-y divide-gray-400">
                 <tbody className="divide-y divide-gray-400">
                   <tr>
@@ -96,7 +96,7 @@ const ProfilePage = () => {
                     <td className="py-5 grid grid-flow-row gap-y-1">
                       {user.bids.length > 0 
                       ? user.bids.map((item) => <p className="bg-gray-800 h-16 w-16 md:h-20 md:w-20 flex items-center justify-center text-white font-semibold text-xl md:text-2xl rounded-md hover:shadow-xl" key={item.jersey.number}>{item.jersey.number}</p>)
-                      : <p className="font-light text-black">No current bids</p>} 
+                      : <p className="px-6 py-4 whitespace-nowrap text-base text-gray-800">No current bids</p>} 
                     </td>
                   </tr>
                   <tr>
