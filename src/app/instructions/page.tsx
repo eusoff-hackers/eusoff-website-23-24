@@ -152,9 +152,9 @@ const InstructionsPage = () => {
             </ul>
             <br />
             
-            2. I did not get the number I wanted. Can I try again in later rounds?
+            2. What if I got outbid for all my choices?
             <ul className="list-disc list-outside font-normal ml-8 space-y-2">
-              <li>No. You will be assigned one of your five choices after your round ends, and there will not be any changes thereafter. Try to bid as strategically as you can! </li>
+              <li>Don&apos;t worry, you&apos;ll be asked to try again in the next round. Hopefully it doesn&apos;t come to that, though! </li>
             </ul>
             <br />
 
