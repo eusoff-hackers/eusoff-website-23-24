@@ -114,6 +114,7 @@ const Dashboard: React.FC = () => {
 
         if(axiosError.response.status == 401) {
           console.error('Session Expired'); 
+          dispatch(setUser(null));
           route.push('/');
         }
       }
@@ -173,7 +174,7 @@ const Dashboard: React.FC = () => {
                   {user.teams.map((team, ind) => 
                   <div className="flex items-center justify-between" key={ind}>
                     <ul>{ind + 1}. {team.name}</ul>
-                    {team.shareable ? <p>Cannot Share Number</p> : <p>Can Share Number</p>}
+                    {team.shareable ? <p>Can share number</p> : <p>Cannot share number</p>}
                   </div>
                   )}
             
