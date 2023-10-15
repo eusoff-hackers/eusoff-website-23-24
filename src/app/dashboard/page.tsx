@@ -114,6 +114,7 @@ const Dashboard: React.FC = () => {
 
         if(axiosError.response.status == 401) {
           console.error('Session Expired'); 
+          dispatch(setUser(null));
           route.push('/');
         }
       }
