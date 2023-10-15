@@ -7,23 +7,13 @@ import { removeUser } from '../redux/Resources/userSlice'
 import { useRouter } from 'next/navigation'
 
 export default function NavBar() {
-
-  const route = useRouter()
-  const dispatch = useDispatch()
-
-  const logout = () => {
-    dispatch(removeUser());
-    localStorage.clear();
-    route.push('/');
-  }
-
   return (
     <div>
       <nav className="h-full w-full sticky top-0 lg:w-64 bg-gray-800 text-white p-5">
         <p className="text-2xl mb-5">Dashboard</p>
         <ul className="space-y-2">
           <li className="hover:translate-x-1">
-            <Link className="flex items-center gap-3 py-2" href="/dashboard">
+            <Link className="flex items-center gap-3 py-2" href="">
               <svg
                 className=" h-5 w-5"
                 fill="none"
@@ -43,7 +33,7 @@ export default function NavBar() {
             </Link>
           </li>
           <li className="hover:translate-x-1">
-            <Link className="flex items-center gap-3 py-2" href="/profile">
+            <Link className="flex items-center gap-3 py-2" href="">
               <svg
                 className=" h-5 w-5"
                 fill="none"
@@ -65,29 +55,27 @@ export default function NavBar() {
             </Link>
           </li>
           <li className="hover:translate-x-1">
-            <Link className="flex items-center gap-3 py-2" href="/instructions">
+            <Link className="flex items-center gap-3 py-2" href="">
               <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  height="24"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  xmlns="http://www.w3.org/2000/svg"
+                className=" h-5 w-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                  <rect x="3" y="2" width="14" height="20" />
-                  <line x1="3" y1="7" x2="17" y2="7" />
-                  <line x1="3" y1="11" x2="17" y2="11" />
-                  <line x1="3" y1="15" x2="17" y2="15" />
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                <circle cx="12" cy="12" r="3" />
               </svg>
               <span>Instructions</span>
             </Link>
           </li>
           <li className="hover:translate-x-1">
-            <Link className="flex items-center gap-3 py-2" onClick={logout} href="/">
+            <Link className="flex items-center gap-3 py-2" href="">
               <svg
                 className=" h-5 w-5"
                 fill="none"
