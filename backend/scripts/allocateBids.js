@@ -77,19 +77,21 @@ async function allocateUser(bidder, jersey) {
   await jersey.save();
 
   /*create ban object for teams user is in*/
-  await Promise.allSettled(
-    updated_bidder.teams.map(async (teamId) => {
-      team = await Team.findById(teamId);
-      if (team.shareable === false) {
-        console.log(
-          `Creating ban for ${team.name} and ${updated_bidder.username}`,
-        );
-        await Ban.create({
-          jersey: jersey._id,
-          team: team._id,
-        });
-      }
-    }),
+  logAndThrow(
+    await Promise.allSettled(
+      updated_bidder.teams.map(async (teamId) => {
+        const team = await Team.findById(teamId);
+        if (team.shareable === false) {
+          console.log(
+            `Creating ban for ${team.name} and ${updated_bidder.username}`,
+          );
+          await Ban.create({
+            jersey: jersey._id,
+            team: team._id,
+          });
+        }
+      }),
+    ),
   );
 }
 
