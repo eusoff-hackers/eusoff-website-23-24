@@ -8,7 +8,7 @@ const readline = require('readline');
 const { backup } = require(`./backup`);
 
 async function restore(source, dest) {
-  await backup(dest);
+  // await backup(dest);
   console.log(`Restoring: ${dest}`);
 
   const mongo_connector = new MongoDBDuplexConnector({
