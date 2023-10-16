@@ -72,6 +72,10 @@ async function register() {
           client: redisClient,
           ttl: 14 * 24 * 60 * 60,
         }),
+        cookie: {
+          sameSite: 'none',
+          secure: true,
+        },
       });
     } else {
       const client = new MongoClient(env.MONGO_URI);
@@ -94,6 +98,10 @@ async function register() {
           ttl: 14 * 24 * 60 * 60,
           autoRemove: `native`,
         }),
+        cookie: {
+          sameSite: 'none',
+          secure: true,
+        },
       });
     }
 
