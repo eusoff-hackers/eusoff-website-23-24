@@ -68,48 +68,47 @@ const ProfilePage = () => {
             </h1>
           </div>
 
-          <div className="min-w-full inline-block pt-4 md:pt-0 align-middle">
-            <div className="border-2 overflow-hidden border-indigo-950 rounded-lg">
-              <table className="min-w-full shadow divide-y divide-gray-400">
-                <tbody className="divide-y divide-gray-400">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-base font-bold text-gray-500 uppercase">Username</th>
-                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase">{user.username}</th>
-                  </tr> 
-                  <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-gray-800">Year</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-base text-gray-800">{user.year}</td>
-                  </tr>
+          
+          <div className="w-full border-2 overflow-hidden border-indigo-950 rounded-lg">
+            <table className="w-full shadow divide-y divide-gray-400">
+              <tbody className="divide-y divide-gray-400">
+                <tr>
+                  <th className="px-6 py-3 text-left text-base font-bold text-gray-500 uppercase">Username</th>
+                  <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase">{user.username}</th>
+                </tr> 
+                <tr>
+                  <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-gray-800">Year</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-base text-gray-800">{user.year}</td>
+                </tr>
 
-                  <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-green-500">Points</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-base text-gray-800">{user.points}</td>
-                  </tr>
+                <tr>
+                  <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-green-500">Points</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-base text-gray-800">{user.points}</td>
+                </tr>
 
-                  <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-green-600">Bidding Round</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-base text-gray-800">{user.round}</td>
-                  </tr>
+                <tr>
+                  <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-green-600">Bidding Round</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-base text-gray-800">{user.round}</td>
+                </tr>
 
-                  <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold  text-orange-500">Current Bids</td> 
-                    <td className="py-5 grid grid-flow-row gap-y-1">
-                      {user.bids.length > 0 
-                      ? user.bids.map((item) => <p className="bg-gray-800 h-16 w-16 md:h-20 md:w-20 flex items-center justify-center text-white font-semibold text-xl md:text-2xl rounded-md hover:shadow-xl" key={item.jersey.number}>{item.jersey.number}</p>)
-                      : <p className="px-6 py-4 whitespace-nowrap text-base text-gray-800">No current bids</p>} 
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-yellow-500">Allocated Number</td> 
-                    <td className="px-6 py-4 whitespace-nowrap text-base text-gray-800">
-                      {user.allocatedNumber != null ? user.allocatedNumber : "None"}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
+                <tr>
+                  <td className="px-6 py-4 whitespace-nowrap text-base font-bold  text-orange-500">Current Bids</td> 
+                  <td className="py-5 grid grid-flow-row gap-y-1">
+                    {user.bids.length > 0 
+                    ? user.bids.map((item) => <p className="bg-gray-800 h-16 w-16 md:h-20 md:w-20 flex items-center justify-center text-white font-semibold text-xl md:text-2xl rounded-md hover:shadow-xl" key={item.jersey.number}>{item.jersey.number}</p>)
+                    : <p className="px-6 py-4 text-base text-gray-800">No current bids</p>} 
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 whitespace-nowrap text-base font-bold text-yellow-500">Allocated Number</td> 
+                  <td className="px-6 py-4 whitespace-nowrap text-base text-gray-800">
+                    {user.allocatedNumber != null ? user.allocatedNumber : "None"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+
         </div>
       </main>
     </div>
