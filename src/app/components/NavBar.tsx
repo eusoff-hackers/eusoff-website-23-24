@@ -6,7 +6,18 @@ import { useDispatch } from 'react-redux'
 import { removeUser } from '../redux/Resources/userSlice'
 import { useRouter } from 'next/navigation'
 
+const axios = require('axios'); 
+axios.defaults.withCredentials = true;
+
 export default function NavBar() {
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/logout`)
+    } catch (error) {
+      console.error("Logout error")
+    }
+  }
 
   const route = useRouter()
   const dispatch = useDispatch()
@@ -14,6 +25,7 @@ export default function NavBar() {
   const logout = () => {
     dispatch(removeUser());
     localStorage.clear();
+    handleLogout();
     route.push('/');
   }
 

@@ -2,6 +2,7 @@
 
 const env = process.env;
 
+const readline = require('readline');
 const mongoose = require(`mongoose`);
 const { User } = require(`../models/user`);
 const { Team } = require(`../models/team`);
@@ -9,8 +10,13 @@ const { Jersey } = require(`../models/jersey`);
 const { Bid } = require(`../models/bid`);
 const { Ban } = require(`../models/ban`);
 const { Server } = require(`../models/server`);
-const { isEligible } = require(`../utils/eligibilityChecker`);
+const { isEligible, getEligible } = require(`../utils/eligibilityChecker`);
 const { logAndThrow } = require('../utils/logger');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
 async function jerseyBidCount(jersey, bid_priority) {
   const get_bids = { priority: bid_priority, jersey: jersey._id };
@@ -19,12 +25,112 @@ async function jerseyBidCount(jersey, bid_priority) {
   return bids.length;
 }
 
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 async function checkRemaining() {
   console.log(`Checking users that have not been allocated a jersey`);
 
   const users = await User.find({ isEligible: true });
   console.log(
     `Users that do not have a jersey: ${users.map((u) => u.username)}`,
+  );
+
+  logAndThrow(
+    await Promise.allSettled(
+      users.map(async (user) => {
+        user.bidding_round += 1;
+        user.bidding_round = Math.min(user.bidding_round, 5);
+        await user.save();
+      }),
+    ),
+  );
+
+  console.log(`Moved all unallocated users to next round.`);
+}
+
+async function allocateUser(bidder, jersey) {
+  if (!(await isEligible(bidder, [jersey]))) {
+    console.error(
+      `\x1b[31m%s\x1b[0m`,
+      `WARNING: cancelling allocation of ineligible user: ${bidder.username}.`,
+    );
+    return;
+  }
+  console.log(`Allocating jersey ${jersey.number} to ${bidder.username}`);
+
+  const updated_bidder = await User.findOneAndUpdate(
+    { username: bidder.username },
+    { allocatedNumber: jersey.number, isEligible: false },
+    { new: true },
+  );
+  if ((await Server.findOne({ key: `round` })).value === 1) {
+    jersey.quota[bidder.gender] = 0;
+  } else {
+    jersey.quota[bidder.gender] -= 1;
+  }
+  await jersey.save();
+
+  /*create ban object for teams user is in*/
+  logAndThrow(
+    await Promise.allSettled(
+      updated_bidder.teams.map(async (teamId) => {
+        const team = await Team.findById(teamId);
+        if (team.shareable === false) {
+          console.log(
+            `Creating ban for ${team.name} and ${updated_bidder.username}`,
+          );
+          await Ban.create({
+            jersey: jersey._id,
+            team: team._id,
+          });
+        }
+      }),
+    ),
+  );
+}
+
+async function checkRound5() {
+  const users = await User.find({ bidding_round: 5, isEligible: true });
+  if (users.length === 0) {
+    console.log(`No eligible users with bidding round 5, safe!`);
+    return;
+  }
+
+  rl.question(
+    `There are eligible round 5 users (those at round 4 and are not yet allocated a number yet, would you like to randomly allocate them numbers? (y/n)`,
+    async (prompt) => {
+      if (prompt !== `y`) return;
+      const shuffledUsers = shuffle(users);
+      for (let i = 0; i < shuffledUsers.length; i++) {
+        let user = users[i];
+        user.bidding_round--;
+        const jerseys = await getEligible(user);
+
+        if (jerseys.length === 0) {
+          console.error(
+            `\x1b[31m%s\x1b[0m`,
+            `WARNING: User ${user.username} cannot be allocated a number/jersey!`,
+          );
+          continue;
+        }
+
+        const idx = Math.floor(Math.random() * (jerseys.length - 1));
+
+        await allocateUser(
+          user,
+          await Jersey.findOne({ number: jerseys[idx] }),
+        );
+      }
+
+      console.log(`Finished randomly allocating users.`);
+      rl.close();
+    },
   );
 }
 
@@ -69,50 +175,8 @@ async function allocate(jersey, bid_priority) {
 
       if (Array.isArray(bidders) && bidders.length) {
         const bidder = bidders.pop();
-        console.log(`Allocating jersey ${jersey.number} to ${bidder.username}`);
-        const updated_bidder = await User.findOneAndUpdate(
-          { username: bidder.username },
-          { allocatedNumber: jersey.number, isEligible: false },
-          { new: true },
-        );
-        if ((await Server.findOne({ key: `round` })).value === 1) {
-          jersey.quota[bidder.gender] = 0;
-        } else {
-          jersey.quota[bidder.gender] -= 1;
-        }
-        await jersey.save();
 
-        /*create ban object for teams user is in*/
-        await Promise.allSettled(
-          updated_bidder.teams.map(async (teamId) => {
-            //   const bannableTeams = [
-            //     'Basketball M',
-            //     'Basketball F',
-            //     'Floorball M',
-            //     'Floorball M',
-            //     'Frisbee',
-            //     'Handball M',
-            //     'Handball F',
-            //     'Soccer M',
-            //     'Soccer F',
-            //     'Softball',
-            //     'Touch Rugby M',
-            //     'Touch Rugby M',
-            //     'Volleyball M',
-            //     'Volleyball F',
-            //   ];
-            team = await Team.findById(teamId);
-            if (team.shareable === false) {
-              console.log(
-                `Creating ban for ${team.name} and ${updated_bidder.username}`,
-              );
-              await Ban.create({
-                jersey: jersey._id,
-                team: team._id,
-              });
-            }
-          }),
-        );
+        await allocateUser(bidder, jersey);
         changes = true;
       }
     }
@@ -151,6 +215,7 @@ async function run() {
   console.log(`Allocation complete :) I hope it's correct?`);
 
   await checkRemaining();
+  await checkRound5();
 }
 
 run();
