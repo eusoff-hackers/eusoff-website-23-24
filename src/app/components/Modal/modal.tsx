@@ -132,7 +132,7 @@ useEffect(()=>{
                   </tr>
                 
 
-                  {Object.keys(bidders).map((category, index:number) => (
+                  {Object.keys(bidders).filter((category, index:number) => category == "Male" || category == "Female").map((category, index:number) => (
                     bidders[category].length > 0 && (
                     <>
                       <tr  key={index}>
