@@ -30,6 +30,14 @@ const schema = {
                 $ref: 'user',
               },
             },
+            quota: {
+              type: `object`,
+              properties: {
+                Male: { type: `number` },
+                Female: { type: `number` },
+              },
+              additionalProperties: false,
+            },
           },
           additionalProperties: false,
         },
@@ -65,7 +73,9 @@ async function getJerseyInfo(jersey) {
     }))
     .sort((a, b) => b.points - a.points);
 
-  return { Male, Female };
+  const {quota} = jersey;
+
+  return { Male, Female, quota };
 }
 
 async function handler(req, res) {
