@@ -81,6 +81,7 @@ const Dashboard: React.FC = () => {
 
       if (response.data.success) {
         setAllowedBids(response.data.data.jerseys)
+        console.log("This is eligible bids" + JSON.stringify(response.data.data.jerseys))
       }
       
     } catch (error) {

@@ -52,6 +52,7 @@ const Modal: React.FC<ModalProps> = ({ closeModal, index, points, biddings, setB
       if (response.data.success) {
           console.log(response.data)
          await setBidders(response.data.data[index])
+         console.log("bids info" + JSON.stringify(response.data.data[index]))
       }
     } catch (error) {
       console.error('Error during update', error);
@@ -116,6 +117,10 @@ useEffect(()=>{
         </div>
         { bidders != null && 
         <div className="mb-4">
+          <div className="flex flex-row space-x-4 mb-2">
+            <div>Male Quota: {bidders.quota.Male}</div>
+            <div>Female Quota: {bidders.quota.Female}</div>
+          </div>
           {(bidders.Male.length>0 || bidders.Female.length>0) ? (
              <table className="min-w-full border-collapse border border-gray-300">
                 <tbody>
@@ -124,7 +129,6 @@ useEffect(()=>{
                     <th className="px-4 py-2">Name</th>
                     <th className="px-4 py-2">Points</th>
                     <th className="px-4 py-2">Sports</th>
-
                   </tr>
                 
 
