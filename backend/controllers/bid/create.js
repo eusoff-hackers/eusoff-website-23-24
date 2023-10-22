@@ -6,6 +6,9 @@ const { success, sendStatus } = require(`${UTILS}/req_handler`);
 const { logger, logAndThrow } = require(`${UTILS}/logger`);
 const { Jersey } = require(`${MODELS}/jersey`);
 const { Bid } = require('../../models/bid');
+const { User } = require('../../models/user');
+
+const mongoose = require(`mongoose`);
 
 const { auth } = require(`${UTILS}/auth`);
 
@@ -39,7 +42,10 @@ const schema = {
 };
 
 async function handler(req, res) {
+  const session = await mongoose.startSession();
   try {
+    session.startTransaction();
+
     const { user } = req.session;
     const { bids } = req.body;
 
@@ -62,16 +68,25 @@ async function handler(req, res) {
       priority: index,
     }));
 
-    await Bid.deleteMany({ user: user._id });
-    const bidIds = (await Bid.create(newBids)).map((bid) => bid._id);
+    await Bid.deleteMany({ user: user._id }).session(session);
+    const bidIds = (await Bid.create(newBids, { session })).map(
+      (bid) => bid._id,
+    );
 
-    user.bids = bidIds;
-    await user.save();
+    // user.bids = bidIds;
+    // await user.save();
+    await User.findOneAndUpdate({ _id: user._id }, { bids: bidIds }).session(
+      session,
+    );
 
+    await session.commitTransaction();
     return await success(res);
   } catch (error) {
     logger.error(`Bid creation error: ${error.message}`, { error });
-    return sendStatus(res, 500);
+    await session.abortTransaction();
+    return sendStatus(res, 429);
+  } finally {
+    session.endSession();
   }
 }
 
