@@ -44,10 +44,12 @@ const schema = {
 async function handler(req, res) {
   const session = await mongoose.startSession();
   try {
-    session.startTransaction();
+    session.startTransaction({ readConcern: { level: `snapshot` } });
 
-    const { user } = req.session;
+    const { user: unsafeUser } = req.session;
     const { bids } = req.body;
+
+    const user = await User.findById(unsafeUser._id).session(session);
 
     const jerseyParsingJobs = await Promise.allSettled(
       bids.map(async (bid) => Jersey.findOne({ number: bid.number })),
@@ -68,13 +70,11 @@ async function handler(req, res) {
       priority: index,
     }));
 
-    await Bid.deleteMany({ user: user._id }).session(session);
+    await Bid.deleteMany({ _id: { $in: user.bids } }).session(session);
     const bidIds = (await Bid.create(newBids, { session })).map(
       (bid) => bid._id,
     );
 
-    // user.bids = bidIds;
-    // await user.save();
     await User.findOneAndUpdate({ _id: user._id }, { bids: bidIds }).session(
       session,
     );
