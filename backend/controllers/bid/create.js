@@ -52,7 +52,7 @@ async function handler(req, res) {
     const user = await User.findById(unsafeUser._id).session(session);
 
     const jerseyParsingJobs = await Promise.allSettled(
-      bids.map(async (bid) => Jersey.findOne({ number: bid.number })),
+      bids.map(async (bid) => Jersey.findOne({ number: bid.number }).session(session)),
     );
 
     const jerseys = logAndThrow(jerseyParsingJobs);
