@@ -85,6 +85,11 @@ userSchema.query.format = async function format(session) {
         .populate({
           path: `bids`,
           populate: { path: `jersey` },
+          options: {
+            sort: {
+              priority: 1,
+            },
+          },
         })
         .populate({
           path: `teams`,
