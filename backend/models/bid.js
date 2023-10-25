@@ -7,7 +7,6 @@ const returnSchema = {
   type: `object`,
   required: [`jersey`],
   properties: {
-    user: { type: `string` },
     jersey: { $ref: `jersey` },
     priority: { type: `number` },
   },
@@ -15,8 +14,12 @@ const returnSchema = {
 };
 
 const bidSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, required: true },
-  jersey: { type: mongoose.Schema.Types.ObjectId, required: true },
+  user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: `User` },
+  jersey: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: `Jersey`,
+  },
   priority: { type: Number, required: true },
 });
 
