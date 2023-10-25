@@ -78,7 +78,7 @@ userSchema.virtual(`teams`, {
   foreignField: `user`,
 });
 
-userSchema.query.format = async function format() {
+userSchema.query.format = async function format(session) {
   try {
     const res = (
       await this.findOne()
@@ -93,6 +93,7 @@ userSchema.query.format = async function format() {
           },
           transform: (team) => team?.team,
         })
+        .session(session)
     ).toObject();
 
     return res;
