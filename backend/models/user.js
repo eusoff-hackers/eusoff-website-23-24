@@ -1,7 +1,7 @@
 // const MAX_BIDS = 5;
 const mongoose = require(`mongoose`);
-const { logger, logAndThrow } = require(`../utils/logger`);
-const { Team } = require('./team');
+const { logger } = require(`../utils/logger`);
+require(`./member.js`);
 
 // function arrayLimit(arr) {
 //   return arr.length <= MAX_BIDS;
@@ -40,11 +40,11 @@ const userSchema = new mongoose.Schema(
   {
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    teams: {
-      type: [{ type: mongoose.Schema.Types.ObjectId /* unique: true */ }],
-      default: [],
-      ref: 'Team',
-    },
+    // teams: {
+    //   type: [{ type: mongoose.Schema.Types.ObjectId /* unique: true */ }],
+    //   default: [],
+    //   ref: 'Team',
+    // },
     // bids: {
     //   type: [{ type: mongoose.Schema.Types.ObjectId /* unique: true */ }],
     //   default: [],
@@ -72,26 +72,29 @@ userSchema.virtual(`bids`, {
   foreignField: `user`,
 });
 
+userSchema.virtual(`teams`, {
+  ref: `Member`,
+  localField: `_id`,
+  foreignField: `user`,
+});
+
 userSchema.query.format = async function format() {
   try {
     const res = (
-      await this.findOne().populate({
-        path: `bids`,
-        populate: { path: `jersey` },
-      })
+      await this.findOne()
+        .populate({
+          path: `bids`,
+          populate: { path: `jersey` },
+        })
+        .populate({
+          path: `teams`,
+          populate: {
+            path: `team`,
+          },
+          transform: (team) => team?.team,
+        })
     ).toObject();
 
-    const promises = [
-      Promise.allSettled(res.teams.map(async (team) => Team.findById(team))),
-    ];
-
-    const jobs = await Promise.allSettled(promises);
-    const primary = logAndThrow(jobs, `User format primary failed`);
-    const results = primary.map((job) =>
-      logAndThrow(job, `User format secondary failed`),
-    );
-
-    [res.teams] = results;
     return res;
   } catch (error) {
     logger.error(`User format error: ${error.message}`, { error });
