@@ -16,10 +16,10 @@
     "@fastify/cors": "^8.4.0",
     "@fastify/redis": "^6.1.1",
     "@fastify/session": "^10.5.0",
-    "bcrypt": "^5.1.1",
     "abstract-cache": "^1.0.1",
     "abstract-cache-mongo": "^2.0.2",
     "abstract-cache-redis": "^2.0.0",
+    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "connect-mongo": "^5.0.0",
     "connect-redis": "^7.1.0",
@@ -37,13 +37,16 @@
     "xkpasswd": "^1.0.5"
   },
   "devDependencies": {
+    "@types/node": "^20.8.9",
     "eslint": "^8.50.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "9.0.0",
     "husky": "^8.0.0",
     "lint-staged": "^14.0.1",
-    "prettier": "3.0.3"
+    "nodemon": "^3.0.1",
+    "prettier": "3.0.3",
+    "ts-node": "^10.9.1"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
