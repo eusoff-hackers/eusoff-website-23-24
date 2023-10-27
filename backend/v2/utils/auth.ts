@@ -5,7 +5,7 @@ const MODELS_PATH = `../models`;
 const { User } = require(`${MODELS_PATH}/user`);
 const { sendStatus } = require(`./req_handler`);
 const { reportError, logger } = require(`./logger`);
-const MongoSession = require(`./mongoSession`);
+const { MongoSession } = require(`./mongoSession`);
 
 declare module 'fastify' {
   interface Session {
@@ -28,9 +28,8 @@ async function auth(req: FastifyRequest, res: FastifyReply) {
       );
 
       await req.session.set(`user`, user);
+      await req.session.save();
       logger.info(`Refreshed user: ${user._id}.`);
-
-      
     } catch (error) {
       reportError(error, `Auth error`);
       await sendStatus(res, 500, `Internal Server Error.`);
@@ -50,6 +49,7 @@ async function login(user: iUser, req: FastifyRequest) {
     await req.session.regenerate();
     await req.session.set(`user`, user);
 
+    await req.session.save();
     
   } catch (error) {
     reportError(error, `Login error`);
@@ -61,7 +61,7 @@ async function logout(req: FastifyRequest) {
   try {
     await req.session.regenerate();
 
-    
+    await req.session.save();
   } catch (error) {
     reportError(error, `Logout error`);
     throw error;
