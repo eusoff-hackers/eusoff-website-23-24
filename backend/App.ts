@@ -20,6 +20,7 @@ const abcache = require('abstract-cache');
 
 const { logger, reportError } = require(`${UTILS_PATH}/logger`);
 const v1 = require(`./v1/routes/router.js`);
+const v2 = require(`./v2/routes/router.js`);
 
 const secret = env.SESSION_SECRET || crypto.randomBytes(128).toString(`base64`);
 
@@ -109,6 +110,7 @@ async function register() {
     }
 
     fastify.register(v1, { prefix: `v1` });
+    fastify.register(v2, { prefix: `v2` });
     run();
   } catch (error) {
     reportError(error, `Error registering middleware`);
