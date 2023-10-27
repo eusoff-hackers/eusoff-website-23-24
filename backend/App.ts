@@ -58,7 +58,7 @@ async function register() {
     fastify.register(fastifyCookie);
 
     if (env.REDIS_URL) {
-      const redisClient = new IORedis({ host: `${env.REDIS_URL}` });
+      const redisClient = new IORedis({ host: `${env.REDIS_URL as string}` });
 
       const abcacheClient = abcache({
         useAwait: true,
@@ -104,7 +104,7 @@ async function register() {
           autoRemove: `native`,
         }),
         cookie: {
-          sameSite: 'none',
+          // sameSite: 'none',
           secure: true,
         },
       });

@@ -7,7 +7,7 @@ declare global {
       NODE_ENV: 'production' | 'development' | undefined;
       BACKEND_PORT: number;
       FRONTEND_URL: string;
-      REDIS_URL: string;
+      REDIS_URL: string | undefined;
     }
   }
 }
