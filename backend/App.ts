@@ -1,4 +1,4 @@
-const UTILS_PATH = `./v1/utils`;
+const UTILS_PATH = `./utils`;
 
 const { env } = process;
 const LOG_LEVEL: boolean = env.NODE_ENV !== 'production';
@@ -18,7 +18,7 @@ const cors = require(`@fastify/cors`);
 const crypto = require(`crypto`);
 const abcache = require('abstract-cache');
 
-const { logger } = require(`.${UTILS_PATH}/logger`);
+const { logger, reportError } = require(`${UTILS_PATH}/logger`);
 const v1 = require(`./v1/routes/router.js`);
 
 const secret = env.SESSION_SECRET || crypto.randomBytes(128).toString(`base64`);
@@ -37,7 +37,7 @@ async function run() {
     logger.info(`Connected to Atlas.`);
     logger.info(`Server started, listening to ${env.BACKEND_PORT}`);
   } catch (error) {
-    // console.error(error);
+    reportError(error, `Error starting server`);
     process.exit(1);
   }
 }
@@ -111,9 +111,11 @@ async function register() {
     fastify.register(v1, { prefix: `v1` });
     run();
   } catch (error) {
-    // console.error(error);
+    reportError(error, `Error registering middleware`);
     process.exit(1);
   }
 }
 
 register();
+
+export {};
