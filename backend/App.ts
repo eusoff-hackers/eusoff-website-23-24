@@ -1,9 +1,10 @@
+import { JsonSchemaToTsProvider } from '@fastify/type-provider-json-schema-to-ts';
+import Fastify from 'fastify';
+
 const UTILS_PATH = `./v2/utils`;
 
 const { env } = process;
 const LOG_LEVEL: boolean = env.NODE_ENV !== 'production';
-
-const Fastify = require(`fastify`);
 const mongoose = require(`mongoose`);
 const fastifySession = require('@fastify/session');
 const fastifyCookie = require('@fastify/cookie');
@@ -19,14 +20,14 @@ const crypto = require(`crypto`);
 const abcache = require('abstract-cache');
 
 const { logger, reportError } = require(`${UTILS_PATH}/logger`);
-const v1 = require(`./v1/routes/router.js`);
+// const v1 = require(`./v1/routes/router.js`);
 const v2 = require(`./v2/routes/router.js`);
 
 const secret = env.SESSION_SECRET || crypto.randomBytes(128).toString(`base64`);
 
 const fastify = Fastify({
   logger: LOG_LEVEL,
-});
+}).withTypeProvider<JsonSchemaToTsProvider>();
 
 async function run() {
   try {
@@ -109,7 +110,7 @@ async function register() {
       });
     }
 
-    fastify.register(v1, { prefix: `v1` });
+    // fastify.register(v1, { prefix: `v1` });
     fastify.register(v2, { prefix: `v2` });
     run();
   } catch (error) {

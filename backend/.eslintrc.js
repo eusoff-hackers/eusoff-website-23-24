@@ -19,7 +19,25 @@ module.exports = {
     'import/no-dynamic-require': 0,
     'no-underscore-dangle': ['error', { allow: ['_id'] }],
     '@typescript-eslint/no-var-requires': 0,
+    'import/prefer-default-export': 'off',
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'never',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never',
+      },
+    ],
   },
   root: true,
   ignorePatterns: [`scripts/*`, `environment.d.ts`],
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
+    },
+  },
 };

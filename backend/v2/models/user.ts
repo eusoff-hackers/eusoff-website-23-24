@@ -10,6 +10,7 @@ interface iUser extends Document {
   gender: `Male` | `Female`;
   email: string;
 }
+
 const rUser = {
   $id: `user`,
   type: `object`,
