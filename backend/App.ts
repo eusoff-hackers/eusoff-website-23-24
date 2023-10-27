@@ -1,4 +1,4 @@
-const UTILS_PATH = `./utils`;
+const UTILS_PATH = `./v2/utils`;
 
 const { env } = process;
 const LOG_LEVEL: boolean = env.NODE_ENV !== 'production';
