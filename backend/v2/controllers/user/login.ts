@@ -54,7 +54,7 @@ async function handler(
     try {
       const {
         credentials: { username, password },
-      } = req.body satisfies iBody;
+      } = req.body;
 
       if (!(await User.exists({ username }).session(session.session))) {
         return await sendStatus(res, 401, `Invalid credentials.`);
