@@ -44,14 +44,17 @@ const schema = {
 
 type iBody = FromSchema<typeof schema.body>;
 
-async function handler(req: FastifyRequest, res: FastifyReply) {
+async function handler(
+  req: FastifyRequest<{ Body: iBody }>,
+  res: FastifyReply,
+) {
   try {
     const session = new MongoSession();
     await session.start();
     try {
       const {
         credentials: { username, password },
-      } = req.body as iBody;
+      } = req.body satisfies iBody;
 
       if (!(await User.exists({ username }).session(session.session))) {
         return await sendStatus(res, 401, `Invalid credentials.`);
