@@ -2,7 +2,12 @@ import { FastifyRequest, FastifyReply, RouteOptions } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { FromSchema } from 'json-schema-to-ts';
 import * as bcrypt from 'bcryptjs';
-import { resBuilder, success, sendStatus } from '../../utils/req_handler';
+import {
+  resBuilder,
+  success,
+  sendStatus,
+  sendError,
+} from '../../utils/req_handler';
 import { MongoSession } from '../../utils/mongoSession';
 import { User } from '../../models/user';
 import { reportError } from '../../utils/logger';
@@ -63,13 +68,13 @@ async function handler(
       return await success(res, { user });
     } catch (error) {
       reportError(error, `Error login handler`);
-      return sendStatus(res, 500, `Internal Server Error.`);
+      return sendError(res);
     } finally {
       await session.end();
     }
   } catch (error) {
     reportError(error, `Mongo Session error`);
-    return sendStatus(res, 500, `Internal Server Error.`);
+    return sendError(res);
   }
 }
 

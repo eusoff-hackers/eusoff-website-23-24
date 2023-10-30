@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply, RouteOptions } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 
-import { success, sendStatus, resBuilder } from '../../utils/req_handler';
+import { success, resBuilder, sendError } from '../../utils/req_handler';
 import { reportError } from '../../utils/logger';
 import { auth } from '../../utils/auth';
 
@@ -24,7 +24,7 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
     return await success(res, { user });
   } catch (error) {
     reportError(error, `Error user info handler`);
-    return sendStatus(res, 500, `Internal Server Error.`);
+    return sendError(res);
   }
 }
 

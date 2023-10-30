@@ -2,24 +2,21 @@ import { FastifyReply } from 'fastify';
 import { logger } from './logger';
 
 async function success<Type>(res: FastifyReply, data: Type) {
-  await res.send({
+  logger.info(`Success response.`, { data });
+  return res.send({
     success: true,
     data,
   });
-  logger.info(`Success response.`, { data });
-}
-
-async function error<Type>(res: FastifyReply, data: Type) {
-  await res.send({
-    success: false,
-    data,
-  });
-  logger.error(`Error response.`, { data });
 }
 
 async function sendStatus(res: FastifyReply, status: number, msg: string) {
-  await res.status(status).send(msg);
   logger.info(`${status} status sent.`, { status, msg });
+  return res.status(status).send(msg);
+}
+
+async function sendError(res: FastifyReply) {
+  logger.error(`Error response.`);
+  return sendStatus(res, 500, `Internal Server Error.`);
 }
 
 function resBuilder<Type>(obj: Type) {
@@ -34,4 +31,4 @@ function resBuilder<Type>(obj: Type) {
   };
 }
 
-export { success, error, sendStatus, resBuilder };
+export { success, sendError, sendStatus, resBuilder };

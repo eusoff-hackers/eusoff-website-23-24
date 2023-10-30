@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply, RouteOptions } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { FromSchema } from 'json-schema-to-ts';
 import bcrypt from 'bcryptjs';
-import { sendStatus } from '../../utils/req_handler';
+import { sendError, sendStatus } from '../../utils/req_handler';
 import { MongoSession } from '../../utils/mongoSession';
 import { User } from '../../models/user';
 import { reportError } from '../../utils/logger';
@@ -58,13 +58,13 @@ async function handler(
       return await sendStatus(res, 200, `Saved!`);
     } catch (error) {
       reportError(error, `Password Reset handler error.`);
-      return sendStatus(res, 500, `Internal Server Error.`);
+      return sendError(res);
     } finally {
       await session.end();
     }
   } catch (error) {
     reportError(error, `Password Reset handler session error`);
-    return sendStatus(res, 500, `Internal Server Error.`);
+    return sendError(res);
   }
 }
 
