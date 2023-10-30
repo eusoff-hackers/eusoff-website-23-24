@@ -1,18 +1,12 @@
 import { FastifyInstance } from 'fastify';
 
-const UTILS_PATH = `../utils`;
-
-const { logAndThrow } = require(`${UTILS_PATH}/logger`);
 /* eslint-disable global-require */
-const schemas = [require(`./user`).rUser, require(`./team`).rTeam];
+import { rUser } from './user';
+import { rTeam } from './team';
 
 async function addSchemas(fastify: FastifyInstance) {
-  logAndThrow(
-    await Promise.allSettled([
-      schemas.map((schema) => fastify.addSchema(schema)),
-    ]),
-    `Failed loading schemas`,
-  );
+  await fastify.addSchema(rUser);
+  await fastify.addSchema(rTeam);
 }
 
 export { addSchemas };

@@ -1,6 +1,6 @@
 import { Document, Schema, model } from 'mongoose';
 
-require(`./member`);
+import './member';
 
 interface iUser extends Document {
   username: string;

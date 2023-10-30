@@ -1,6 +1,4 @@
-import { ClientSession } from 'mongoose';
-
-const mongoose = require(`mongoose`);
+import mongoose, { ClientSession } from 'mongoose';
 
 class MongoSession {
   #session: ClientSession | undefined;
@@ -18,7 +16,6 @@ class MongoSession {
       readConcern: { level: `snapshot` },
       writeConcern: { w: `majority`, j: true },
     });
-    
   }
 
   async commit() {
@@ -26,7 +23,13 @@ class MongoSession {
       throw new Error(`No session.`);
     }
     await (this.#session as ClientSession).commitTransaction();
-    
+  }
+
+  async abort() {
+    if (!this.#session) {
+      throw new Error(`No session.`);
+    }
+    await (this.#session as ClientSession).abortTransaction();
   }
 
   async end() {
@@ -34,7 +37,6 @@ class MongoSession {
       throw new Error(`No session.`);
     }
     (this.#session as ClientSession).endSession();
-    
   }
 }
 

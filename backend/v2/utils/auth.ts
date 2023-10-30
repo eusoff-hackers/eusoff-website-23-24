@@ -1,15 +1,12 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { iUser } from '../models/user';
-
-const MODELS_PATH = `../models`;
-const { User } = require(`${MODELS_PATH}/user`);
-const { sendStatus } = require(`./req_handler`);
-const { reportError, logger } = require(`./logger`);
-const { MongoSession } = require(`./mongoSession`);
+import { iUser, User } from '../models/user';
+import { sendStatus } from './req_handler';
+import { reportError, logger } from './logger';
+import { MongoSession } from './mongoSession';
 
 declare module 'fastify' {
   interface Session {
-    user?: iUser;
+    user: iUser;
   }
 }
 
@@ -25,11 +22,12 @@ async function auth(req: FastifyRequest, res: FastifyReply) {
       const { user: userSession }: { user: iUser } = req.session as {
         user: iUser;
       };
-      const user = await User.findById(userSession._id).session(
-        session.session,
-      );
 
-      req.session.user = user;
+      const user = (await User.findById(userSession._id).session(
+        session.session,
+      ))!;
+
+      req.session.set(`user`, user);
       await req.session.save();
       logger.info(`Refreshed user: ${user._id}.`);
     } catch (error) {
@@ -48,7 +46,7 @@ async function auth(req: FastifyRequest, res: FastifyReply) {
 async function login(user: iUser, req: FastifyRequest) {
   try {
     await req.session.regenerate();
-    req.session.user = user;
+    req.session.set(`user`, user);
 
     await req.session.save();
   } catch (error) {

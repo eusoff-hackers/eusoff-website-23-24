@@ -1,22 +1,14 @@
+import winston from 'winston';
+import 'winston-mongodb';
+
 const { env } = process;
 const LOG_LEVEL: `production` | `warn` | `info` =
   env.NODE_ENV === 'production' ? 'warn' : 'info';
 
-const winston = require('winston');
-require('winston-mongodb');
-
 const { format, transports } = winston;
 
 const logFormat = format.printf(
-  ({
-    level,
-    message,
-    timestamp,
-  }: {
-    level: string;
-    message: string;
-    timestamp: string;
-  }) => `${timestamp} ${level}: ${message}`,
+  ({ level, message, timestamp }) => `${timestamp} ${level}: ${message}`,
 );
 
 const logger = winston.createLogger({
@@ -68,4 +60,4 @@ function reportError(error: unknown, template: string) {
   }
 }
 
-module.exports = { logger, logAndThrow, reportError };
+export { logger, logAndThrow, reportError };

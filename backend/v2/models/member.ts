@@ -1,7 +1,6 @@
 import { Document, Types, Schema, model } from 'mongoose';
-
-require(`./user`);
-require(`./team`);
+import './user';
+import './team';
 
 interface iMember extends Document {
   user: Types.ObjectId;

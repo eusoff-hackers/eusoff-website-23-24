@@ -18,7 +18,7 @@ module.exports = {
   rules: {
     'import/no-dynamic-require': 0,
     'no-underscore-dangle': ['error', { allow: ['_id'] }],
-    '@typescript-eslint/no-var-requires': 0,
+    // '@typescript-eslint/no-var-requires': 0,
     'import/prefer-default-export': 'off',
     'import/extensions': [
       'error',

@@ -1,6 +1,6 @@
-const mongoose = require(`mongoose`);
 const { env } = process;
-const { Member } = require(`../models/member`);
+import mongoose from 'mongoose';
+import { Member } from '../models/member';
 
 async function run() {
   await mongoose.connect(env.MONGO_URI);

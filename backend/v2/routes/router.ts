@@ -1,9 +1,7 @@
 import { FastifyInstance } from 'fastify';
-
-const UTILS_PATH = `../utils`;
-const { success } = require(`${UTILS_PATH}/req_handler`);
-const { addSchemas } = require(`../models/fastify-schemas`);
-const user = require(`./user`);
+import { success } from '../utils/req_handler';
+import { addSchemas } from '../models/fastify-schemas';
+import user from './user';
 
 export default async (fastify: FastifyInstance) => {
   await addSchemas(fastify);
@@ -12,5 +10,4 @@ export default async (fastify: FastifyInstance) => {
     success(res, `You have reached v2 backend!`);
   });
   fastify.register(user, { prefix: `/user` });
-  
 };

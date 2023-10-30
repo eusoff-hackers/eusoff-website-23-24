@@ -1,12 +1,9 @@
 import { FastifyRequest, FastifyReply, RouteOptions } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 
-const UTILS_PATH = `../../utils`;
-
-const { success, sendStatus, resBuilder } = require(
-  `${UTILS_PATH}/req_handler`,
-);
-const { reportError } = require(`${UTILS_PATH}/logger`);
+import { success, sendStatus, resBuilder } from '../../utils/req_handler';
+import { reportError } from '../../utils/logger';
+import { auth } from '../../utils/auth';
 
 const schema = {
   response: {
@@ -26,7 +23,7 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
     const { user } = req.session;
     return await success(res, { user });
   } catch (error) {
-    reportError(`Error user info handler`);
+    reportError(error, `Error user info handler`);
     return sendStatus(res, 500, `Internal Server Error.`);
   }
 }
@@ -40,6 +37,7 @@ const info: RouteOptions<
   method: `GET`,
   url: `/info`,
   schema,
+  preHandler: auth,
   handler,
 };
 

@@ -1,18 +1,12 @@
 import { FastifyRequest, FastifyReply, RouteOptions } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { FromSchema } from 'json-schema-to-ts';
-
-const UTILS_PATH = `../../utils`;
-const MODELS_PATH = `../../models`;
-
-const { resBuilder, success, sendStatus } = require(
-  `${UTILS_PATH}/req_handler`,
-);
-const { MongoSession } = require(`${UTILS_PATH}/mongoSession`);
-const { User } = require(`${MODELS_PATH}/user`);
-const { reportError } = require(`${UTILS_PATH}/logger`);
-const bcrypt = require(`bcryptjs`);
-const auth = require(`${UTILS_PATH}/auth`);
+import * as bcrypt from 'bcryptjs';
+import { resBuilder, success, sendStatus } from '../../utils/req_handler';
+import { MongoSession } from '../../utils/mongoSession';
+import { User } from '../../models/user';
+import { reportError } from '../../utils/logger';
+import * as auth from '../../utils/auth';
 
 const schema = {
   body: {
@@ -59,7 +53,7 @@ async function handler(
       if (!(await User.exists({ username }).session(session.session))) {
         return await sendStatus(res, 401, `Invalid credentials.`);
       }
-      const user = await User.findOne({ username }).session(session.session);
+      const user = (await User.findOne({ username }).session(session.session))!;
 
       if (!(await bcrypt.compare(password, user.password))) {
         return sendStatus(res, 401, `Invalid credentials.`);

@@ -1,6 +1,5 @@
 import { FastifyReply } from 'fastify';
-
-const { logger } = require(`./logger`);
+import { logger } from './logger';
 
 async function success<Type>(res: FastifyReply, data: Type) {
   await res.send({
@@ -8,7 +7,6 @@ async function success<Type>(res: FastifyReply, data: Type) {
     data,
   });
   logger.info(`Success response.`, { data });
-  
 }
 
 async function error<Type>(res: FastifyReply, data: Type) {
@@ -17,13 +15,11 @@ async function error<Type>(res: FastifyReply, data: Type) {
     data,
   });
   logger.error(`Error response.`, { data });
-  
 }
 
 async function sendStatus(res: FastifyReply, status: number, msg: string) {
   await res.status(status).send(msg);
   logger.info(`${status} status sent.`, { status, msg });
-  
 }
 
 function resBuilder<Type>(obj: Type) {

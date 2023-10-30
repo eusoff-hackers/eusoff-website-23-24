@@ -41,6 +41,7 @@
     "xkpasswd": "^1.0.5"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.5",
     "@types/node": "^20.8.9",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
