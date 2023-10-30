@@ -63,7 +63,7 @@ async function handler(
       await session.end();
     }
   } catch (error) {
-    reportError(error, `Password Reset handler session serror`);
+    reportError(error, `Password Reset handler session error`);
     return sendStatus(res, 500, `Internal Server Error.`);
   }
 }
