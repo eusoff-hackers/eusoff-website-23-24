@@ -10,7 +10,7 @@ import {
 } from '../../utils/req_handler';
 import { MongoSession } from '../../utils/mongoSession';
 import { User } from '../../models/user';
-import { reportError } from '../../utils/logger';
+import { reportError, logEvent } from '../../utils/logger';
 import * as auth from '../../utils/auth';
 
 const schema = {
@@ -65,6 +65,8 @@ async function handler(
       }
 
       await auth.login(user, req);
+
+      logEvent(`USER LOGIN`, user._id);
       return await success(res, { user });
     } catch (error) {
       reportError(error, `Error login handler`);

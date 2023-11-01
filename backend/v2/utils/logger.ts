@@ -1,5 +1,7 @@
 import winston from 'winston';
 import 'winston-mongodb';
+import { Types } from 'mongoose';
+import { EventLog } from '../models/eventLog';
 
 const { env } = process;
 const LOG_LEVEL: `production` | `warn` | `info` =
@@ -60,4 +62,34 @@ function reportError(error: unknown, template: string) {
   }
 }
 
-export { logger, logAndThrow, reportError };
+async function logEvent(action: string, data: string): Promise<void>;
+async function logEvent(
+  action: string,
+  data: string,
+  user: Types.ObjectId,
+): Promise<void>;
+async function logEvent(action: string, user: Types.ObjectId): Promise<void>;
+async function logEvent(
+  action: string,
+  second?: string | Types.ObjectId,
+  third?: Types.ObjectId,
+): Promise<void> {
+  try {
+    const data = typeof second === `string` ? second : undefined;
+    let user: Types.ObjectId | undefined;
+    if (second instanceof Types.ObjectId) user = second;
+    else if (third instanceof Types.ObjectId) user = third;
+
+    await EventLog.create({
+      action,
+      data,
+      user,
+    });
+    
+  } catch (error) {
+    reportError(error, `Event report error`);
+    
+  }
+}
+
+export { logger, logAndThrow, reportError, logEvent };
