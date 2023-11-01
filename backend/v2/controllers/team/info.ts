@@ -36,26 +36,26 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
       ).map((team) => team.team);
       return await success(res, { teams });
     } catch (error) {
-      reportError(error, `User teams handler error`);
+      reportError(error, `Team info handler error`);
       return sendStatus(res, 500, `Internal Server Error.`);
     }
   } catch (error) {
-    reportError(error, `User teams handler session error`);
+    reportError(error, `Team info handler session error`);
     return sendStatus(res, 500, `Internal Server Error.`);
   }
 }
 
-const teams: RouteOptions<
+const info: RouteOptions<
   Server,
   IncomingMessage,
   ServerResponse,
   Record<string, never>
 > = {
   method: `GET`,
-  url: `/teams`,
+  url: `/info`,
   schema,
   preHandler: auth,
   handler,
 };
 
-export { teams };
+export { info };
