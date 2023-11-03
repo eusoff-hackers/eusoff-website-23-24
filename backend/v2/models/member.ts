@@ -8,7 +8,7 @@ interface iMember extends Document {
 }
 
 const memberSchema = new Schema<iMember>({
-  user: { type: Schema.Types.ObjectId, required: true, ref: `User` },
+  user: { type: Schema.Types.ObjectId, required: true, ref: `User`, index: 1 },
   team: {
     type: Schema.Types.ObjectId,
     required: true,

@@ -8,6 +8,7 @@ interface iTeam extends Document {
 const rTeam = {
   $id: `team`,
   type: `object`,
+  required: [`name`, `shareable`],
   properties: {
     name: { type: `string` },
     shareable: { type: `boolean` },
