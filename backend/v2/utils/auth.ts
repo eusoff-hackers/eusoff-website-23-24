@@ -7,39 +7,32 @@ import { MongoSession } from './mongoSession';
 declare module 'fastify' {
   interface Session {
     user: iUser;
+    session: MongoSession;
   }
 }
 
 async function auth(req: FastifyRequest, res: FastifyReply) {
+  const session = req.session.get(`session`)!;
   try {
-    const session = new MongoSession();
-    await session.start();
-    try {
-      if (!req.session?.user) {
-        await sendStatus(res, 401, `Unauthorized.`);
-        return;
-      }
-      const { user: userSession }: { user: iUser } = req.session as {
-        user: iUser;
-      };
-
-      const user = (await User.findById(userSession._id).session(
-        session.session,
-      ))!;
-
-      req.session.set(`user`, user);
-      await req.session.save();
-      logger.info(`Refreshed user: ${user._id}.`);
-    } catch (error) {
-      reportError(error, `Auth error`);
-      await sendStatus(res, 500, `Internal Server Error.`);
+    if (!req.session?.user) {
+      await sendStatus(res, 401, `Unauthorized.`);
       return;
-    } finally {
-      await session.end();
     }
+    const { user: userSession }: { user: iUser } = req.session as {
+      user: iUser;
+    };
+
+    const user = (await User.findById(userSession._id).session(
+      session.session,
+    ))!;
+
+    req.session.set(`user`, user);
+    await req.session.save();
+    logger.info(`Refreshed user: ${user._id}.`);
   } catch (error) {
-    reportError(error, `Mongo session error`);
+    reportError(error, `Auth error`);
     await sendStatus(res, 500, `Internal Server Error.`);
+    
   }
 }
 

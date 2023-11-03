@@ -8,7 +8,6 @@ import {
   sendStatus,
   sendError,
 } from '../../utils/req_handler';
-import { MongoSession } from '../../utils/mongoSession';
 import { User } from '../../models/user';
 import { reportError, logEvent } from '../../utils/logger';
 import * as auth from '../../utils/auth';
@@ -47,36 +46,30 @@ async function handler(
   req: FastifyRequest<{ Body: iBody }>,
   res: FastifyReply,
 ) {
+  const session = req.session.get(`session`)!;
   try {
-    const session = new MongoSession();
-    await session.start();
-    try {
-      const {
-        credentials: { username, password },
-      } = req.body;
+    const {
+      credentials: { username, password },
+    } = req.body;
 
-      if (!(await User.exists({ username }).session(session.session))) {
-        return await sendStatus(res, 401, `Invalid credentials.`);
-      }
-      const user = (await User.findOne({ username }).session(session.session))!;
-
-      if (!(await bcrypt.compare(password, user.password))) {
-        return sendStatus(res, 401, `Invalid credentials.`);
-      }
-
-      await auth.login(user, req);
-
-      logEvent(`USER LOGIN`, user._id);
-      return await success(res, { user });
-    } catch (error) {
-      reportError(error, `Error login handler`);
-      return sendError(res);
-    } finally {
-      await session.end();
+    if (!(await User.exists({ username }).session(session.session))) {
+      return await sendStatus(res, 401, `Invalid credentials.`);
     }
+    const user = (await User.findOne({ username }).session(session.session))!;
+
+    if (!(await bcrypt.compare(password, user.password))) {
+      return sendStatus(res, 401, `Invalid credentials.`);
+    }
+
+    await auth.login(user, req);
+
+    logEvent(`USER LOGIN`, user._id);
+    return await success(res, { user });
   } catch (error) {
-    reportError(error, `Mongo Session error`);
+    reportError(error, `Error login handler`);
     return sendError(res);
+  } finally {
+    await session.end();
   }
 }
 

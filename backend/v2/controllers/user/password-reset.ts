@@ -3,7 +3,6 @@ import { IncomingMessage, Server, ServerResponse } from 'http';
 import { FromSchema } from 'json-schema-to-ts';
 import bcrypt from 'bcryptjs';
 import { sendError, sendStatus } from '../../utils/req_handler';
-import { MongoSession } from '../../utils/mongoSession';
 import { User } from '../../models/user';
 import { reportError } from '../../utils/logger';
 import { auth } from '../../utils/auth';
@@ -31,40 +30,36 @@ async function handler(
   req: FastifyRequest<{ Body: iBody }>,
   res: FastifyReply,
 ) {
+  const session = req.session.get(`session`)!;
   try {
-    const session = new MongoSession();
-    await session.start();
+    const {
+      credentials: { password },
+    } = req.body;
+
+    const user = req.session.get(`user`)!;
+
+    await User.findOneAndUpdate(
+      { _id: user._id },
+      { password: await bcrypt.hash(password, 10) },
+    ).session(session.session);
+
     try {
-      const {
-        credentials: { password },
-      } = req.body;
-      const { user: unsafeUser } = req.session;
-      await User.findOneAndUpdate(
-        { _id: unsafeUser._id },
-        { password: await bcrypt.hash(password, 10) },
-      ).session(session.session);
-
-      try {
-        await session.commit();
-      } catch (error) {
-        await session.abort();
-        return await sendStatus(
-          res,
-          429,
-          `Please wait for a while before making another request.`,
-        );
-      }
-
-      return await sendStatus(res, 200, `Saved!`);
+      await session.commit();
     } catch (error) {
-      reportError(error, `Password Reset handler error.`);
-      return sendError(res);
-    } finally {
-      await session.end();
+      await session.abort();
+      return await sendStatus(
+        res,
+        429,
+        `Please wait for a while before making another request.`,
+      );
     }
+
+    return await sendStatus(res, 200, `Saved!`);
   } catch (error) {
-    reportError(error, `Password Reset handler session error`);
+    reportError(error, `Password Reset handler error.`);
     return sendError(res);
+  } finally {
+    await session.end();
   }
 }
 

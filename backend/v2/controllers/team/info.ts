@@ -1,7 +1,6 @@
 import { FastifyRequest, FastifyReply, RouteOptions } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
-import { sendStatus, resBuilder, success } from '../../utils/req_handler';
-import { MongoSession } from '../../utils/mongoSession';
+import { sendError, resBuilder, success } from '../../utils/req_handler';
 import { Member } from '../../models/member';
 import { reportError } from '../../utils/logger';
 import { auth } from '../../utils/auth';
@@ -23,25 +22,22 @@ const schema = {
 } as const;
 
 async function handler(req: FastifyRequest, res: FastifyReply) {
+  const session = req.session.get(`session`)!;
   try {
-    const session = new MongoSession();
-    await session.start();
-    try {
-      const { user } = req.session;
-      const teams = (
-        await Member.find({ user: user._id })
-          .lean()
-          .populate(`team`)
-          .session(session.session)
-      ).map((team) => team.team);
-      return await success(res, { teams });
-    } catch (error) {
-      reportError(error, `Team info handler error`);
-      return sendStatus(res, 500, `Internal Server Error.`);
-    }
+    const user = req.session.get(`user`)!;
+
+    const teams = (
+      await Member.find({ user: user._id })
+        .lean()
+        .populate(`team`)
+        .session(session.session)
+    ).map((team) => team.team);
+    return await success(res, { teams });
   } catch (error) {
-    reportError(error, `Team info handler session error`);
-    return sendStatus(res, 500, `Internal Server Error.`);
+    reportError(error, `Team info handler error`);
+    return sendError(res);
+  } finally {
+    session.end();
   }
 }
 

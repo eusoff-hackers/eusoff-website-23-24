@@ -20,11 +20,13 @@ const schema = {
 
 async function handler(req: FastifyRequest, res: FastifyReply) {
   try {
-    const { user } = req.session;
+    const user = req.session.get(`user`);
     return await success(res, { user });
   } catch (error) {
     reportError(error, `Error user info handler`);
     return sendError(res);
+  } finally {
+    req.session.get(`session`)?.end();
   }
 }
 

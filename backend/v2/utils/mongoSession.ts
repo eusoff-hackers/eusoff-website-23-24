@@ -1,4 +1,6 @@
+import { FastifyInstance, FastifyRequest } from 'fastify';
 import mongoose, { ClientSession } from 'mongoose';
+import { logger } from "./logger";
 
 class MongoSession {
   #session: ClientSession | undefined;
@@ -33,11 +35,25 @@ class MongoSession {
   }
 
   async end() {
-    if (!this.#session) {
-      throw new Error(`No session.`);
+    try {
+      if (!this.#session) {
+        throw new Error(`No session.`);
+      }
+      (this.#session as ClientSession).endSession();
+    } catch (error) {
+      logger.error(`Mongo end session error.`);
     }
-    (this.#session as ClientSession).endSession();
   }
 }
 
-export { MongoSession };
+async function addSession(fastify: FastifyInstance) {
+  fastify.addHook(`preHandler`, async (req: FastifyRequest) => {
+    const session = new MongoSession();
+    await session.start();
+    req.session.set(`session`, session);
+    return req.session.save();
+  });
+  
+}
+
+export { MongoSession, addSession };
