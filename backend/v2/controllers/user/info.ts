@@ -26,7 +26,7 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
     reportError(error, `Error user info handler`);
     return sendError(res);
   } finally {
-    req.session.get(`session`)?.end();
+    await req.session.get(`session`)?.end();
   }
 }
 

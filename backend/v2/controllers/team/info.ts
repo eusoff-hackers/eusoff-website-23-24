@@ -37,7 +37,7 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
     reportError(error, `Team info handler error`);
     return sendError(res);
   } finally {
-    session.end();
+    await session.end();
   }
 }
 

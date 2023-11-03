@@ -44,7 +44,7 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
     reportError(error, `Bid Info handler error`);
     return sendError(res);
   } finally {
-    session.end();
+    await session.end();
   }
 }
 
