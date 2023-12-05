@@ -37,7 +37,7 @@ Used to login to an account.
 - **data**? `(object)` &mdash; If successful, the requested data:
   - **user** `(object)` &mdash; The account details:
     - **username** `(string)` &mdash; The user's username.
-    - **bids** `(Array)` &mdash; The user's current bids.
+    - **bids** `(array)` &mdash; The user's current bids.
       - TBC
     - Other functionalities TBC
 

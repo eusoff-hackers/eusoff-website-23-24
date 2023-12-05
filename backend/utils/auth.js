@@ -1,12 +1,17 @@
 const session = require(`./session`);
 const { logger } = require(`./logger`);
+const { sendStatus } = require(`./req_handler`);
+const { User } = require(`../models/user`);
 
-function auth(req, res, next) {
-  if (!req.session) return next();
-  const { user } = req.session;
+async function auth(req, res) {
+  if (!req.session || !req.session.user) {
+    return sendStatus(res, 401);
+  }
+  const { user: userSession } = req.session;
+  const user = await User.findById(userSession._id);
 
-  req.user = user;
-  return next();
+  req.session.user = user;
+  return session.save(req);
 }
 
 async function login(user, req) {
@@ -22,4 +27,14 @@ async function login(user, req) {
   }
 }
 
-module.exports = { login, auth };
+async function logout(req) {
+  try {
+    await session.regenerate(req);
+    return await session.save(req);
+  } catch (error) {
+    logger.error(`Failed regenerating user session: ${error.message}`);
+    throw new Error(`Failed to regenerate session.`);
+  }
+}
+
+module.exports = { login, auth, logout };
