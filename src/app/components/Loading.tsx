@@ -1,10 +1,9 @@
 'use client'
 
 import React from 'react'
-import { useRouter } from 'next/navigation'
 import FakeNavBar from './FakeNavBar'
 
-
+// Loading Page
 export default function Loading() {
   return (
   <main className="flex flex-col md:flex-row">

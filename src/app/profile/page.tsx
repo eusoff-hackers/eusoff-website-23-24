@@ -1,7 +1,5 @@
 "use client"; // This is a client component 👈🏽
 
-import Link from 'next/link'
-
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { removeUser, selectUser, User } from '../redux/Resources/userSlice';
@@ -39,26 +37,23 @@ const ProfilePage = () => {
     }
   }, [user, route]);
 
-
-  const logout = () => {
-    dispatch(removeUser());
-    route.push('/');
-  }
-
-
   return (
     !isClient || user == null ? <Loading /> : 
     <div className="bg-gradient-to-tl from-slate-200 to-slate-300 min-h-screen w-full flex flex-col lg:flex-row">
       { isNav && <NavBar/> }
       <main className="h-fit w-full">
         
+        {/*Top Banner*/}
         <div className="bg-gradient-to-r from-cyan-500 to-blue-500 text-4xl text-zinc-950
                         font-mono m-0 p-2 font-bold uppercase hover:shadow-2xl text-center">
           Profile
         </div>
 
+        {/*Main Content*/}
         <div className="bg-slate-200 mt-10 w-5/6 shadow-2xl text-3xl font-mono rounded-lg divide-y-5
                         m-auto grid grid-flow-row md:grid-flow-col gap-0 md:items-center py-10 px-5 mb-3">
+
+          {/*Placeholder image and log in text*/}
           <div className=" bg-slate-200 text-center">
             <img className="border-dashed w-48 h-48 rounded-full border-4 border-indigo-950 m-auto shadow-2xl shadow-sky-200" 
             src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
@@ -68,7 +63,7 @@ const ProfilePage = () => {
             </h1>
           </div>
 
-          
+          {/*Table displaying user data*/}
           <div className="w-full border-2 overflow-hidden border-indigo-950 rounded-lg">
             <table className="w-full shadow divide-y divide-gray-400">
               <tbody className="divide-y divide-gray-400">
@@ -108,7 +103,6 @@ const ProfilePage = () => {
               </tbody>
             </table>
           </div>
-
         </div>
       </main>
     </div>
