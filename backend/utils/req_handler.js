@@ -5,7 +5,7 @@ async function success(res, data) {
     success: true,
     data,
   });
-  logger.info(`Success response.`, { res, data });
+  logger.info(`Success response.`, { data });
 }
 
 async function error(res, data) {
@@ -13,12 +13,12 @@ async function error(res, data) {
     success: false,
     data,
   });
-  logger.info(`Error response.`, { res, data });
+  logger.info(`Error response.`, { data });
 }
 
 async function sendStatus(res, status, msg) {
   await res.status(status).send(msg);
-  logger.info(`${status} status sent.`, { res, status, msg });
+  logger.info(`${status} status sent.`, { status, msg });
 }
 
 function resBuilder(obj) {
