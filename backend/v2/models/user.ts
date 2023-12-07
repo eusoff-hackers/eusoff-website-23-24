@@ -9,6 +9,7 @@ interface iUser extends Document {
   year: number;
   gender: `Male` | `Female`;
   email: string;
+  room: string;
 }
 
 const rUser = {
@@ -20,6 +21,7 @@ const rUser = {
     role: { type: `string`, enum: [`USER`, `ADMIN`] },
     year: { type: `number`, minimum: 1, maximum: 5 },
     gender: { type: `string`, enum: [`Male`, `Female`] },
+    room: { type: `string` },
   },
   additionalProperties: false,
 };
@@ -37,6 +39,7 @@ const userSchema = new Schema<iUser>(
     year: { type: Number, min: 1, max: 5, required: true },
     gender: { type: String, enum: [`Male`, `Female`], required: true },
     email: { type: String },
+    room: { type: String, required: true },
   },
   { toObject: { virtuals: true } },
 );

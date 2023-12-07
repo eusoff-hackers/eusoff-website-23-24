@@ -12,12 +12,13 @@ interface iBiddingInfo extends Document {
 const rBiddingInfo = {
   $id: `biddingInfo`,
   type: `object`,
-  required: [`round`, `points`, `allocated`],
+  required: [`round`, `points`],
   properties: {
     round: { type: `number` },
     points: { type: `number` },
     allocated: { type: `boolean` },
     jersey: { $ref: `jersey` },
+    user: { $ref: `user` },
   },
   additionalProperties: false,
 };

@@ -8,6 +8,7 @@ declare global {
       BACKEND_PORT: number;
       FRONTEND_URL: string;
       REDIS_URL: string | undefined;
+      CACHE_TIME: number;
     }
   }
 }

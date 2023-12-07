@@ -27,7 +27,7 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
 
     return await success(res, { jerseys });
   } catch (error) {
-    reportError(error, `Jersey Info handler error`);
+    reportError(error, `Jersey Eligible handler error`);
     return sendError(res);
   } finally {
     await session.end();
