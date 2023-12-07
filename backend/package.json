@@ -7,6 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "env-cmd -f ./.env.dev npx nodemon",
     "built": "env-cmd -f ./.env.dev node build/App.js",
+    "build": "npx tsc",
+    "prod": "env-cmd -f ./.env node build/App.js",
     "prepare": "cd .. && husky install backend/.husky",
     "script": "env-cmd -f ./.env.dev node "
   },
