@@ -17,6 +17,7 @@ const rBiddingInfo = {
     round: { type: `number` },
     points: { type: `number` },
     allocated: { type: `boolean` },
+    jersey: { $ref: `jersey` },
   },
   additionalProperties: false,
 };
