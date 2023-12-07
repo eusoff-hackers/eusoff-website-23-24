@@ -30,6 +30,7 @@
     "csv": "^6.3.5",
     "csv-parser": "^3.0.0",
     "env-cmd": "^10.1.0",
+    "express-session": "^1.17.3",
     "fastify": "^4.23.2",
     "ioredis": "^5.3.2",
     "json-schema-to-ts": "^2.9.2",
