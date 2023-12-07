@@ -1,5 +1,5 @@
 import { BiddingInfo, iBiddingInfo } from '../models/biddingInfo';
-import { iJersey } from '../models/jersey';
+import { iJersey, Jersey } from '../models/jersey';
 import { Member } from '../models/member';
 import { JerseyBan } from '../models/jerseyBan';
 import { Server, iServer } from '../models/server';
@@ -41,6 +41,15 @@ async function checkUser(user: iUser, session: MongoSession): Promise<boolean> {
   }
 }
 
+async function getTeams(user: iUser, session: MongoSession) {
+  return (
+    await Member.find({ user: user._id })
+      .lean()
+      .populate(`team`)
+      .session(session.session)
+  ).map((team) => team.team._id);
+}
+
 async function isEligible(
   user: iUser,
   jerseys: iJersey[],
@@ -49,12 +58,7 @@ async function isEligible(
   try {
     if ((await checkUser(user, session)) === false) return false;
 
-    const teams = (
-      await Member.find({ user: user._id })
-        .lean()
-        .populate(`team`)
-        .session(session.session)
-    ).map((team) => team.team._id);
+    const teams = await getTeams(user, session);
 
     if (jerseys.some((j) => j.quota[user.gender] === 0)) {
       return false;
@@ -67,13 +71,33 @@ async function isEligible(
       }).session(session.session)
     ) {
       return false;
-    } 
-      return true;
-    
+    }
+    return true;
   } catch (error) {
     reportError(error, `isEligible error`);
     throw new Error(`isEligible error`);
   }
 }
 
-export { checkUser, isEligible };
+async function getEligible(
+  user: iUser,
+  session: MongoSession,
+): Promise<number[]> {
+  if ((await checkUser(user, session)) === false) {
+    return [];
+  }
+
+  const teams = await getTeams(user, session);
+
+  const banned = (
+    await JerseyBan.find({ team: { $in: teams } }).session(session.session)
+  ).map((ban) => ban.jersey);
+
+  const eligibleJerseys = (await Jersey.find({ _id: { $nin: banned } }))
+    .filter((j) => j.quota[user.gender] !== 0)
+    .map((jersey) => jersey.number);
+
+  return eligibleJerseys;
+}
+
+export { checkUser, isEligible, getEligible };

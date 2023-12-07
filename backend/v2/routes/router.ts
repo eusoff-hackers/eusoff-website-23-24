@@ -5,6 +5,7 @@ import { addSession } from '../utils/mongoSession';
 import user from './user';
 import team from './team';
 import bid from './bid';
+import jersey from './jersey';
 
 export default async (fastify: FastifyInstance) => {
   await addSchemas(fastify);
@@ -16,4 +17,5 @@ export default async (fastify: FastifyInstance) => {
   fastify.register(user, { prefix: `/user` });
   fastify.register(team, { prefix: `/team` });
   fastify.register(bid, { prefix: `/bid` });
+  fastify.register(jersey, { prefix: `/jersey` });
 };
