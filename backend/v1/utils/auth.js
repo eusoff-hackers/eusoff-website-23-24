@@ -8,7 +8,9 @@ async function auth(req, res) {
     return sendStatus(res, 401);
   }
   const { user: userSession } = req.session;
-  const user = await User.findById(userSession._id);
+  const user = await User.findById(userSession._id)
+    .populate(`bids`)
+    .populate(`teams`);
 
   req.session.user = user;
   return session.save(req);

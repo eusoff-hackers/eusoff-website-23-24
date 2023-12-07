@@ -2,10 +2,9 @@
 
 import React from 'react'
 import Link from "next/link"
-import { useDispatch } from 'react-redux'
-import { removeUser } from '../redux/Resources/userSlice'
-import { useRouter } from 'next/navigation'
 
+/* Fake Navigation Bar to fix flickering issue. Copy of the real nav bar with
+its functionalities removed. */
 export default function NavBar() {
   return (
     <div>
