@@ -12,7 +12,8 @@ const rBid = {
   type: `object`,
   required: [`jersey`],
   properties: {
-    jersey: { type: `number` },
+    jersey: { $ref: `jersey` },
+    priority: { type: `number` },
   },
   additionalProperties: false,
 };

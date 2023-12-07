@@ -2,7 +2,7 @@ import { FastifyReply } from 'fastify';
 import { logger } from './logger';
 
 async function success<Type>(res: FastifyReply, data: Type) {
-  logger.info(`Success response.`, { data });
+  logger.info(`Success response.`);
   return res.send({
     success: true,
     data,

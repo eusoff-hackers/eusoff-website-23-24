@@ -11,7 +11,7 @@ interface iJersey extends Document {
 const rJersey = {
   $id: `jersey`,
   type: `object`,
-  required: [`number`, `quota`],
+  required: [`number`],
   properties: {
     number: { type: `number` },
     quota: {

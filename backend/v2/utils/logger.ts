@@ -2,6 +2,7 @@ import winston from 'winston';
 import 'winston-mongodb';
 import { Types } from 'mongoose';
 import { EventLog } from '../models/eventLog';
+import { MongoSession } from './mongoSession';
 
 const { env } = process;
 const LOG_LEVEL: `production` | `warn` | `info` =
@@ -62,15 +63,25 @@ function reportError(error: unknown, template: string) {
   }
 }
 
-async function logEvent(action: string, data: string): Promise<void>;
 async function logEvent(
   action: string,
+  session: MongoSession,
+  data: string,
+): Promise<void>;
+async function logEvent(
+  action: string,
+  session: MongoSession,
   data: string,
   user: Types.ObjectId,
 ): Promise<void>;
-async function logEvent(action: string, user: Types.ObjectId): Promise<void>;
 async function logEvent(
   action: string,
+  session: MongoSession,
+  user: Types.ObjectId,
+): Promise<void>;
+async function logEvent(
+  action: string,
+  session: MongoSession,
   second?: string | Types.ObjectId,
   third?: Types.ObjectId,
 ): Promise<void> {
@@ -80,15 +91,18 @@ async function logEvent(
     if (second instanceof Types.ObjectId) user = second;
     else if (third instanceof Types.ObjectId) user = third;
 
-    await EventLog.create({
-      action,
-      data,
-      user,
-    });
-    
+    await EventLog.create(
+      [
+        {
+          action,
+          data,
+          user,
+        },
+      ],
+      { session: session.session },
+    );
   } catch (error) {
     reportError(error, `Event report error`);
-    
   }
 }
 

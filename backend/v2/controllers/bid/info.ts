@@ -34,7 +34,9 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
     const [info, bids] = logAndThrow(
       await Promise.allSettled([
         BiddingInfo.findOne({ user: user._id }).session(session.session),
-        Bid.find({ user: user._id }).session(session.session),
+        Bid.find({ user: user._id })
+          .populate(`jersey`)
+          .session(session.session),
       ]),
       `Bid info handler DB search`,
     );

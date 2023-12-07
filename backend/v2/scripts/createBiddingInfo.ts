@@ -6,7 +6,7 @@ async function run() {
   await mongoose.connect(env.MONGO_URI);
 
   await BiddingInfo.create({
-    user: `653b7a975c1eaadf5dc55c9e`,
+    user: `65103b7c55c6cc52dfa3b57c`,
     round: 1,
     points: 1,
     allocated: false,

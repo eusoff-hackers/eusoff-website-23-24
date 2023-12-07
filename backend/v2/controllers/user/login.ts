@@ -63,7 +63,14 @@ async function handler(
 
     await auth.login(user, req);
 
-    logEvent(`USER LOGIN`, user._id);
+    await logEvent(`USER LOGIN`, session, user._id);
+
+    try {
+      await session.commit();
+    } catch (error) {
+      reportError(error, `Login Transaction commit error`);
+      await session.abort();
+    }
     return await success(res, { user });
   } catch (error) {
     reportError(error, `Error login handler`);

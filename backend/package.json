@@ -34,7 +34,7 @@
     "ioredis": "^5.3.2",
     "json-schema-to-ts": "^2.9.2",
     "mongodb-snapshot": "^1.4.1",
-    "mongoose": "^7.5.2",
+    "mongoose": "^7.6.6",
     "nodemailer": "^6.9.6",
     "winston": "^3.10.0",
     "winston-mongodb": "^5.1.1",
