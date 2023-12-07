@@ -5,8 +5,12 @@
   "main": "App.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "env-cmd -f ./.env.dev node App.js",
-    "prepare": "cd .. && husky install backend/.husky"
+    "dev": "env-cmd -f ./.env.dev npx nodemon",
+    "built": "env-cmd -f ./.env.dev node build/App.js",
+    "build": "npx tsc",
+    "prod": "env-cmd -f ./.env node build/App.js",
+    "prepare": "cd .. && husky install backend/.husky",
+    "script": "env-cmd -f ./.env.dev node "
   },
   "author": "Eusoff Hackers",
   "license": "ISC",
@@ -16,10 +20,11 @@
     "@fastify/cors": "^8.4.0",
     "@fastify/redis": "^6.1.1",
     "@fastify/session": "^10.5.0",
-    "bcrypt": "^5.1.1",
+    "@fastify/type-provider-json-schema-to-ts": "^2.2.2",
     "abstract-cache": "^1.0.1",
     "abstract-cache-mongo": "^2.0.2",
     "abstract-cache-redis": "^2.0.0",
+    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "connect-mongo": "^5.0.0",
     "connect-redis": "^7.1.0",
@@ -30,21 +35,30 @@
     "express-session": "^1.17.3",
     "fastify": "^4.23.2",
     "ioredis": "^5.3.2",
+    "json-schema-to-ts": "^2.9.2",
+    "mongodb": "^6.3.0",
     "mongodb-snapshot": "^1.4.1",
-    "mongoose": "^7.5.2",
+    "mongoose": "^7.6.6",
     "nodemailer": "^6.9.6",
     "winston": "^3.10.0",
     "winston-mongodb": "^5.1.1",
     "xkpasswd": "^1.0.5"
   },
   "devDependencies": {
-    "eslint": "^8.50.0",
+    "@types/bcryptjs": "^2.4.5",
+    "@types/node": "^20.8.9",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
+    "eslint": "^8.52.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "9.0.0",
     "husky": "^8.0.0",
     "lint-staged": "^14.0.1",
-    "prettier": "3.0.3"
+    "nodemon": "^3.0.1",
+    "prettier": "3.0.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
