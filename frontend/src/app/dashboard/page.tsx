@@ -97,14 +97,14 @@ const Dashboard: React.FC = () => {
       if (response.data.success) {
         const newUser : User = {
           username: response.data.data.user.username,
-          teams: response.data.data.user.teams,
-          bids: response.data.data.user.bids,
-          isEligible: response.data.data.user.isEligible,
-          role: response.data.data.user.role,
-          year: response.data.data.user.year,
-          points: response.data.data.user.points,
-          allocatedNumber: response.data.data.user.allocatedNumber,
-          round: response.data.data.user.bidding_round
+          // teams: response.data.data.user.teams,
+          // bids: response.data.data.user.bids,
+          // isEligible: response.data.data.user.isEligible,
+          // role: response.data.data.user.role,
+          // year: response.data.data.user.year,
+          // points: response.data.data.user.points,
+          // allocatedNumber: response.data.data.user.allocatedNumber,
+          // round: response.data.data.user.bidding_round
         }
         console.log("updated user")
         dispatch(setUser(newUser));
@@ -136,8 +136,8 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     setIsNav(true);
     setIsClient(true); // indicate that client has been rendered
-    getEligibleBids(); // get all eligible bids when page renders
-    setPreviousBids(); // set bids in bidding table when page renders
+    // getEligibleBids(); // get all eligible bids when page renders
+    // setPreviousBids(); // set bids in bidding table when page renders
     updateUser(); // Makes a get request each time page is refreshed to check if cookie still exist
     console.log("Saved user: " + JSON.stringify(user));
   }, [])
@@ -168,8 +168,8 @@ const Dashboard: React.FC = () => {
       <div className="flex-1 p-5 light:bg-white-800 text-black">
         <div className="border-b-2 pb-2">
           <h2 className="text-2xl font-bold mb-2">Hello, {user.username}</h2>
-            <div className='space-y-2'>
-              <div className='bg-gray-200 rounded-lg px-2 py-1'>
+            {/* <div className='space-y-2'>
+              {/* <div className='bg-gray-200 rounded-lg px-2 py-1'>
                 <p className="font-bold">Your current CCAs:</p>
                 <div> 
                   {user.teams.map((team, ind) => 
@@ -180,8 +180,8 @@ const Dashboard: React.FC = () => {
                   )}
             
                 </div>
-              </div>
-              <div className="flex flex-row bg-gray-200 rounded-lg px-2 py-1 items-center justify-between">
+              </div> */}
+              {/* <div className="flex flex-row bg-gray-200 rounded-lg px-2 py-1 items-center justify-between">
                 <p className="font-bold">Your current bids:&nbsp;</p>
                 <div className='flex flex-row'>
                   {user.bids.map((bid, ind) => {
@@ -198,13 +198,13 @@ const Dashboard: React.FC = () => {
                 <p className='font-bold'>Bidding Status:</p>
                 {user.isEligible ? <p>You Are Allowed To Bid</p> : <p>Your round is {user.round}. Please wait for round</p>}
               </div>
-            </div>
+            </div> } */}
         </div>
-        { biddings.length>0 ? <BiddingTable biddings={biddings} setBiddings={setBiddings} 
+        {/* { biddings.length>0 ? <BiddingTable biddings={biddings} setBiddings={setBiddings} 
           updateUser={updateUser} 
           setToast={setToast}
-          handleOpen={handleOpen}/> : <div>Click on a number on the table to start a bid</div>}
-        <div>
+          handleOpen={handleOpen}/> : <div>Click on a number on the table to start a bid</div>} */}
+        {/* <div>
           {toast.message == "" 
             ? <></> 
             : <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
@@ -213,9 +213,9 @@ const Dashboard: React.FC = () => {
                 </Alert>
               </Snackbar>
           }
-        </div>
+        </div> */}
         <Legend/>
-        <div className="grid  pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
+        {/* <div className="grid  pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
           {Array.from({ length: 100 }, (_, index) => ( allowedBids.includes(index) ? 
               (<div
                 key={index}
@@ -233,17 +233,17 @@ const Dashboard: React.FC = () => {
               >
                       {index}
               </div>)
-        ))}
+        ))} */}
 
-         {isModalOpen && selectedItemIndex !== null && (
+         {/* {isModalOpen && selectedItemIndex !== null && (
         <Modal closeModal={closeModal} index={selectedItemIndex} points={user.points} biddings={biddings} setBiddings={setBiddings} 
           setToast={setToast}
           handleOpen={handleOpen}
           currentList = {user.teams}
           />
-        )}
+        )} */}
 
-        </div>
+        {/* </div> */}
       </div>
     </div>)
   )
