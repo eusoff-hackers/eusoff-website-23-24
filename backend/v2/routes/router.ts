@@ -6,6 +6,7 @@ import user from './user';
 import team from './team';
 import bid from './bid';
 import jersey from './jersey';
+import sso from './sso';
 
 export default async (fastify: FastifyInstance) => {
   await addSchemas(fastify);
@@ -18,4 +19,5 @@ export default async (fastify: FastifyInstance) => {
   fastify.register(team, { prefix: `/team` });
   fastify.register(bid, { prefix: `/bid` });
   fastify.register(jersey, { prefix: `/jersey` });
+  fastify.register(sso, { prefix: `/sso` });
 };
