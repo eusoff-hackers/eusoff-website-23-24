@@ -2,7 +2,7 @@ import { Types, Document, Schema, model } from 'mongoose';
 import './jersey';
 
 interface iBiddingInfo extends Document {
-  user: Types.ObjectId;
+  user?: Types.ObjectId;
   round: number;
   points: number;
   allocated: boolean;

@@ -31,17 +31,16 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
   try {
     const user = req.session.get(`user`)!;
 
-    const [info, bids] = logAndThrow(
-      await Promise.allSettled([
-        BiddingInfo.findOne({ user: user._id })
-          .populate(`jersey`)
-          .session(session.session),
-        Bid.find({ user: user._id })
-          .populate(`jersey`)
-          .session(session.session),
-      ]),
-      `Bid info handler DB search`,
-    );
+    const p = await Promise.allSettled([
+      BiddingInfo.findOne({ user: user._id })
+        .populate(`jersey`)
+        .session(session.session),
+      Bid.find({ user: user._id }).populate(`jersey`).session(session.session),
+    ]);
+    const info = logAndThrow([p[0]], `Bid info retrieval error`)[0];
+    const bids = logAndThrow([p[1]], `Bids parse error`)[0];
+
+    if (info) info.user = undefined;
 
     return await success(res, { info, bids });
   } catch (error) {
