@@ -97,14 +97,14 @@ const Dashboard: React.FC = () => {
       if (response.data.success) {
         const newUser : User = {
           username: response.data.data.user.username,
-          // teams: response.data.data.user.teams,
-          // bids: response.data.data.user.bids,
-          // isEligible: response.data.data.user.isEligible,
-          // role: response.data.data.user.role,
-          // year: response.data.data.user.year,
-          // points: response.data.data.user.points,
-          // allocatedNumber: response.data.data.user.allocatedNumber,
-          // round: response.data.data.user.bidding_round
+          teams: [],
+          bids: [],
+          isEligible: true,
+          role: "dummy",
+          year: 0,
+          points: 0,
+          allocatedNumber: 0,
+          round: 0,
         }
         console.log("updated user")
         dispatch(setUser(newUser));
