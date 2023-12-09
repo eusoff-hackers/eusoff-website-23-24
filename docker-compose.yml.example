@@ -45,10 +45,9 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - mongodb:/data/db
+      - mongodb:/bitnami/mongodb
       - ./mongod.conf:/etc/mongo/mongod.conf
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-      - ./keyfile:/keyfile
     networks:
       - mongodb_network
 
