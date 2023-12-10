@@ -9,27 +9,27 @@ import { MongoSession } from './mongoSession';
 
 async function checkUser(user: iUser, session: MongoSession): Promise<boolean> {
   try {
-    const [isOpen, round, bidInfo]: [
+    const [bidOpen, round, bidInfo]: [
       iServer | null,
       iServer | null,
       iBiddingInfo | null,
     ] = logAndThrow<iServer | iBiddingInfo | null>(
       await Promise.allSettled([
-        Server.findOne({ key: `isOpen` }).session(session.session),
+        Server.findOne({ key: `bidOpen` }).session(session.session),
         Server.findOne({ key: `biddingRound` }).session(session.session),
         BiddingInfo.findOne({ user: user._id }).session(session.session),
       ]),
       `Getting server config error`,
     ) as [iServer | null, iServer | null, iBiddingInfo | null];
 
-    if (!isOpen || !round || !bidInfo) {
+    if (!bidOpen || !round || !bidInfo) {
       logger.error(`Check user find results are null | undefined`);
       throw new Error(`Some datas are null | undefined`);
     }
 
     if (
       bidInfo.round > (round.value as number) ||
-      (isOpen.value as boolean) === false ||
+      (bidOpen.value as boolean) === false ||
       bidInfo.allocated
     )
       return false;

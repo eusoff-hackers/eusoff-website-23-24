@@ -24,7 +24,13 @@ const rBiddingInfo = {
 };
 
 const biddingInfoSchema = new Schema<iBiddingInfo>({
-  user: { type: Schema.Types.ObjectId, required: true, ref: `User`, index: 1 },
+  user: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    unique: true,
+    ref: `User`,
+    index: 1,
+  },
   round: { type: Number, required: true },
   points: { type: Number, required: true },
   allocated: { type: Boolean, required: true, default: false },

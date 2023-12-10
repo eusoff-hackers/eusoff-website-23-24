@@ -30,21 +30,26 @@ services:
       - frontend
 
   mongodb:
-    image: "mongodb/mongodb-community-server:6.0-ubi8"
+    # image: "mongodb/mongodb-community-server:6.0-ubi8"
+    image: "bitnami/mongodb:5.0.23"
     restart: unless-stopped
     environment:
-      - MONGODB_INITDB_ROOT_USERNAME=eusoff
-      - MONGODB_INITDB_ROOT_PASSWORD=smallcoock
-      - MONGODB_INITDB_DATABASE=db
+      - MONGODB_USERNAME=eusoff
+      - MONGODB_PASSWORD=smallcoock
+      - MONGODB_DATABASE=db
+      - MONGODB_ROOT_PASSWORD=smallcoock
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_REPLICA_SET_NAME=rs0
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+      - MONGODB_ADVERTISED_HOSTNAME=eusoff.college
     ports:
       - 27017:27017
     volumes:
-      - mongodb:/data/db
+      - mongodb:/bitnami/mongodb
       - ./mongod.conf:/etc/mongo/mongod.conf
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
       - mongodb_network
-    command: --config /etc/mongo/mongod.conf
 
   redis:
     image: redis:7.2.1
@@ -58,6 +63,9 @@ services:
     image: nginx:latest
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
     depends_on:
       - backend
       - frontend
@@ -67,10 +75,24 @@ services:
     networks:
       - backend
       - frontend
+  
+  # certbot:
+  #   image: certbot/certbot
+  #   container_name: certbot
+  #   volumes:
+  #     - certbot-etc:/etc/letsencrypt
+  #     - certbot-var:/var/lib/letsencrypt
+  #     - web-root:/var/www/html
+  #   depends_on:
+  #     - nginx
+  #   command: certonly --webroot --webroot-path=/var/www/html --email juan.c.vieri@u.nus.edu --agree-tos --no-eff-email --force-renewal -d eusoff.college  -d www.eusoff.college
 
 volumes:
   mongodb:
   redis:
+  certbot-etc:
+  certbot-var:
+  web-root:
 
 networks:
   mongodb_network:
