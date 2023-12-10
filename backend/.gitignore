@@ -6,3 +6,4 @@ package-lock.json
 .tsbuildinfo
 build/
 sso/FederationMetadata.xml*
+v2/scripts/csv/*
