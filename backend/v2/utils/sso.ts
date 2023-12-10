@@ -3,12 +3,13 @@ import * as fs from 'fs';
 import { reportError, logger } from './logger';
 
 /* eslint-disable import/no-mutable-exports */
-let apiController; let oauthController: IOAuthController;
+let apiController;
+let oauthController: IOAuthController;
 
 const jacksonOptions = {
-  externalUrl: process.env.FRONTEND_URL,
+  externalUrl: process.env.BACKEND_URL,
   samlAudience: process.env.SSO_AUDIENCE,
-  samlPath: '/v2/sso/acs',
+  samlPath: '/sso/acs',
   db: {
     engine: 'mongo' as const,
     url: process.env.MONGO_URI,
@@ -37,7 +38,6 @@ const jacksonOptions = {
     logger.info(`SSO initialization success.`);
   } catch (error) {
     reportError(error, `SSO initialization error.`);
-    
   }
 })();
 
