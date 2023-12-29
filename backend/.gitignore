@@ -5,5 +5,4 @@ package-lock.json
 !.env.example
 .tsbuildinfo
 build/
-sso/FederationMetadata.xml*
-v2/scripts/csv/*
+node_modules

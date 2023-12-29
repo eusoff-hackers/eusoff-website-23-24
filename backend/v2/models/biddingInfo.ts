@@ -2,7 +2,7 @@ import { Types, Document, Schema, model } from 'mongoose';
 import './jersey';
 
 interface iBiddingInfo extends Document {
-  user?: Types.ObjectId;
+  user: Types.ObjectId;
   round: number;
   points: number;
   allocated: boolean;
@@ -24,13 +24,7 @@ const rBiddingInfo = {
 };
 
 const biddingInfoSchema = new Schema<iBiddingInfo>({
-  user: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    unique: true,
-    ref: `User`,
-    index: 1,
-  },
+  user: { type: Schema.Types.ObjectId, required: true, ref: `User`, index: 1 },
   round: { type: Number, required: true },
   points: { type: Number, required: true },
   allocated: { type: Boolean, required: true, default: false },

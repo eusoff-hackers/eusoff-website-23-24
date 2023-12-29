@@ -9,10 +9,6 @@ declare global {
       FRONTEND_URL: string;
       REDIS_URL: string | undefined;
       CACHE_TIME: number;
-      BACKEND_URL: string;
-      SSO_TENANT: string;
-      SSO_PRODUCT: string;
-      SSO_AUDIENCE: string;
     }
   }
 }

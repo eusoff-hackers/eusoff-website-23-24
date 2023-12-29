@@ -5,7 +5,7 @@ import fastifySession from '@fastify/session';
 import fastifyCookie from '@fastify/cookie';
 import MongoStore from 'connect-mongo';
 import IORedis from 'ioredis';
-import Formbody from '@fastify/formbody';
+
 import RedisStore from 'connect-redis';
 import { MongoClient } from 'mongodb';
 import redis from '@fastify/redis';
@@ -107,8 +107,6 @@ async function register() {
         },
       });
     }
-
-    fastify.register(Formbody);
 
     // fastify.register(v1, { prefix: `v1` });
     fastify.register(v2, { prefix: `v2` });
