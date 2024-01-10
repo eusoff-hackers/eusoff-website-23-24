@@ -1,33 +1,34 @@
-'use client'
+"use client";
 
-import React from 'react'
-import Link from "next/link"
-import { useDispatch } from 'react-redux'
-import { removeUser } from '../redux/Resources/userSlice'
-import { useRouter } from 'next/navigation'
+import React from "react";
+import Link from "next/link";
+import { useDispatch } from "react-redux";
+import { removeUser } from "../redux/Resources/userSlice";
+import { useRouter } from "next/navigation";
 
-const axios = require('axios'); 
+const axios = require("axios");
 axios.defaults.withCredentials = true;
 
 export default function NavBar() {
-
   const handleLogout = async () => {
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/logout`)
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/logout`
+      );
     } catch (error) {
-      console.error("Logout error")
+      console.error("Logout error");
     }
-  }
+  };
 
-  const route = useRouter()
-  const dispatch = useDispatch()
+  const route = useRouter();
+  const dispatch = useDispatch();
 
   const logout = () => {
     dispatch(removeUser());
     localStorage.clear();
     handleLogout();
-    route.push('/');
-  }
+    route.push("/");
+  };
 
   return (
     <div>
@@ -79,27 +80,52 @@ export default function NavBar() {
           <li className="hover:translate-x-1">
             <Link className="flex items-center gap-3 py-2" href="/instructions">
               <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  height="24"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                  <rect x="3" y="2" width="14" height="20" />
-                  <line x1="3" y1="7" x2="17" y2="7" />
-                  <line x1="3" y1="11" x2="17" y2="11" />
-                  <line x1="3" y1="15" x2="17" y2="15" />
+                <rect x="3" y="2" width="14" height="20" />
+                <line x1="3" y1="7" x2="17" y2="7" />
+                <line x1="3" y1="11" x2="17" y2="11" />
+                <line x1="3" y1="15" x2="17" y2="15" />
               </svg>
               <span>Instructions</span>
             </Link>
+            <Link className="flex items-center gap-3 py-2" href="/cca">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+              <span>CCA</span>
+            </Link>
           </li>
           <li className="hover:translate-x-1">
-            <Link className="flex items-center gap-3 py-2" onClick={logout} href="/">
+            <Link
+              className="flex items-center gap-3 py-2"
+              onClick={logout}
+              href="/"
+            >
               <svg
                 className=" h-5 w-5"
                 fill="none"
@@ -121,5 +147,5 @@ export default function NavBar() {
         </ul>
       </nav>
     </div>
-  )
+  );
 }
