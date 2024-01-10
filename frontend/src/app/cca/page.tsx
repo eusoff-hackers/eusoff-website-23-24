@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { Alert, Snackbar, AlertColor } from "@mui/material";
 import { ToastMessage } from "../dashboard/page";
 
-import Modal from "../components/Modal/modal";
+import { Modal } from "reactstrap";
 import BiddingTable from "../components/BiddingTable";
 import NavBar from "../components/NavBar";
 import Loading from "../components/Loading";
@@ -34,9 +34,13 @@ const CCA: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // used cons
-  const [ccaList, setCcaList] = useState<string[]>([]);
+  const [ccaList, setCcaList] = useState<string[]>([
+    "first",
+    "second",
+    "third",
+  ]);
   const [myCca, setMyCca] = useState<string[]>(["first", "second"]);
-  const [selectedCca, setSelectedCca] = useState<string>("");
+  const [selectedCca, setSelectedCca] = useState<string>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
 
   const [toast, setToast] = useState<ToastMessage>({
@@ -73,6 +77,11 @@ const CCA: React.FC = () => {
       console.log(err);
     }
   };
+  const openModal = (name: string) => {
+    setIsFormModalOpen(true);
+    setSelectedCca(name);
+  };
+
   const updateUser = async () => {
     try {
       const response = await axios.get(
@@ -155,6 +164,40 @@ const CCA: React.FC = () => {
             />
           ) : (
             <div>Click on a cca on the table to register a ccas</div>
+          )}
+        </div>
+        <div className="grid  pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
+          {ccaList.map((name) => (
+            <div
+              key={name}
+              className={`bg-gray-800
+                            h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500`}
+              onClick={() => openModal(name)}
+            >
+              {name}
+            </div>
+          ))}
+
+          {isModalOpen && selectedCca !== null && (
+            <Modal
+              isOpen={isFormModalOpen}
+              toggle={() => setIsFormModalOpen(false)}
+            >
+              <form>
+                <label>
+                  Name
+                  <input type="text" name="name" />
+                </label>
+                <label>
+                  Telegram
+                  <input type="text" name="telegram" />
+                </label>
+                <label>
+                  Email
+                  <input type="text" name="email" />
+                </label>
+              </form>
+            </Modal>
           )}
         </div>
       </div>

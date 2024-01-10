@@ -92,7 +92,7 @@ const CcaTable: React.FC<CcaList> = ({
               Ranking
             </th>
             <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-              Jersey Number
+              CCA
             </th>
             <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
               Actions
