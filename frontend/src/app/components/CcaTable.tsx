@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Bidding } from "../dashboard/page";
 import { ToastMessage } from "../dashboard/page";
 import { CcaData } from "../cca/page";
 
 interface CcaList {
-  selectedCcas: string[];
-  setSelectedCca: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedCcas: CcaData[];
+  setSelectedCca: React.Dispatch<React.SetStateAction<CcaData[]>>;
   updateUser: () => void;
   handleOpen: () => void;
   setToast: React.Dispatch<React.SetStateAction<ToastMessage>>;
@@ -23,8 +23,8 @@ const CcaTable: React.FC<CcaList> = ({
   handleOpen,
   setToast,
 }) => {
-  const deleteCca = (name: string) => {
-    const arr = selectedCcas.filter((e) => e !== name);
+  const deleteCca = (cca: CcaData) => {
+    const arr = selectedCcas.filter((e) => e !== cca);
     setSelectedCca(arr);
   };
 
@@ -74,9 +74,6 @@ const CcaTable: React.FC<CcaList> = ({
         <thead className="bg-gray-800 text-white">
           <tr>
             <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-              Ranking
-            </th>
-            <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
               CCA
             </th>
             <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
@@ -85,20 +82,20 @@ const CcaTable: React.FC<CcaList> = ({
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 bg-gray-50">
-          {selectedCcas.map((cca, index) => (
-            <tr key={index} className="hover:bg-gray-100">
-              <td className="px-6 py-4 whitespace-no-wrap">{index + 1}</td>
-              <td className="px-6 py-4 whitespace-no-wrap">{cca}</td>
-              <td className="px-6 py-4 whitespace-no-wrap">
-                <button
-                  className="text-red-500 bg-red-100 hover:bg-red-200 px-3 py-1 rounded focus:outline-none"
-                  onClick={() => deleteCca(cca)}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
+          {selectedCcas &&
+            selectedCcas.map((cca) => (
+              <tr key={cca._id} className="hover:bg-gray-100">
+                <td className="px-6 py-4 whitespace-no-wrap">{cca.name}</td>
+                <td className="px-6 py-4 whitespace-no-wrap">
+                  <button
+                    className="text-red-500 bg-red-100 hover:bg-red-200 px-3 py-1 rounded focus:outline-none"
+                    onClick={() => deleteCca(cca)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

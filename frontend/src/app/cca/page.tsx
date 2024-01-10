@@ -4,28 +4,30 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser, setUser, User } from "../redux/Resources/userSlice";
 import { useRouter } from "next/navigation";
-import { Alert, Snackbar, AlertColor } from "@mui/material";
+import { Modal, Alert, Snackbar, AlertColor, Box } from "@mui/material";
 import { ToastMessage } from "../dashboard/page";
-
-import { Modal } from "reactstrap";
-import BiddingTable from "../components/BiddingTable";
 import NavBar from "../components/NavBar";
 import Loading from "../components/Loading";
 import { AxiosError } from "axios";
-import Legend from "../components/Legend";
 import CcaTable from "../components/CcaTable";
+import FormModal from "../components/Modal/FormModal";
 
-export interface CcaData {
+export interface UserData {
   name: string;
   tele: string;
   email: string;
 }
+export interface CcaData {
+  _id: string;
+  name: string;
+}
 
 const axios = require("axios");
+
+axios.defaults.withCredentials = true;
 const axiosWithCredentials = axios.create({
   withCredentials: true,
 });
-axios.defaults.withCredentials = true;
 
 const CCA: React.FC = () => {
   const user = useSelector(selectUser);
@@ -36,14 +38,13 @@ const CCA: React.FC = () => {
   const [isClient, setIsClient] = useState(false);
 
   // used cons
-  const [ccaList, setCcaList] = useState<string[]>([
-    "first",
-    "second",
-    "third",
+  const [ccaList, setCcaList] = useState<CcaData[]>([
+    // { _id: "testing", name: "testing" },
   ]);
-  const [registeredCca, setRegisteredCca] = useState<string[]>([]);
-  const [selectedCca, setSelectedCca] = useState<string[]>([]);
+  const [registeredCca, setRegisteredCca] = useState<CcaData[]>([]);
+  const [selectedCca, setSelectedCca] = useState<CcaData[]>([]);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState<UserData>();
 
   const [toast, setToast] = useState<ToastMessage>({
     message: "",
@@ -60,57 +61,31 @@ const CCA: React.FC = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/cca/list`
       );
       if (response.data.success) {
-        setCcaList(response.data.data.cca.list);
+        setCcaList(response.data.data);
       }
     } catch (err) {
       console.log(err);
     }
   };
 
-  const getMyCca = async () => {
+  const getRegisteredCca = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/cca/registered`
+      const res = await axiosWithCredentials.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/cca/info`
       );
-      if (response.data.success) {
-        setCcaList(response.data.data.cca.registered);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const handleSubmit = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    try {
-      // const payload = JSON.stringify();
-      const res = await axiosWithCredentials.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/cca/signup`
-      );
+      console.log(res);
       if (res.data.success) {
-        console.log("Successfully registered");
-        setToast({ message: "Cca submitted", severity: "success" });
-        updateUser();
-      } else {
-        console.error("Registration failed");
-        setToast({ message: "Cca failed to be registered", severity: "error" });
+        setRegisteredCca(res.data.data.ccas);
       }
-    } catch (error) {
-      console.error("Error during form submission", error);
+    } catch (err) {
+      console.log(err);
     }
   };
 
-  const handleClick = (name: string) => {
-    if (selectedCca.indexOf(name) == -1) {
-      const arr = selectedCca;
-      arr.push(name);
-      setSelectedCca(arr);
-    } else {
-      var arr = selectedCca.filter((e) => e !== name);
-      setSelectedCca(arr);
+  const handleClick = (cca: CcaData) => {
+    if (selectedCca.indexOf(cca) == -1) {
+      setSelectedCca((selectedCca) => [...selectedCca, cca]);
     }
-    console.log(selectedCca);
   };
 
   const updateUser = async () => {
@@ -151,8 +126,9 @@ const CCA: React.FC = () => {
   useEffect(() => {
     getCcaList();
     setIsNav(true);
-    setIsClient(true);
     updateUser();
+    setIsClient(true);
+
     console.log("Saved user: " + JSON.stringify(user));
   }, []);
 
@@ -163,9 +139,9 @@ const CCA: React.FC = () => {
     }
   }, [user, route]);
 
-  useEffect(() => {
-    // getMyCca();
-  }, [selectedCca]);
+  // useEffect(() => {
+  //   getRegisteredCca();
+  // }, [selectedCca]);
 
   return !isClient || user == null ? (
     <Loading />
@@ -180,11 +156,12 @@ const CCA: React.FC = () => {
               <p className="font-bold">Your current CCAs:</p>
               <div>
                 {registeredCca &&
-                  registeredCca.map((name) => <div>{name}</div>)}
+                  registeredCca.map((cca) => <div>{cca.name}</div>)}
               </div>
-            </div>
-            <div className="flex flex-row bg-gray-200 rounded-lg px-2 py-1 items-center justify-between">
-              <p className="font-bold">Your current CCAs:&nbsp;</p>
+              <p className="font-bold">Your selected CCAs:</p>
+              <div>
+                {selectedCca && selectedCca.map((cca) => <div>{cca.name}</div>)}
+              </div>
             </div>
           </div>
           {ccaList.length > 0 ? (
@@ -200,48 +177,27 @@ const CCA: React.FC = () => {
           )}
         </div>
         <div className="grid  pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
-          {ccaList.map((name) => (
+          {ccaList.map((cca) => (
             <div
-              key={name}
+              key={cca._id}
               className={`bg-gray-800
                             h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500`}
-              onClick={() => handleClick(name)}
+              onClick={() => handleClick(cca)}
             >
-              {name}
+              {cca.name}
             </div>
           ))}
 
           {isFormModalOpen && selectedCca !== null && (
-            <Modal
+            <FormModal
               isOpen={isFormModalOpen}
-              toggle={() => setIsFormModalOpen(false)}
-            >
-              <div>
-                <form>
-                  <label>
-                    Name
-                    <input type="text" name="name" />
-                  </label>
-                  <label>
-                    Telegram
-                    <input type="text" name="telegram" />
-                  </label>
-                  <label>
-                    Email
-                    <input type="text" name="email" />
-                  </label>
-                </form>
-              </div>
-              <div>
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white px-2 py-2 rounded hover:bg-blue-600 focus:outline-none"
-                  onClick={(e) => handleSubmit(e)}
-                >
-                  Submit
-                </button>{" "}
-              </div>
-            </Modal>
+              ccas={selectedCca}
+              handleClose={() => {
+                setIsFormModalOpen(false);
+                getRegisteredCca();
+              }}
+              setToast={setToast}
+            />
           )}
         </div>
       </div>
