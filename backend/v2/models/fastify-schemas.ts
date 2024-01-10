@@ -7,6 +7,8 @@ import { rBiddingInfo } from './biddingInfo';
 import { rBid } from './bid';
 import { rJersey } from './jersey';
 import { rCca } from './cca';
+import { rCcaInfo } from './ccaInfo';
+import { rCcaSignup } from './ccaSignup';
 
 async function addSchemas(fastify: FastifyInstance) {
   await fastify.addSchema(rUser);
@@ -15,6 +17,8 @@ async function addSchemas(fastify: FastifyInstance) {
   await fastify.addSchema(rJersey);
   await fastify.addSchema(rBid);
   await fastify.addSchema(rCca);
+  await fastify.addSchema(rCcaInfo);
+  await fastify.addSchema(rCcaSignup);
 }
 
 export { addSchemas };

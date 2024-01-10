@@ -5,6 +5,7 @@ import './jersey';
 interface iBid extends Document {
   user: Types.ObjectId;
   jersey: Types.ObjectId;
+  priority: number;
 }
 
 const rBid = {
@@ -21,6 +22,7 @@ const rBid = {
 const bidSchema = new Schema<iBid>({
   user: { type: Schema.Types.ObjectId, required: true, ref: `User`, index: 1 },
   jersey: { type: Schema.Types.ObjectId, required: true, ref: `Jersey` },
+  priority: { type: Number, required: true },
 });
 
 const Bid = model<iBid>(`Bid`, bidSchema);

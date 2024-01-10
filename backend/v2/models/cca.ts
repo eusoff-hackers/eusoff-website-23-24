@@ -1,16 +1,19 @@
-import { Document, Schema, model } from 'mongoose';
+import { Document, Types, Schema, model } from 'mongoose';
 
 interface iCca extends Document {
+  _id: Types.ObjectId;
   name: string;
 }
 
 const rCca = {
   $id: `cca`,
   type: `object`,
-  required: [`name`],
+  required: [`_id`],
   properties: {
+    _id: { type: `string` },
     name: { type: `string` },
   },
+  additionalProperties: false,
 };
 
 const ccaSchema = new Schema<iCca>({
