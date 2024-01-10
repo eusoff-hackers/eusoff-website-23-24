@@ -4,12 +4,11 @@ import { ToastMessage } from "../dashboard/page";
 import { CcaData } from "../cca/page";
 
 interface CcaList {
-  ccas: string[];
-  setMyCca: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedCcas: string[];
+  setSelectedCca: React.Dispatch<React.SetStateAction<string[]>>;
   updateUser: () => void;
   handleOpen: () => void;
   setToast: React.Dispatch<React.SetStateAction<ToastMessage>>;
-  selectedCca: string;
 }
 
 const axios = require("axios");
@@ -18,39 +17,25 @@ const axiosWithCredentials = axios.create({
 });
 
 const CcaTable: React.FC<CcaList> = ({
-  ccas,
-  setMyCca,
+  selectedCcas,
+  setSelectedCca,
   updateUser,
   handleOpen,
   setToast,
-  selectedCca,
 }) => {
-  const handleSubmit = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    try {
-      const res = await axiosWithCredentials.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/cca/${selectedCca}`
-      );
-      if (res.data.success) {
-        console.log("Successfully registered");
-        setToast({ message: "Cca submitted", severity: "success" });
-        handleOpen();
-        updateUser();
-      } else {
-        console.error("Registration failed");
-        setToast({ message: "Cca failed to be registered", severity: "error" });
-        handleOpen();
-      }
-    } catch (error) {
-      console.error("Error during form submission", error);
-    }
+  const deleteCca = (name: string) => {
+    const arr = selectedCcas.filter((e) => e !== name);
+    setSelectedCca(arr);
+  };
+
+  const handleModal = () => {
+    handleOpen();
   };
 
   return (
     <div>
       <div className="flex items-center justify-between space-x-4 py-2">
-        <h2 className="text-xl font-semibold py-2">Submit new bids:</h2>
+        <h2 className="text-xl font-semibold py-2">Submit new Registration:</h2>
         <div className="flex space-x-2 items-center justify-between">
           <div className="flex rounded-lg text-orange-400 text-sm font-bold p-2">
             <svg
@@ -72,13 +57,13 @@ const CcaTable: React.FC<CcaList> = ({
             <p className="pl-2">Ensure you click submit to confirm changes</p>
           </div>
 
-          {ccas.length == 0 ? (
+          {selectedCcas.length == 0 ? (
             <></>
           ) : (
             <button
               type="submit"
               className="bg-blue-500 text-white px-2 py-2 rounded hover:bg-blue-600 focus:outline-none"
-              onClick={(e) => handleSubmit(e)}
+              onClick={(e) => handleModal()}
             >
               Submit
             </button>
@@ -100,17 +85,17 @@ const CcaTable: React.FC<CcaList> = ({
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 bg-gray-50">
-          {ccas.map((cca, index) => (
+          {selectedCcas.map((cca, index) => (
             <tr key={index} className="hover:bg-gray-100">
               <td className="px-6 py-4 whitespace-no-wrap">{index + 1}</td>
               <td className="px-6 py-4 whitespace-no-wrap">{cca}</td>
               <td className="px-6 py-4 whitespace-no-wrap">
-                {/* <button
+                <button
                   className="text-red-500 bg-red-100 hover:bg-red-200 px-3 py-1 rounded focus:outline-none"
-                  onClick={() => deleteBid(index)}
+                  onClick={() => deleteCca(cca)}
                 >
                   Delete
-                </button> */}
+                </button>
               </td>
             </tr>
           ))}

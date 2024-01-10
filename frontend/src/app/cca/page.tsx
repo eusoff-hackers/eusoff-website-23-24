@@ -22,6 +22,9 @@ export interface CcaData {
 }
 
 const axios = require("axios");
+const axiosWithCredentials = axios.create({
+  withCredentials: true,
+});
 axios.defaults.withCredentials = true;
 
 const CCA: React.FC = () => {
@@ -31,7 +34,6 @@ const CCA: React.FC = () => {
 
   const [isNav, setIsNav] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // used cons
   const [ccaList, setCcaList] = useState<string[]>([
@@ -39,23 +41,23 @@ const CCA: React.FC = () => {
     "second",
     "third",
   ]);
-  const [myCca, setMyCca] = useState<string[]>(["first", "second"]);
-  const [selectedCca, setSelectedCca] = useState<string>(null);
+  const [registeredCca, setRegisteredCca] = useState<string[]>([]);
+  const [selectedCca, setSelectedCca] = useState<string[]>([]);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
 
   const [toast, setToast] = useState<ToastMessage>({
     message: "",
     severity: "error",
   });
-  const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => {
-    setOpen(true);
+    setIsFormModalOpen(true);
   };
+
   const getCcaList = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/CCA/list`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/cca/list`
       );
       if (response.data.success) {
         setCcaList(response.data.data.cca.list);
@@ -68,7 +70,7 @@ const CCA: React.FC = () => {
   const getMyCca = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/CCA/registered`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/cca/registered`
       );
       if (response.data.success) {
         setCcaList(response.data.data.cca.registered);
@@ -77,9 +79,38 @@ const CCA: React.FC = () => {
       console.log(err);
     }
   };
-  const openModal = (name: string) => {
-    setIsFormModalOpen(true);
-    setSelectedCca(name);
+
+  const handleSubmit = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    try {
+      // const payload = JSON.stringify();
+      const res = await axiosWithCredentials.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/cca/signup`
+      );
+      if (res.data.success) {
+        console.log("Successfully registered");
+        setToast({ message: "Cca submitted", severity: "success" });
+        updateUser();
+      } else {
+        console.error("Registration failed");
+        setToast({ message: "Cca failed to be registered", severity: "error" });
+      }
+    } catch (error) {
+      console.error("Error during form submission", error);
+    }
+  };
+
+  const handleClick = (name: string) => {
+    if (selectedCca.indexOf(name) == -1) {
+      const arr = selectedCca;
+      arr.push(name);
+      setSelectedCca(arr);
+    } else {
+      var arr = selectedCca.filter((e) => e !== name);
+      setSelectedCca(arr);
+    }
+    console.log(selectedCca);
   };
 
   const updateUser = async () => {
@@ -118,7 +149,7 @@ const CCA: React.FC = () => {
   };
 
   useEffect(() => {
-    // getCcaList();
+    getCcaList();
     setIsNav(true);
     setIsClient(true);
     updateUser();
@@ -147,7 +178,10 @@ const CCA: React.FC = () => {
           <div className="space-y-2">
             <div className="bg-gray-200 rounded-lg px-2 py-1">
               <p className="font-bold">Your current CCAs:</p>
-              <div>{myCca && myCca.map((name) => <div>{name}</div>)}</div>
+              <div>
+                {registeredCca &&
+                  registeredCca.map((name) => <div>{name}</div>)}
+              </div>
             </div>
             <div className="flex flex-row bg-gray-200 rounded-lg px-2 py-1 items-center justify-between">
               <p className="font-bold">Your current CCAs:&nbsp;</p>
@@ -155,12 +189,11 @@ const CCA: React.FC = () => {
           </div>
           {ccaList.length > 0 ? (
             <CcaTable
-              ccas={ccaList}
-              setMyCca={setMyCca}
+              selectedCcas={selectedCca}
+              setSelectedCca={setSelectedCca}
               updateUser={updateUser}
               handleOpen={handleOpen}
               setToast={setToast}
-              selectedCca={selectedCca}
             />
           ) : (
             <div>Click on a cca on the table to register a ccas</div>
@@ -172,31 +205,42 @@ const CCA: React.FC = () => {
               key={name}
               className={`bg-gray-800
                             h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500`}
-              onClick={() => openModal(name)}
+              onClick={() => handleClick(name)}
             >
               {name}
             </div>
           ))}
 
-          {isModalOpen && selectedCca !== null && (
+          {isFormModalOpen && selectedCca !== null && (
             <Modal
               isOpen={isFormModalOpen}
               toggle={() => setIsFormModalOpen(false)}
             >
-              <form>
-                <label>
-                  Name
-                  <input type="text" name="name" />
-                </label>
-                <label>
-                  Telegram
-                  <input type="text" name="telegram" />
-                </label>
-                <label>
-                  Email
-                  <input type="text" name="email" />
-                </label>
-              </form>
+              <div>
+                <form>
+                  <label>
+                    Name
+                    <input type="text" name="name" />
+                  </label>
+                  <label>
+                    Telegram
+                    <input type="text" name="telegram" />
+                  </label>
+                  <label>
+                    Email
+                    <input type="text" name="email" />
+                  </label>
+                </form>
+              </div>
+              <div>
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white px-2 py-2 rounded hover:bg-blue-600 focus:outline-none"
+                  onClick={(e) => handleSubmit(e)}
+                >
+                  Submit
+                </button>{" "}
+              </div>
             </Modal>
           )}
         </div>
