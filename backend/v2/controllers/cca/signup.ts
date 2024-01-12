@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply, RouteOptions } from 'fastify';
-import { IncomingMessage, Server, ServerResponse } from 'http';
+import { IncomingMessage, Server as HttpServer, ServerResponse } from 'http';
 import { FromSchema } from 'json-schema-to-ts';
 import { sendError, sendStatus } from '../../utils/req_handler';
 import { reportError, logEvent } from '../../utils/logger';
@@ -7,6 +7,7 @@ import { auth } from '../../utils/auth';
 import { Cca, iCca } from '../../models/cca';
 import { CcaInfo, iCcaInfo } from '../../models/ccaInfo';
 import { CcaSignup } from '../../models/ccaSignup';
+import { Server } from '../../models/server';
 
 const schema = {
   body: {
@@ -39,6 +40,12 @@ async function handler(
 ) {
   const session = req.session.get(`session`)!;
   try {
+    const isOpen = (await Server.findOne({ key: `ccaOpen` }))?.value;
+
+    if (!isOpen) {
+      return await sendStatus(res, 403, `CCA registration not open.`);
+    }
+
     const user = req.session.get(`user`)!;
     const ccas = await Cca.find({
       _id: { $in: req.body.ccas.map((s) => s._id) },
@@ -85,7 +92,7 @@ async function handler(
 }
 
 const signup: RouteOptions<
-  Server,
+  HttpServer,
   IncomingMessage,
   ServerResponse,
   { Body: iBody }
