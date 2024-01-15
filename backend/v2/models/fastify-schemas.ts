@@ -9,6 +9,7 @@ import { rJersey } from './jersey';
 import { rCca } from './cca';
 import { rCcaInfo } from './ccaInfo';
 import { rCcaSignup } from './ccaSignup';
+import { rHall } from './hall';
 
 async function addSchemas(fastify: FastifyInstance) {
   await fastify.addSchema(rUser);
@@ -19,6 +20,7 @@ async function addSchemas(fastify: FastifyInstance) {
   await fastify.addSchema(rCca);
   await fastify.addSchema(rCcaInfo);
   await fastify.addSchema(rCcaSignup);
+  await fastify.addSchema(rHall);
 }
 
 export { addSchemas };
