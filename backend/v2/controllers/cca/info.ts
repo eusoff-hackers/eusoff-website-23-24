@@ -1,10 +1,11 @@
 import { FastifyRequest, FastifyReply, RouteOptions } from 'fastify';
-import { IncomingMessage, Server, ServerResponse } from 'http';
+import { IncomingMessage, Server as HttpServer, ServerResponse } from 'http';
 import { success, resBuilder, sendError } from '../../utils/req_handler';
 import { logAndThrow, reportError } from '../../utils/logger';
 import { auth } from '../../utils/auth';
 import { CcaInfo } from '../../models/ccaInfo';
 import { CcaSignup } from '../../models/ccaSignup';
+import { Server } from '../../models/server';
 
 const schema = {
   response: {
@@ -20,6 +21,7 @@ const schema = {
             $ref: `cca`,
           },
         },
+        isOpen: { type: `boolean` },
       },
     }),
   },
@@ -45,7 +47,9 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
       (c) => c.cca,
     );
 
-    return await success(res, { info, ccas });
+    const isOpen = (await Server.findOne({ key: `ccaOpen` }))?.value;
+
+    return await success(res, { info, ccas, isOpen });
   } catch (error) {
     reportError(error, `Bid Info handler error`);
     return sendError(res);
@@ -55,7 +59,7 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
 }
 
 const info: RouteOptions<
-  Server,
+  HttpServer,
   IncomingMessage,
   ServerResponse,
   Record<string, never>
