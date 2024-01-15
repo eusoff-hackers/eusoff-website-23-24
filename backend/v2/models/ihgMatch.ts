@@ -3,6 +3,7 @@ import { Document, Types, Schema, model } from 'mongoose';
 interface iIhgMatch extends Document {
   red: Types.ObjectId;
   blue: Types.ObjectId;
+  sport: Types.ObjectId;
   timestamp: Date;
   pointsRed?: number;
   pointsBlue?: number;
@@ -15,6 +16,7 @@ const rIhgMatch = {
   properties: {
     red: { $ref: `hall` },
     blue: { $ref: `hall` },
+    sport: { $ref: `team` },
     timestamp: { type: `number` },
     pointsRed: { type: `number` },
     pointsBlue: { type: `number` },
@@ -25,6 +27,7 @@ const rIhgMatch = {
 const ihgMatchSchema = new Schema<iIhgMatch>({
   red: { type: Schema.Types.ObjectId, ref: `Hall`, required: true },
   blue: { type: Schema.Types.ObjectId, ref: `Hall`, required: true },
+  sport: { type: Schema.Types.ObjectId, ref: `Team`, required: true },
   timestamp: { type: Date, required: true },
   pointsRed: { type: Number },
   pointsBlue: { type: Number },

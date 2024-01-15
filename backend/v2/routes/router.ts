@@ -9,6 +9,7 @@ import jersey from './jersey';
 import sso from './sso';
 import cca from './cca';
 import hall from './hall';
+import ihg from './ihg';
 
 export default async (fastify: FastifyInstance) => {
   await addSchemas(fastify);
@@ -24,4 +25,5 @@ export default async (fastify: FastifyInstance) => {
   fastify.register(sso, { prefix: `/sso` });
   fastify.register(cca, { prefix: `/cca` });
   fastify.register(hall, { prefix: `/hall` });
+  fastify.register(ihg, { prefix: `/ihg` });
 };
