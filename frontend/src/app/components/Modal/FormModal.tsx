@@ -1,4 +1,4 @@
-import { CcaData, UserData } from "@/app/cca/page";
+import { CcaData, UserCcaData, UserData } from "@/app/cca/page";
 import { ToastMessage } from "@/app/dashboard/page";
 import { setUser } from "@/app/redux/Resources/userSlice";
 import { AlignHorizontalRight } from "@mui/icons-material";
@@ -19,10 +19,6 @@ import axios from "axios";
 import { getuid } from "process";
 import { useState } from "react";
 
-interface CcaSignupData {
-  info: UserData;
-  ccas: CcaData[];
-}
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -37,7 +33,8 @@ const style = {
 
 interface FormModalProps {
   isOpen: boolean;
-  ccas: CcaData[];
+  ccas: CcaData[]; //cca to register
+  info: UserData; // check user data
   handleClose: () => void;
   setToast: React.Dispatch<React.SetStateAction<ToastMessage>>;
 }
@@ -48,12 +45,13 @@ const axiosWithCredentials = axios.create({
 const FormModal: React.FC<FormModalProps> = ({
   isOpen,
   ccas,
+  info,
   handleClose,
   setToast,
 }) => {
-  const [userName, setUserName] = useState<string>();
-  const [userTele, setUserTele] = useState<string>();
-  const [userEmail, setUserEmail] = useState<string>();
+  const [userName, setUserName] = useState<string>(info.name);
+  const [userTele, setUserTele] = useState<string>(info.telegram);
+  const [userEmail, setUserEmail] = useState<string>(info.email);
 
   const handleSubmit = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -120,18 +118,21 @@ const FormModal: React.FC<FormModalProps> = ({
           id="nameField"
           label="Name"
           variant="standard"
+          defaultValue={info.name}
           onBlur={(ele) => setUserName(ele.target.value)}
         />
         <TextField
           id="telegramField"
           label="telegram"
           variant="standard"
+          defaultValue={info.telegram}
           onBlur={(ele) => setUserTele(ele.target.value)}
         />
         <TextField
           id="emailField"
           label="email"
           variant="standard"
+          defaultValue={info.email}
           onBlur={(ele) => setUserEmail(ele.target.value)}
         />
         <div style={{ position: "relative", float: "right" }}>

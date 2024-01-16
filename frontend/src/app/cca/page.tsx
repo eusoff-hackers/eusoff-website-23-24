@@ -11,15 +11,27 @@ import Loading from "../components/Loading";
 import { AxiosError } from "axios";
 import CcaTable from "../components/CcaTable";
 import FormModal from "../components/Modal/FormModal";
+import { register } from "module";
 
 export interface UserData {
   name: string;
-  tele: string;
+  telegram: string;
   email: string;
 }
 export interface CcaData {
   _id: string;
   name: string;
+  category: string;
+  heads: string[];
+  contacts: string[];
+  description: string;
+  committees: string[];
+}
+
+export interface UserCcaData {
+  info: UserData;
+  ccas: CcaData[];
+  isOpen: boolean;
 }
 
 const axios = require("axios");
@@ -45,7 +57,8 @@ const CCA: React.FC = () => {
   const [selectedCca, setSelectedCca] = useState<CcaData[]>([]);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [userInfo, setUserInfo] = useState<UserData>();
-
+  const [isOpen, setIsOpen] = useState<boolean>();
+  const [committeesModal, setCommitteesModal] = useState<boolean>();
   const [toast, setToast] = useState<ToastMessage>({
     message: "",
     severity: "error",
@@ -68,7 +81,7 @@ const CCA: React.FC = () => {
     }
   };
 
-  const getRegisteredCca = async () => {
+  const getCcaUserProps = async () => {
     try {
       const res = await axiosWithCredentials.get(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/cca/info`
@@ -76,6 +89,8 @@ const CCA: React.FC = () => {
       console.log(res);
       if (res.data.success) {
         setRegisteredCca(res.data.data.ccas);
+        setUserInfo(res.data.data.info);
+        setIsOpen(res.data.data.isOpen);
       }
     } catch (err) {
       console.log(err);
@@ -83,7 +98,12 @@ const CCA: React.FC = () => {
   };
 
   const handleClick = (cca: CcaData) => {
-    if (selectedCca.indexOf(cca) == -1) {
+    if (selectedCca.indexOf(cca) == -1 && registeredCca.indexOf(cca) == -1) {
+      // console.log(registeredCca);
+      // console.log(cca);
+      if (cca.committees[0] != "") {
+        setCommitteesModal(true);
+      }
       setSelectedCca((selectedCca) => [...selectedCca, cca]);
     }
   };
@@ -128,7 +148,7 @@ const CCA: React.FC = () => {
     setIsNav(true);
     updateUser();
     setIsClient(true);
-
+    getCcaUserProps();
     console.log("Saved user: " + JSON.stringify(user));
   }, []);
 
@@ -158,10 +178,10 @@ const CCA: React.FC = () => {
                 {registeredCca &&
                   registeredCca.map((cca) => <div>{cca.name}</div>)}
               </div>
-              <p className="font-bold">Your selected CCAs:</p>
+              {/* <p className="font-bold">Your selected CCAs:</p>
               <div>
                 {selectedCca && selectedCca.map((cca) => <div>{cca.name}</div>)}
-              </div>
+              </div> */}
             </div>
           </div>
           {ccaList.length > 0 ? (
@@ -177,24 +197,29 @@ const CCA: React.FC = () => {
           )}
         </div>
         <div className="grid  pl-7 grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
-          {ccaList.map((cca) => (
-            <div
-              key={cca._id}
-              className={`bg-gray-800
-                            h-16 w-16 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500`}
-              onClick={() => handleClick(cca)}
-            >
-              {cca.name}
-            </div>
-          ))}
+          {isOpen ? (
+            ccaList.map((cca) => (
+              <div
+                key={cca._id}
+                className={`bg-gray-800
+                            h-16 w-30 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500`}
+                onClick={() => handleClick(cca)}
+              >
+                {cca.name}
+              </div>
+            ))
+          ) : (
+            <div>Cca Application not open yet</div>
+          )}
 
           {isFormModalOpen && selectedCca !== null && (
             <FormModal
               isOpen={isFormModalOpen}
               ccas={selectedCca}
+              info={userInfo}
               handleClose={() => {
                 setIsFormModalOpen(false);
-                getRegisteredCca();
+                getCcaUserProps();
               }}
               setToast={setToast}
             />
