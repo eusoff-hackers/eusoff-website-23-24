@@ -5,22 +5,44 @@ import { CircularProgress } from '@mui/material';
 import {useEffect, useState} from "react";
 import styles from './ihg.module.css'
 import eusoffLogo from "public/eusoff-logo.png";
-export default function Leaderboard() {
+
+export interface Match {
+    red: {_id:string, name: string},
+    blue:  {_id:string, name: string},
+    sport:  {name: string, shareable: boolean},
+    timestamp: number
+}
+
+const Leaderboard: React.FC = () => {
 
     const [loading,setLoading] = useState(true);
+    const [matches,setMatches] = useState<Match []>([]);
+    const axios = require('axios'); 
+
 
     useEffect(() => {
-        setTimeout(()=>{
-            // simple preloader
-            // try to fetch all data here and then share it everywhere else
-            //  axios
-      //.get("")
-      //.then((response) => {
-      //      setData((data: any) => [...data, req.data])
-     // })
-            setLoading(false)
-        },1000)
-    },[])
+        setTimeout( ()=>{
+           axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v2/ihg/matches`)
+           .then((response:any)=>{
+            if(response.data.success){
+                setLoading(!response.data.success)
+                setMatches(response.data.data)
+            }
+           })
+           .catch()
+        },100)
+    },)    
+
+    const getTime = (timestamp) => {
+        let time = new Intl.DateTimeFormat("en-GB", {
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+        }).format(timestamp);
+
+        return time;
+    }
 
   return loading ? (
     <div className={styles.loadingContainer}>
@@ -48,11 +70,23 @@ export default function Leaderboard() {
                 <h1> Leaderboard</h1>
             </div>
             <div className={styles.matches}>
-                                <h1> Matches</h1>
-
+                <h1> Upcoming Matches </h1>
+                {matches!=null && matches.map((match,index)=><div className={styles.matchContainer} key={index}>
+                     
+                     <Image className={styles.hallLogo} alt="hall logo" width={100} height={100} src={`/${match.red.name.replace(/\s+/g, '')}.png`}/>
+                     <span className={styles.versus}>VS</span>
+                     <Image className={styles.hallLogo} alt="hall logo" width={100} height={100} src={`/${match.blue.name.replace(/\s+/g, '')}.png`}/>
+                     <div className={styles.sportName}>
+                        <span>{match.sport.name}</span> : 
+                        <span>{getTime(match.timestamp)}</span>
+                     </div>
+                </div>)}
             </div>
         </div>
     </div>
 
   )
 }
+
+export default Leaderboard;
+ 
