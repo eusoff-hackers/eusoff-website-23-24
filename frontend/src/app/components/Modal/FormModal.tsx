@@ -67,6 +67,7 @@ const FormModal: React.FC<FormModalProps> = ({
     try {
       if (!pdpaCheck) {
         setPdpaReminder(true);
+        return;
       }
       const payload = {
         info: {

@@ -82,6 +82,7 @@ const CommiteeModal: React.FC<CommiteeModalProps> = ({
       aria-describedby="modal-modal-description"
     >
       <Box sx={boxStyle}>
+        <span style={{ color: "black" }}>{selectedCca.name}</span>
         <FormGroup>
           {commitees &&
             commitees.map((comm) => {
