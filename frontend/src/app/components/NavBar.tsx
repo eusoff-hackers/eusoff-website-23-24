@@ -98,6 +98,8 @@ export default function NavBar() {
               </svg>
               <span>Instructions</span>
             </Link>
+          </li>
+          <li className="hover:translate-x-1">
             <Link className="flex items-center gap-3 py-2" href="/cca">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

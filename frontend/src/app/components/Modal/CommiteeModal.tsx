@@ -14,42 +14,91 @@ import {
   Checkbox,
   FormGroup,
   FormControlLabel,
+  colors,
 } from "@mui/material";
-import { useState } from "react";
+import React, { useState } from "react";
+import { boxStyle } from "./FormModal";
+
 interface CommiteeModalProps {
   commitees: string[];
   isOpen: boolean;
   handleClose: () => void;
-  setSelected: React.Dispatch<React.SetStateAction<CcaData[]>>;
+  selectedCommittees: string[];
+  setSelectedCommittees: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedCca: React.Dispatch<React.SetStateAction<CcaData>>;
+  selectedCca: CcaData;
 }
 
 const CommiteeModal: React.FC<CommiteeModalProps> = ({
   commitees,
   isOpen,
   handleClose,
-  setSelected,
+  selectedCommittees,
+  setSelectedCommittees,
+  setSelectedCca,
+  selectedCca,
 }) => {
-  const [choices, setChoices] = useState<string[]>();
-
-  const handleCheck = (e: React.ChangeEvent) => {};
+  const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // console.log(e);
+    if (e.target.checked) {
+      const selected = e.target.value;
+      console.log(selectedCommittees.indexOf(selected));
+      console.log(selectedCommittees);
+      if (selectedCommittees.indexOf(selected) == -1) {
+        setSelectedCommittees((selectedCommittees) => [
+          ...selectedCommittees,
+          e.target.value,
+        ]);
+      }
+    } else {
+      setSelectedCommittees(
+        selectedCommittees.filter((ele: string) => {
+          return ele !== e.target.value;
+        })
+      );
+    }
+  };
+  const handleSubmit = () => {
+    setSelectedCca({
+      ...selectedCca,
+      committees: selectedCommittees,
+    });
+    // console.log(selectedCca);
+    // const temp = selectedCca;
+    // console.log(temp);
+    // temp.committees = selectedCommittees;
+    // console.log(commitees);
+    // setSelectedCca(temp);
+    handleClose();
+  };
 
   return (
     <Modal
       open={isOpen}
-      onClose={handleClose}
+      // onClose={() => {
+      //   handleClose();
+      // }}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <FormGroup>
-        {commitees.map((comm) => {
-          return (
-            <FormControlLabel
-              control={<Checkbox onChange={handleCheck} />}
-              label={comm}
-            />
-          );
-        })}
-      </FormGroup>
+      <Box sx={boxStyle}>
+        <FormGroup>
+          {commitees &&
+            commitees.map((comm) => {
+              console.log(comm);
+              return (
+                <FormControlLabel
+                  control={<Checkbox value={comm} onChange={handleCheck} />}
+                  label={comm}
+                  sx={{ color: "black" }}
+                />
+              );
+            })}
+        </FormGroup>
+        <Button variant="outlined" onClick={handleSubmit}>
+          Done
+        </Button>
+      </Box>
     </Modal>
   );
 };

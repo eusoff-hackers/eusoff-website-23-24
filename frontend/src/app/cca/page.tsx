@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser, setUser, User } from "../redux/Resources/userSlice";
 import { useRouter } from "next/navigation";
-import { Modal, Alert, Snackbar, AlertColor, Box } from "@mui/material";
 import { ToastMessage } from "../dashboard/page";
 import NavBar from "../components/NavBar";
 import Loading from "../components/Loading";
@@ -12,6 +11,7 @@ import { AxiosError } from "axios";
 import CcaTable from "../components/CcaTable";
 import FormModal from "../components/Modal/FormModal";
 import { register } from "module";
+import CommiteeModal from "../components/Modal/CommiteeModal";
 
 export interface UserData {
   name: string;
@@ -54,11 +54,17 @@ const CCA: React.FC = () => {
     // { _id: "testing", name: "testing" },
   ]);
   const [registeredCca, setRegisteredCca] = useState<CcaData[]>([]);
-  const [selectedCca, setSelectedCca] = useState<CcaData[]>([]);
+  const [selectedCcas, setSelectedCcas] = useState<CcaData[]>([]);
+  const [selectedCca, setSelectedCca] = useState<CcaData>();
+
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [userInfo, setUserInfo] = useState<UserData>();
   const [isOpen, setIsOpen] = useState<boolean>();
-  const [committeesModal, setCommitteesModal] = useState<boolean>();
+
+  const [isCommitteesModalOpen, setIsCommitteesModalOpen] = useState<boolean>();
+  const [committeeData, setCommitteeData] = useState<string[]>();
+  const [selectedCommittees, setSelectedCommittees] = useState<string[]>();
+
   const [toast, setToast] = useState<ToastMessage>({
     message: "",
     severity: "error",
@@ -98,13 +104,24 @@ const CCA: React.FC = () => {
   };
 
   const handleClick = (cca: CcaData) => {
-    if (selectedCca.indexOf(cca) == -1 && registeredCca.indexOf(cca) == -1) {
+    if (selectedCcas.indexOf(cca) == -1 && registeredCca.indexOf(cca) == -1) {
       // console.log(registeredCca);
       // console.log(cca);
       if (cca.committees[0] != "") {
-        setCommitteesModal(true);
+        setSelectedCommittees([]);
+        setCommitteeData(cca.committees);
+        setSelectedCca(cca);
+
+        setIsCommitteesModalOpen(true);
+      } else {
+        setSelectedCcas((ccas) => [...ccas, cca]);
       }
-      setSelectedCca((selectedCca) => [...selectedCca, cca]);
+    }
+  };
+
+  const handleClickWithCommitee = () => {
+    if (selectedCca) {
+      setSelectedCcas((ccas) => [...ccas, selectedCca]);
     }
   };
 
@@ -152,6 +169,10 @@ const CCA: React.FC = () => {
     console.log("Saved user: " + JSON.stringify(user));
   }, []);
 
+  useEffect(() => {
+    console.log(committeeData);
+  }, [committeeData]);
+
   //auth
   useEffect(() => {
     if (user == null) {
@@ -178,16 +199,17 @@ const CCA: React.FC = () => {
                 {registeredCca &&
                   registeredCca.map((cca) => <div>{cca.name}</div>)}
               </div>
-              {/* <p className="font-bold">Your selected CCAs:</p>
+              <p className="font-bold">Your selected CCAs:</p>
               <div>
-                {selectedCca && selectedCca.map((cca) => <div>{cca.name}</div>)}
-              </div> */}
+                {selectedCcas &&
+                  selectedCcas.map((cca) => <div>{cca.name}</div>)}
+              </div>
             </div>
           </div>
           {ccaList.length > 0 ? (
             <CcaTable
-              selectedCcas={selectedCca}
-              setSelectedCca={setSelectedCca}
+              selectedCcas={selectedCcas}
+              setSelectedCca={setSelectedCcas}
               updateUser={updateUser}
               handleOpen={handleOpen}
               setToast={setToast}
@@ -212,16 +234,30 @@ const CCA: React.FC = () => {
             <div>Cca Application not open yet</div>
           )}
 
-          {isFormModalOpen && selectedCca !== null && (
+          {isFormModalOpen && selectedCcas !== null && (
             <FormModal
               isOpen={isFormModalOpen}
-              ccas={selectedCca}
+              ccas={selectedCcas}
               info={userInfo}
               handleClose={() => {
                 setIsFormModalOpen(false);
                 getCcaUserProps();
               }}
               setToast={setToast}
+            />
+          )}
+          {isCommitteesModalOpen && (
+            <CommiteeModal
+              commitees={committeeData}
+              isOpen={isCommitteesModalOpen}
+              handleClose={() => {
+                setIsCommitteesModalOpen(false);
+                handleClickWithCommitee();
+              }}
+              selectedCommittees={selectedCommittees}
+              setSelectedCommittees={setSelectedCommittees}
+              setSelectedCca={setSelectedCca}
+              selectedCca={selectedCca}
             />
           )}
         </div>
