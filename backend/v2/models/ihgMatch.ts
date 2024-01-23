@@ -17,7 +17,7 @@ const rIhgMatch = {
   properties: {
     red: { $ref: `hall` },
     blue: { $ref: `hall` },
-    sport: { $ref: `team` },
+    sport: { $ref: `ihgSport` },
     timestamp: { type: `number` },
     pointsRed: { type: `number` },
     pointsBlue: { type: `number` },
@@ -29,7 +29,7 @@ const rIhgMatch = {
 const ihgMatchSchema = new Schema<iIhgMatch>({
   red: { type: Schema.Types.ObjectId, ref: `Hall`, required: true },
   blue: { type: Schema.Types.ObjectId, ref: `Hall`, required: true },
-  sport: { type: Schema.Types.ObjectId, ref: `Team`, required: true },
+  sport: { type: Schema.Types.ObjectId, ref: `IhgSport`, required: true },
   timestamp: { type: Date, required: true },
   pointsRed: { type: Number },
   pointsBlue: { type: Number },

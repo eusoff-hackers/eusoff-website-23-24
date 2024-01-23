@@ -12,6 +12,7 @@ import { rCcaSignup } from './ccaSignup';
 import { rHall } from './hall';
 import { rIhgMatch } from './ihgMatch';
 import { rIhgPoint } from './ihgPoint';
+import { rIhgSport } from './ihgSport';
 
 async function addSchemas(fastify: FastifyInstance) {
   await fastify.addSchema(rUser);
@@ -25,6 +26,7 @@ async function addSchemas(fastify: FastifyInstance) {
   await fastify.addSchema(rHall);
   await fastify.addSchema(rIhgMatch);
   await fastify.addSchema(rIhgPoint);
+  await fastify.addSchema(rIhgSport);
 }
 
 export { addSchemas };
