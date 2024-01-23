@@ -7,12 +7,13 @@ interface iIhgMatch extends Document {
   timestamp: Date;
   pointsRed?: number;
   pointsBlue?: number;
+  venue: string;
 }
 
 const rIhgMatch = {
   $id: `ihgMatch`,
   type: `object`,
-  required: [`red`, `blue`, `timestamp`],
+  required: [`red`, `blue`, `timestamp`, `venue`],
   properties: {
     red: { $ref: `hall` },
     blue: { $ref: `hall` },
@@ -20,6 +21,7 @@ const rIhgMatch = {
     timestamp: { type: `number` },
     pointsRed: { type: `number` },
     pointsBlue: { type: `number` },
+    venue: { type: `string` },
   },
   additionalProperties: false,
 };
@@ -31,6 +33,7 @@ const ihgMatchSchema = new Schema<iIhgMatch>({
   timestamp: { type: Date, required: true },
   pointsRed: { type: Number },
   pointsBlue: { type: Number },
+  venue: { type: String, required: true },
 });
 
 const IhgMatch = model<iIhgMatch>(`IhgMatch`, ihgMatchSchema);
