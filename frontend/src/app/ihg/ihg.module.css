@@ -6,16 +6,17 @@
     text-transform: uppercase;
 }
 
+
+
 .container{
   height: 100dvh;
   width: 100dvw;
   background: linear-gradient(to bottom, #ffde59 ,#ff4d4d);
-  display: flex;
-  flex-direction: column;
     font-family: 'Lexend', sans-serif;
-
-  justify-content: center;
-  position: relative;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 15% 85%;
+    position: relative;
   color: #000;
   resize: horizontal;
 }
@@ -49,29 +50,29 @@
   align-items: center;
   padding: 1%;
 }
+
 .header{
-  width:100%;
-  height:15%;
+  max-width:100%;
+  height:auto;
+  max-height: 15%;
   display: flex;
   justify-content: space-between;
   position: relative;
+  flex-wrap: wrap;
+  padding: 3%;
 }
 
 .left{
-    margin-top: 2.5%;
-    margin-left: 2.5%;
     display:flex;
 }
 
 .right{
-    margin-top: 4%;
-    margin-right: 4%;
+    padding: 2%;
     font-size: 1.5rem;
 }
 
 .eusoff{
-    width:100%;
-    height:90%;    
+    width:clamp(0%,15%,25vw);
     object-fit: contain;
 }
 .text{
@@ -93,7 +94,7 @@
 padding-top: 1.25%;
   bottom:0;
   width:100%;
-  height:85%;
+  height:100%;
   display:flex;
     flex-wrap: wrap;
   justify-content: center;
@@ -110,7 +111,8 @@ padding-top: 1.25%;
     padding-top: 1%;
 }
 .matches{
-    border-radius: 20px;
+    border-radius: 10px;
+    margin: 2.5%;
     margin-left:1.25%;
     margin-right:2.5%;
     padding-left:1%;
@@ -121,10 +123,15 @@ padding-top: 1.25%;
 
 }
 .matchContainer{
+  height: auto;
     display:flex;
     justify-content:space-between;
-    padding:5%;
+    padding: 3%;
+    column-count: 3;
+    background: #FEB901;
+    border-radius: 40px;
 }
+
 
 .hallLogo{
     width: 5rem;
@@ -141,15 +148,32 @@ padding-top: 1.25%;
     font-family: 'Lexend', sans-serif;
 }
 
+.hallvs{
+  column-width: 35%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
+  padding: 0.5%;
+  margin-left: min(3%,7vw);
+}
+
 .sportName{
     margin-left:5%;
     display: flex;
+    flex-direction: column;
     justify-content:  space-between;
     align-items: center;
-    padding-left: 2%;
     text-transform: uppercase;
     padding-right: 2%;
     font-size: 1rem;
     background: #FEB901;
-    white-space: nowrap;
+    column-width: 40%;
+}
+
+.timing{
+  column-width: 20%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
 }
