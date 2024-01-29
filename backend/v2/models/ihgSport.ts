@@ -10,6 +10,7 @@ const rIhgSport = {
   type: `object`,
   required: [`name`, `isCarnival`],
   properties: {
+    _id: { type: `string` },
     name: { type: `string` },
     isCarnival: { type: `boolean` },
   },
