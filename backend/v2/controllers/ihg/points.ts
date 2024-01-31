@@ -4,6 +4,7 @@ import { success, resBuilder, sendError } from '../../utils/req_handler';
 import { reportError, logAndThrow } from '../../utils/logger';
 import { IhgPlacement } from '../../models/ihgPlacement';
 import { Hall } from '../../models/hall';
+import { setCache, checkCache } from '../../utils/cache_handler';
 
 const POINTS_REWARD = {
   carnival: [0, 1, 2, 3, 4, 5, 6],
@@ -20,6 +21,9 @@ const schema = {
         properties: {
           hall: { $ref: `hall` },
           points: { type: `number` },
+          golds: { type: `number` },
+          silvers: { type: `number` },
+          bronzes: { type: `number` },
         },
         additionalProperties: false,
       },
@@ -41,15 +45,31 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
           if (!placements) return { hall: h, points: 0 };
 
           let points = 0;
+          let golds = 0;
+          let silvers = 0;
+          let bronzes = 0;
           placements.forEach((p) => {
             if (p.sport.isCarnival) {
               points += POINTS_REWARD.carnival[p.place];
             } else {
               points += POINTS_REWARD.nonCarnival[p.place];
             }
+
+            switch (p.place) {
+              case 1:
+                golds += 1;
+                break;
+              case 2:
+                silvers += 1;
+                break;
+              case 3:
+                bronzes += 1;
+                break;
+              default:
+            }
           });
 
-          return { hall: h, points };
+          return { hall: h, points, golds, silvers, bronzes };
         }),
       ),
       `IHG points calculation`,
@@ -73,7 +93,9 @@ const points: RouteOptions<
   method: `GET`,
   url: `/points`,
   schema,
+  preHandler: checkCache,
   handler,
+  onSend: setCache,
 };
 
 export { points };

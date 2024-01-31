@@ -16,7 +16,7 @@ async function auth(req: FastifyRequest, res: FastifyReply) {
   try {
     if (!req.session?.user) {
       await sendStatus(res, 401, `Unauthorized.`);
-      return;
+      return false;
     }
     const { user: userSession }: { user: iUser } = req.session as {
       user: iUser;
@@ -29,8 +29,26 @@ async function auth(req: FastifyRequest, res: FastifyReply) {
     req.session.set(`user`, user);
     await req.session.save();
     logger.info(`Refreshed user: ${user._id}.`);
+    return true;
   } catch (error) {
     reportError(error, `Auth error`);
+    await sendStatus(res, 500, `Internal Server Error.`);
+    return false;
+  }
+}
+
+async function admin(req: FastifyRequest, res: FastifyReply) {
+  try {
+    if (!(await auth(req, res))) return;
+
+    if (req.session?.user?.role !== `ADMIN`) {
+      await sendStatus(res, 401, `Unauthorized.`);
+      return;
+    }
+
+    logger.info(`Authorized admin on: ${req.session.user._id}`);
+  } catch (error) {
+    reportError(error, `Admin auth error.`);
     await sendStatus(res, 500, `Internal Server Error.`);
   }
 }
@@ -58,4 +76,4 @@ async function logout(req: FastifyRequest) {
   }
 }
 
-export { login, auth, logout };
+export { login, auth, logout, admin };

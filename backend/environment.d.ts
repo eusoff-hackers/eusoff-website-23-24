@@ -8,7 +8,7 @@ declare global {
       BACKEND_PORT: number;
       FRONTEND_URL: string;
       REDIS_URL: string | undefined;
-      CACHE_TIME: number;
+      CACHE_TIME: string;
       BACKEND_URL: string;
       SSO_TENANT: string;
       SSO_PRODUCT: string;

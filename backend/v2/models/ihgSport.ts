@@ -8,8 +8,9 @@ interface iIhgSport extends Document {
 const rIhgSport = {
   $id: `ihgSport`,
   type: `object`,
-  required: [`name`, `isCarnival`],
+  required: [`_id`],
   properties: {
+    _id: { type: `string` },
     name: { type: `string` },
     isCarnival: { type: `boolean` },
   },
