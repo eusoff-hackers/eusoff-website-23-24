@@ -4,6 +4,7 @@ import { success, resBuilder, sendError } from '../../utils/req_handler';
 import { reportError, logAndThrow } from '../../utils/logger';
 import { IhgPlacement } from '../../models/ihgPlacement';
 import { Hall } from '../../models/hall';
+import { setCache, checkCache } from '../../utils/cache_handler';
 
 const POINTS_REWARD = {
   carnival: [0, 1, 2, 3, 4, 5, 6],
@@ -45,8 +46,8 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
 
           let points = 0;
           let golds = 0;
-            let silvers = 0;
-            let bronzes = 0;
+          let silvers = 0;
+          let bronzes = 0;
           placements.forEach((p) => {
             if (p.sport.isCarnival) {
               points += POINTS_REWARD.carnival[p.place];
@@ -92,7 +93,9 @@ const points: RouteOptions<
   method: `GET`,
   url: `/points`,
   schema,
+  preHandler: checkCache,
   handler,
+  onSend: setCache,
 };
 
 export { points };

@@ -6,6 +6,7 @@ import { placements } from '../controllers/ihg/placements';
 import admin from './ihg/admin';
 
 export default async (fastify: FastifyInstance) => {
+  fastify.decorateRequest(`fastify`, fastify);
   fastify.route(matches);
   fastify.route(points);
   fastify.route(sports);
