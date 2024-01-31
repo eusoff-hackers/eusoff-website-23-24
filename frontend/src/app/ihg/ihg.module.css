@@ -72,7 +72,7 @@
 }
 
 .eusoff{
-    width:clamp(0%,10%,25vw);
+    width:min(15%,25vw);
     object-fit: contain;
 }
 .text{
