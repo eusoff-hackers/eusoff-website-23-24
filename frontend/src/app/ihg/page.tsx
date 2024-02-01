@@ -63,6 +63,9 @@ const axios = require('axios');
 const Leaderboard: React.FC = () => {
 
     const [loading,setLoading] = useState(true);
+    const [matches,setMatches] = useState<Match []>([]);
+    const [points,setPoints] = useState<Point []>([]);
+    /* 
     const [matches, setMatches] = useState<Match[]>(
       JSON.parse(localStorage.getItem(`${STORAGE_KEY}_matches`) || '[]')
     );
@@ -71,10 +74,10 @@ const Leaderboard: React.FC = () => {
     );
     const [lastFetchTime, setLastFetchTime] = useState<number>(
       parseInt(localStorage.getItem('lastFetchTime') || '0')
-    );
+    );*/
 
     let heading='';
-
+/*
     useEffect(() => {
       const fetchData = async () => {
         try {
@@ -133,7 +136,27 @@ const Leaderboard: React.FC = () => {
 
       // Return the next 4 values or fewer if there are not enough remaining values
       return nextValues.slice(0, 4);
-    }
+    }*/
+
+    useEffect(() => {
+      axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/matches`)
+      .then((response:any)=>{
+      if(response.data.success){
+          setLoading(!response.data.success)
+          setMatches(sortMatchesByTimestamp(response.data.data))
+          }
+      })
+      .catch()
+
+      axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/points`)
+      .then((response:any)=>{
+      if(response.data.success){
+          setLoading(!response.data.success)
+          setPoints(response.data.data)
+          }
+      })
+      .catch()
+  }, [])  
 
     const getTime = (timestamp:number) => {
         let time = new Intl.DateTimeFormat("en-GB", {
