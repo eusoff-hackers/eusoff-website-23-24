@@ -118,18 +118,21 @@ const Leaderboard: React.FC = () => {
       }
     }, [lastFetchTime]); // Only re-run the effect if lastFetchTime changes
 
-    const getLastFourElements = (list) => {
+    const getLastFourLatestElements = (list) => {
       if (!Array.isArray(list)) {
         throw new Error('Input is not an array');
       }
     
-      const length = list.length;
-    
-      if (length <= 4) {
-        return list;
-      }
-    
-      return list.slice(length - 4, length);
+      const currentTime = new Date().getTime();
+
+      // Filter the values based on the current time
+      const nextValues = list.filter(value => {
+      const valueTime = new Date(value.timestamp).getTime();
+        return valueTime > currentTime;
+      });
+
+      // Return the next 4 values or fewer if there are not enough remaining values
+      return nextValues.slice(0, 4);
     }
 
     const getTime = (timestamp:number) => {
@@ -249,7 +252,7 @@ const Leaderboard: React.FC = () => {
             </div>
             <div className={styles.matches}>
                 <h1> Upcoming Matches </h1>
-                {matches!=null && getLastFourElements(matches).map((match,index)=> {
+                {matches!=null && matches.map((match,index)=> {
                 
                 const formattedDate = getDate(match.timestamp)
                 const time = getTime(match.timestamp)
