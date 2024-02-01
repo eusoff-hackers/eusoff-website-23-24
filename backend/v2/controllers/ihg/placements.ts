@@ -20,7 +20,8 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
   try {
     const placements = await IhgPlacement.find()
       .populate(`hall`)
-      .populate(`sport`);
+      .populate(`sport`)
+      .session(session.session);
     return await success(res, placements);
   } catch (error) {
     reportError(error, `IHG placements handler error`);

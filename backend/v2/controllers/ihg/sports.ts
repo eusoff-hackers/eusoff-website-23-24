@@ -18,7 +18,7 @@ const schema = {
 async function handler(req: FastifyRequest, res: FastifyReply) {
   const session = req.session.get(`session`)!;
   try {
-    const sports = await IhgSport.find();
+    const sports = await IhgSport.find().session(session.session);
     return await success(res, sports);
   } catch (error) {
     reportError(error, `IHG sports handler error`);

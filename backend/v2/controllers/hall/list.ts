@@ -18,7 +18,7 @@ const schema = {
 async function handler(req: FastifyRequest, res: FastifyReply) {
   const session = req.session.get(`session`)!;
   try {
-    const hall = await Hall.find();
+    const hall = await Hall.find().session(session.session);
     return await success(res, hall);
   } catch (error) {
     reportError(error, `Hall list handler error`);

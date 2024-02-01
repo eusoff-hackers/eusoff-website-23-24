@@ -56,34 +56,107 @@ const sortMatchesByTimestamp = (matches: Match[]): Match[] => {
     return matches.sort((a, b) => a.timestamp - b.timestamp);
 }
 
+const STORAGE_KEY = 'keyisnotihgbuteusofftothefore';
+const axios = require('axios');
+
+
 const Leaderboard: React.FC = () => {
 
     const [loading,setLoading] = useState(true);
     const [matches,setMatches] = useState<Match []>([]);
     const [points,setPoints] = useState<Point []>([]);
-    const axios = require('axios'); 
+    /* 
+    const [matches, setMatches] = useState<Match[]>(
+      JSON.parse(localStorage.getItem(`${STORAGE_KEY}_matches`) || '[]')
+    );
+    const [points, setPoints] = useState<Point[]>(
+      JSON.parse(localStorage.getItem(`${STORAGE_KEY}_points`) || '[]')
+    );
+    const [lastFetchTime, setLastFetchTime] = useState<number>(
+      parseInt(localStorage.getItem('lastFetchTime') || '0')
+    );*/
 
     let heading='';
+/*
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const matchesResponse = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/matches`
+          );
+  
+          if (matchesResponse.data.success) {
+            const sortedMatches = sortMatchesByTimestamp(matchesResponse.data.data);
+            setMatches(sortedMatches);
+            localStorage.setItem(`${STORAGE_KEY}_matches`, JSON.stringify(sortedMatches));
+          }
+        } catch (error) {
+          console.error('Error fetching matches:', error);
+        }
+  
+        try {
+          const pointsResponse = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/points`
+          );
+  
+          if (pointsResponse.data.success) {
+            setPoints(pointsResponse.data.data);
+            localStorage.setItem(`${STORAGE_KEY}_points`, JSON.stringify(pointsResponse.data.data));
+          }
+        } catch (error) {
+          console.error('Error fetching points:', error);
+        }
+  
+        // Update the last fetch time
+        setLastFetchTime(Date.now());
+        localStorage.setItem('lastFetchTime', Date.now().toString());
+        setLoading(false);
+      };
+  
+      // Fetch data only if more than 5 minutes have passed since the last fetch
+      if ((points==[] || matches==[]) || (Date.now() - lastFetchTime > 5 * 60 * 1000)) {
+        fetchData();
+      } else {
+        setLoading(false); // No need to fetch, set loading to false
+      }
+    }, [lastFetchTime]); // Only re-run the effect if lastFetchTime changes
+
+    const getLastFourLatestElements = (list) => {
+      if (!Array.isArray(list)) {
+        throw new Error('Input is not an array');
+      }
+    
+      const currentTime = new Date().getTime();
+
+      // Filter the values based on the current time
+      const nextValues = list.filter(value => {
+      const valueTime = new Date(value.timestamp).getTime();
+        return valueTime > currentTime;
+      });
+
+      // Return the next 4 values or fewer if there are not enough remaining values
+      return nextValues.slice(0, 4);
+    }*/
 
     useEffect(() => {
-        axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/matches`)
-        .then((response:any)=>{
-        if(response.data.success){
-            setLoading(!response.data.success)
-            setMatches(sortMatchesByTimestamp(response.data.data))
-            }
-        })
-        .catch()
+      axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/matches`)
+      .then((response:any)=>{
+      if(response.data.success){
+          setLoading(!response.data.success)
+          setMatches(sortMatchesByTimestamp(response.data.data))
+          }
+      })
+      .catch()
 
-        axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/points`)
-        .then((response:any)=>{
-        if(response.data.success){
-            setLoading(!response.data.success)
-            setPoints(response.data.data)
-            }
-        })
-        .catch()
-    }, [])    
+      axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/points`)
+      .then((response:any)=>{
+      if(response.data.success){
+          setLoading(!response.data.success)
+          setPoints(response.data.data)
+          }
+      })
+      .catch()
+  }, [])  
 
     const getTime = (timestamp:number) => {
         let time = new Intl.DateTimeFormat("en-GB", {
