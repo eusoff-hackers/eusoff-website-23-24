@@ -66,26 +66,24 @@ const Leaderboard: React.FC = () => {
     let heading='';
 
     useEffect(() => {
-        setTimeout( ()=>{
-           axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/matches`)
-           .then((response:any)=>{
-            if(response.data.success){
-                setLoading(!response.data.success)
-                setMatches(sortMatchesByTimestamp(response.data.data))
-                }
-           })
-           .catch()
+        axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/matches`)
+        .then((response:any)=>{
+        if(response.data.success){
+            setLoading(!response.data.success)
+            setMatches(sortMatchesByTimestamp(response.data.data))
+            }
+        })
+        .catch()
 
-           axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/points`)
-           .then((response:any)=>{
-            if(response.data.success){
-                setLoading(!response.data.success)
-                setPoints(response.data.data)
-                }
-           })
-           .catch()
-        },100)
-    },)    
+        axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/points`)
+        .then((response:any)=>{
+        if(response.data.success){
+            setLoading(!response.data.success)
+            setPoints(response.data.data)
+            }
+        })
+        .catch()
+    }, [])    
 
     const getTime = (timestamp:number) => {
         let time = new Intl.DateTimeFormat("en-GB", {
