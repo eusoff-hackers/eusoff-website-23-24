@@ -21,7 +21,8 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
     const matches = await IhgMatch.find()
       .populate(`red`)
       .populate(`blue`)
-      .populate(`sport`);
+      .populate(`sport`)
+      .session(session.session);
     return await success(res, matches);
   } catch (error) {
     reportError(error, `IHG matches handler error`);

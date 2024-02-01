@@ -34,8 +34,12 @@ async function handler(
         placements.map(async (p) => {
           if (
             !(
-              (await Hall.exists({ _id: p.hall._id })) &&
-              (await IhgSport.exists({ _id: p.sport._id }))
+              (await Hall.exists({ _id: p.hall._id }).session(
+                session.session,
+              )) &&
+              (await IhgSport.exists({ _id: p.sport._id }).session(
+                session.session,
+              ))
             )
           ) {
             return false;
