@@ -12,6 +12,7 @@ async function checkCache<T>(
     const cache = (await req.fastify.cache.get(req.url)) as unknown as {
       item: T;
     };
+
     if (cache) {
       logger.info(`Replying from cache for ${req.url}.`);
       res.fromCache = true;
@@ -36,7 +37,7 @@ async function setCache(
     logger.info(`Setting cache for ${req.url}.`);
     data.cached_at = Date.now();
 
-    await req.fastify.cache.set(req.url, data, env.CACHE_TIME);
+    await req.fastify.cache.set(req.url, data, parseInt(env.CACHE_TIME, 10));
   } catch (error) {
     reportError(error, `Error setting cache for ${req.url}.`);
   }
