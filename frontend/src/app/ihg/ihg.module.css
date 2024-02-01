@@ -136,8 +136,8 @@ padding-top: 1.25%;
 }
 
 .hallLogo{
-    width: 5rem;
-    height: 5rem;
+    width: min(30%,5rem);
+    height: min(30%,5rem);
     object-fit:contain;
     text-transform: uppercase;
 }
