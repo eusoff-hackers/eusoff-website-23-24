@@ -18,7 +18,7 @@ const schema = {
 async function handler(req: FastifyRequest, res: FastifyReply) {
   const session = req.session.get(`session`)!;
   try {
-    const cca = await Cca.find();
+    const cca = await Cca.find().session(session.session);
     return await success(res, cca);
   } catch (error) {
     reportError(error, `Cca list handler error`);
