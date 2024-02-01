@@ -34,13 +34,13 @@ const schema = {
 async function handler(req: FastifyRequest, res: FastifyReply) {
   const session = req.session.get(`session`)!;
   try {
-    const halls = await Hall.find();
+    const halls = await Hall.find().session(session.session);
     const ret = logAndThrow(
       await Promise.allSettled(
         halls.map(async (h) => {
-          const placements = await IhgPlacement.find({ hall: h._id }).populate(
-            `sport`,
-          );
+          const placements = await IhgPlacement.find({ hall: h._id })
+            .populate(`sport`)
+            .session(session.session);
 
           if (!placements) return { hall: h, points: 0 };
 
