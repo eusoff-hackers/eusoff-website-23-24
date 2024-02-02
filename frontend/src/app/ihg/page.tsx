@@ -56,6 +56,13 @@ const sortMatchesByTimestamp = (matches: Match[]): Match[] => {
     return matches.sort((a, b) => a.timestamp - b.timestamp);
 }
 
+const sortPoints = (points: Point[]): Point[] => {
+      // Use the Array.sort method to sort the matches based on points
+  return points.sort((a,b) => b.points - a.points)
+}
+
+const getCapitalLetters = word => (typeof word === 'string' ? word.match(/[A-Z]/g)?.join('') || '' : '');
+
 const STORAGE_KEY = 'keyisnotihgbuteusofftothefore';
 const axios = require('axios');
 
@@ -152,7 +159,7 @@ const Leaderboard: React.FC = () => {
       .then((response:any)=>{
       if(response.data.success){
           setLoading(!response.data.success)
-          setPoints(response.data.data)
+          setPoints(sortPoints(response.data.data))
           }
       })
       .catch()
@@ -285,9 +292,15 @@ const Leaderboard: React.FC = () => {
                     {(heading !== formattedDate) && <h2 className={styles.date}>{formattedDate}</h2>}
                     <div className={styles.matchContainer} key={index}>
                         <div className={styles.hallvs}>
-                            <Image className={styles.hallLogo} alt="hall logo" width={100} height={100} src={`/${match.red.name.replace(/\s+/g, '')}.png`}/>
+                            <div  className={styles.logoContainer}>
+                              <Image className={styles.hallLogo} alt="hall logo" width={100} height={100} src={`/${match.red.name.replace(/\s+/g, '')}.png`}/>
+                              <span className={styles.hallNameSmall}> {getCapitalLetters(match.red.name.replace(/\s+/g, ''))} </span>
+                            </div>
                             <span className={styles.versus}>VS</span>
-                            <Image className={styles.hallLogo} alt="hall logo" width={100} height={100} src={`/${match.blue.name.replace(/\s+/g, '')}.png`}/>
+                            <div className={styles.logoContainer}>
+                              <Image className={styles.hallLogo} alt="hall logo" width={100} height={100} src={`/${match.blue.name.replace(/\s+/g, '')}.png`}/>
+                              <span className={styles.hallNameSmall}> {getCapitalLetters(match.blue.name.replace(/\s+/g, ''))} </span>
+                            </div>
                         </div>
                         <div className={styles.sportName}>
                             <span>{match.sport.name}  {(match.sport.isCarnival)? "- Carnival" :""}</span> 
