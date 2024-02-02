@@ -61,7 +61,10 @@ const sortPoints = (points: Point[]): Point[] => {
   return points.sort((a,b) => b.points - a.points)
 }
 
-const getCapitalLetters = word => (typeof word === 'string' ? word.match(/[A-Z]/g)?.join('') || '' : '');
+function getCapitalLetters(word: string): string {
+  return word.match(/[A-Z]/g)?.join('');
+}
+
 
 const STORAGE_KEY = 'keyisnotihgbuteusofftothefore';
 const axios = require('axios');
