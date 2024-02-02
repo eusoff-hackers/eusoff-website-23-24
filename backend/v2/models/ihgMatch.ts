@@ -8,6 +8,7 @@ interface iIhgMatch extends Document {
   pointsRed?: number;
   pointsBlue?: number;
   venue: string;
+  stage?: string;
 }
 
 const rIhgMatch = {
@@ -22,6 +23,7 @@ const rIhgMatch = {
     pointsRed: { type: `number` },
     pointsBlue: { type: `number` },
     venue: { type: `string` },
+    stage: { type: `string` },
   },
   additionalProperties: false,
 };
@@ -34,6 +36,7 @@ const ihgMatchSchema = new Schema<iIhgMatch>({
   pointsRed: { type: Number },
   pointsBlue: { type: Number },
   venue: { type: String, required: true },
+  stage: { type: String },
 });
 
 const IhgMatch = model<iIhgMatch>(`IhgMatch`, ihgMatchSchema);

@@ -7,8 +7,8 @@ import { Hall } from '../../models/hall';
 import { setCache, checkCache } from '../../utils/cache_handler';
 
 const POINTS_REWARD = {
-  carnival: [0, 1, 2, 3, 4, 5, 6],
-  nonCarnival: [0, 1, 1, 3, 3, 4, 5],
+  carnival: [0, 6, 5, 4, 3, 2, 1],
+  nonCarnival: [0, 5, 4, 3, 3, 1, 1],
 };
 
 const schema = {
