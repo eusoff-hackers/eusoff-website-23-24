@@ -140,7 +140,7 @@ padding-top: 1.25%;
 }
 
 .hallLogo{
-    width: min(30%,5rem);
+   
     height: 5rem;
     object-fit:contain;
     text-transform: uppercase;
@@ -193,4 +193,12 @@ padding-top: 1.25%;
 .date{
   margin-top: 3%;
   font-size: 1.3rem;
+}
+
+.logoContainer{
+  max-width: min(30%,5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
