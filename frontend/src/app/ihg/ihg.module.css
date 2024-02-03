@@ -124,13 +124,13 @@ padding-top: 1.25%;
 }
 .matchContainer{
   min-height: 17.5%;
-     max-width: 100%;
+    max-width: 100%;
     display:flex;
-    justify-content:space-between;
     padding: 1%;
-    column-count: 3;
     background: #FEB901;
     border-radius: 15px;
+    overflow: hidden;
+    align-items: center;
 }
 
 .tables{
@@ -140,7 +140,7 @@ padding-top: 1.25%;
 }
 
 .hallLogo{
-    min-height: 5rem;
+    height: 4rem;
     object-fit:contain;
     text-transform: uppercase;
     margin: 1%;
