@@ -306,7 +306,7 @@ const Leaderboard: React.FC = () => {
                             </div>
                         </div>
                         <div className={styles.sportName}>
-                            <span>{match.sport.name}  {(match.sport.isCarnival)? "- Carnival" :""}</span> 
+                            <span>{match.sport.name}  - {match.stage}</span> 
                             <span className={styles.venue}> {match.venue} </span>
                         </div>
                         <div className={styles.timing}><span>{convertTo12HourFormat(time)}</span></div>
