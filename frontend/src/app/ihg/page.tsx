@@ -41,6 +41,7 @@ export interface Match {
     sport:  {name: string, isCarnival: boolean},
     timestamp: number,
     venue: string,
+    stage: string,
 }
 
 export interface Point {
