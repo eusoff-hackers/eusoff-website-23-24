@@ -154,7 +154,6 @@ padding-top: 1.25%;
 
 .hallvs{
   max-width: 35%;
-
   display: flex;
   justify-content:space-between;
   align-items:center;
@@ -177,7 +176,7 @@ padding-top: 1.25%;
 .sportName span{
   display:inline;
   white-space: nowrap;
-  font-size: min(3vw,1rem);
+  font-size: min(2.5vw,1rem);
 }
 
 .timing{
