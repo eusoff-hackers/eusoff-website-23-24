@@ -107,7 +107,7 @@ const Leaderboard: React.FC = () => {
         try {
           const pointsResponse = await axios.get(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/points`
-          );
+          );  
   
           if (pointsResponse.data.success) {
             setPoints(pointsResponse.data.data);
@@ -307,7 +307,7 @@ const Leaderboard: React.FC = () => {
                         </div>
                         <div className={styles.sportName}>
                             <span>{match.sport.name}  {(match.sport.isCarnival)? "- Carnival" :""}</span> 
-                            <span> {match.venue} </span>
+                            <span className={styles.venue}> {match.venue} </span>
                         </div>
                         <div className={styles.timing}><span>{convertTo12HourFormat(time)}</span></div>
                     </div>
