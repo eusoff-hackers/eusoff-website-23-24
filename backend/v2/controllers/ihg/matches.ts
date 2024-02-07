@@ -18,7 +18,8 @@ const schema = {
 async function handler(req: FastifyRequest, res: FastifyReply) {
   const session = req.session.get(`session`)!;
   try {
-    const matches = await IhgMatch.find()
+    console.log(new Date());
+    const matches = await IhgMatch.find({ timestamp: { $gt: new Date() } })
       .populate(`red`)
       .populate(`blue`)
       .populate(`sport`)
