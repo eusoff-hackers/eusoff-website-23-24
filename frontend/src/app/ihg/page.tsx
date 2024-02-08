@@ -230,7 +230,7 @@ const Leaderboard: React.FC = () => {
             return(
                 <div className={styles.tableContainer} >
                     <div className={styles.headerRow}>
-                        <p className={styles.headerCell}>Hall</p>
+                        <p className={styles.headerCell}>Hall Name</p>
                         <p className={styles.headerCell}>🥇</p>
                         <p className={styles.headerCell}>🥈</p>
                         <p className={styles.headerCell}>🥉</p>
