@@ -228,32 +228,24 @@ const Leaderboard: React.FC = () => {
 
     const generateTable = (pointsArray: Point[]) => {
             return(
-                <TableContainer sx={{ width: '95%', height: '90%', mx: 'auto', display:'flex', my:'3%'}}  component={Paper}>
-                <Table aria-label="customized table">
-                  <TableHead>
-                    <TableRow>
-                      <StyledTableCell align="left">Hall Name</StyledTableCell>
-                      <StyledTableCell >Gold</StyledTableCell>
-                      <StyledTableCell >Silver</StyledTableCell>
-                      <StyledTableCell >Bronze</StyledTableCell>
-                      <StyledTableCell align="right" >Points</StyledTableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
+                <div className={styles.tableContainer} >
+                    <div className={styles.headerRow}>
+                        <p className={styles.headerCell}>Hall Name</p>
+                        <p className={styles.headerCell}>🥇</p>
+                        <p className={styles.headerCell}>🥈</p>
+                        <p className={styles.headerCell}>🥉</p>
+                        <p className={styles.headerCell}>Points</p>
+                    </div>
                     {pointsArray.map((row) => (
-                      <StyledTableRow key={row.hall.id}>
-                        <StyledTableCell align="left" component="th" scope="row">
-                          {row.hall.name}
-                        </StyledTableCell>
-                        <StyledTableCell >{row.golds}</StyledTableCell>
-                        <StyledTableCell >{row.silvers}</StyledTableCell>
-                        <StyledTableCell >{row.bronzes}</StyledTableCell>
-                        <StyledTableCell align="right">{row.points}</StyledTableCell>
-                      </StyledTableRow>
+                      <div className={styles.contentRow} key={row.hall.id}>
+                        <p className={styles.tableCell}>{row.hall.name}</p>
+                        <p className={styles.tableCell}>{row.golds}</p>
+                        <p className={styles.tableCell}>{row.silvers}</p>
+                        <p className={styles.tableCell}>{row.bronzes}</p>
+                        <p className={styles.tableCell}>{row.points}</p>
+                      </div>
                     ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                </div>
             );
           }
     
