@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100;400;600&display=swap');
+
+.right h1{
+    font-weight: 100;
+    letter-spacing: 1.15;
+    text-transform: uppercase;
+}
+
+
+
+.container{
+  height: 100dvh;
+  width: 100dvw;
+  background: linear-gradient(to bottom, #ffde59 ,#ff4d4d);
+    font-family: 'Lexend', sans-serif;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 15% 85%;
+    position: relative;
+  color: #000;
+  resize: horizontal;
+}
+
+.container h1{
+  font-family: 'Lexend', sans-serif;
+  font-weight: 600;
+}
+
+.loadingContainer{
+  height: 100dvh;
+  width: 100dvw;
+  background: linear-gradient(to bottom, #ffde59 ,#ff4d4d);
+      font-family: 'Lexend', sans-serif;
+
+  display: flex;
+  align-items:center;
+  font-size: 1.5rem;
+  letter-spacing: 1rem;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  color: #000;
+}
+
+.matchContainer{
+  width: 97%;
+  display:flex;
+  justify-content: space-between;
+  overflow: auto;   
+  align-items: center;
+  padding: 1%;
+}
+
+.header{
+  max-width:100%;
+  height:auto;
+  max-height: 15%;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  flex-wrap: wrap;
+  padding: 3%;
+}
+
+.left{
+    display:flex;
+}
+
+.right{
+    padding: 2%;
+    font-size: 1.5rem;
+}
+
+.eusoff{
+    width:min(15%,25vw);
+    object-fit: contain;
+}
+.text{
+    width:100%;
+    height: 100%;
+    display:flex;
+    font-size: 1.5rem;
+    align-items: flex-start;
+    flex-direction:column;    
+    white-space: nowrap;
+}
+
+.h5{
+    padding-left: 0.25%;
+
+}
+.content{
+      position: relative;
+padding-top: 1.25%;
+  bottom:0;
+  width:100%;
+  height:100%;
+  display:flex;
+    flex-wrap: wrap;
+  justify-content: center;
+  overflow: auto;
+}
+.leaderboard{
+    border-radius: 20px;
+    margin: 2%;
+    min-width: 55%;
+    max-height: 97.5%;
+    background: white;
+    padding-left:1%;
+    padding-top: 1%;
+}
+.matches{
+    border-radius: 15px;
+    margin:2%;
+    padding-left:1%;
+    min-width: 35%;
+    max-height: 97.5%;
+    background: white;
+    padding-top: 1%;
+    display:flex;
+    flex-direction: column;
+    overflow: auto;
+
+}
+.matchContainer{
+  min-height: 17.5%;
+    max-width: 100%;
+    display:flex;
+    padding: 1%;
+    background: #FEB901;
+    border-radius: 15px;
+    overflow: hidden;
+    align-items: center;
+}
+
+.tables{
+  height: 90%;
+  width: 90%;
+  margin:3%;
+}
+
+.hallLogo{
+    height: 4rem;
+    object-fit:contain;
+    text-transform: uppercase;
+    margin: 1%;
+}
+
+.versus{
+    font-size: 2rem;
+    font-weight: 600;
+    font-family: 'Lexend', sans-serif;
+}
+
+.hallvs{
+  max-width: 35%;
+  display: flex;
+  justify-content:space-between;
+  align-items:center;
+  padding: 0.5%;
+  margin-left: min(3%,7vw);
+}
+
+.sportName{
+    margin-left:5%;
+    display: flex;
+    flex-direction: column;
+    justify-content:  space-between;
+    align-items: center;
+    text-transform: uppercase;
+    padding-right: 2%;
+    background: #FEB901;
+    max-width: 40%;
+}
+
+.sportName span{
+  display:inline;
+  white-space: nowrap;
+  font-size: min(2.5vw,1rem);
+}
+
+.timing{
+  max-width: 20%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+  font-size: min(3vw,1rem);
+}
+
+.venue{
+  font-size: min(3vw,1rem);
+}
+
+.date{
+  margin-top: 3%;
+  font-size: 1.3rem;
+}
+
+.logoContainer{
+  max-width: min(30%,5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.tableContainer{
+  display: grid;
+  grid-gap: 5px;
+  min-height: 95%;
+  width: 97.5%;
+  grid-template-rows: repeat(7,calc(95/7-1)%);
+  border-radius: 20px 20px 0 0;
+}
+
+.headerRow, .contentRow{
+  display:grid;
+  grid-template-columns: 45% repeat(4,14%);
+}
+
+.headerCell, .tableCell{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.headerCell{
+  background: black;
+  color: white;
+  font-size: min(3vw, 1.5rem);
+}
+
+
