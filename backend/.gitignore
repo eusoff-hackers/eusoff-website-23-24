@@ -7,3 +7,4 @@ package-lock.json
 build/
 sso/FederationMetadata.xml*
 v2/scripts/csv/*
+backups/

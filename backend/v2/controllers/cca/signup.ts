@@ -40,7 +40,9 @@ async function handler(
 ) {
   const session = req.session.get(`session`)!;
   try {
-    const isOpen = (await Server.findOne({ key: `ccaOpen` }))?.value;
+    const isOpen = (
+      await Server.findOne({ key: `ccaOpen` }).session(session.session)
+    )?.value;
 
     if (!isOpen) {
       return await sendStatus(res, 403, `CCA registration not open.`);
@@ -49,7 +51,7 @@ async function handler(
     const user = req.session.get(`user`)!;
     const ccas = await Cca.find({
       _id: { $in: req.body.ccas.map((s) => s._id) },
-    });
+    }).session(session.session);
     const info = {
       user: user._id,
       ...req.body.info,

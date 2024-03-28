@@ -9,6 +9,11 @@ import { rJersey } from './jersey';
 import { rCca } from './cca';
 import { rCcaInfo } from './ccaInfo';
 import { rCcaSignup } from './ccaSignup';
+import { rHall } from './hall';
+import { rIhgMatch } from './ihgMatch';
+import { rIhgPoint } from './ihgPoint';
+import { rIhgSport } from './ihgSport';
+import { rIhgPlacement } from './ihgPlacement';
 
 async function addSchemas(fastify: FastifyInstance) {
   await fastify.addSchema(rUser);
@@ -19,6 +24,11 @@ async function addSchemas(fastify: FastifyInstance) {
   await fastify.addSchema(rCca);
   await fastify.addSchema(rCcaInfo);
   await fastify.addSchema(rCcaSignup);
+  await fastify.addSchema(rHall);
+  await fastify.addSchema(rIhgMatch);
+  await fastify.addSchema(rIhgPoint);
+  await fastify.addSchema(rIhgSport);
+  await fastify.addSchema(rIhgPlacement);
 }
 
 export { addSchemas };
