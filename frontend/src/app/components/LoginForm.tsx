@@ -16,7 +16,7 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (user !== null) {
-      router.push(`/dashboard`);
+      router.push(`/dashboard/profile`);
     }
   });
 
@@ -51,7 +51,7 @@ export default function LoginForm() {
         }
 
         dispatch(setUser(newUser));
-        router.replace("/dashboard");
+        router.replace("/dashboard/profile");
       } 
     } catch (error) {
       const axiosError = error as AxiosError;

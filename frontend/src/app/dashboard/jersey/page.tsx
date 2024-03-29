@@ -2,16 +2,16 @@
 
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectUser, setUser, User } from '../redux/Resources/userSlice';
+import { selectUser, setUser, User } from '../../redux/Resources/userSlice';
 import { useRouter } from 'next/navigation';
 import { Alert, Snackbar, AlertColor } from '@mui/material';
  
-import Modal from '../components/Modal/modal';
-import BiddingTable from '../components/BiddingTable';
-import NavBar from '../components/NavBar';
-import Loading from '../components/Loading';
+import Modal from '../../components/Modal/modal';
+import BiddingTable from '../../components/BiddingTable';
+import NavBar from '../../components/NavBar';
+import Loading from '../../components/Loading';
 import { AxiosError } from 'axios';
-import Legend from '../components/Legend';
+import Legend from '../../components/Legend';
 
 export interface Bidding {
   number: number
@@ -42,7 +42,7 @@ const loadBiddings = () => {
 const axios = require('axios'); 
 axios.defaults.withCredentials = true;
 
-const Dashboard: React.FC = () => {
+const Jersey: React.FC = () => {
   const user = useSelector(selectUser);
   const route = useRouter();
   const dispatch = useDispatch();
@@ -159,8 +159,6 @@ const Dashboard: React.FC = () => {
     setIsModalOpen(false);
   };
 
-
-
   return (
     !isClient || user == null ? <Loading /> : 
     (<div className="w-full flex flex-col lg:flex-row">
@@ -249,4 +247,4 @@ const Dashboard: React.FC = () => {
   )
 }
 
-export default Dashboard;
+export default Jersey;
