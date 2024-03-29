@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply, RouteOptions } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
-import { getEligible } from '../../utils/eligibilityChecker';
+import { getEligible } from '../../utils/jersey';
 import { success, sendError, resBuilder } from '../../utils/req_handler';
 import { reportError } from '../../utils/logger';
 import { auth } from '../../utils/auth';
