@@ -15,6 +15,7 @@ import { rIhgPoint } from './ihgPoint';
 import { rIhgSport } from './ihgSport';
 import { rIhgPlacement } from './ihgPlacement';
 import { rRoom } from './room';
+import { rRoomBidInfo } from './roomBidInfo';
 
 async function addSchemas(fastify: FastifyInstance) {
   await fastify.addSchema(rUser);
@@ -31,6 +32,7 @@ async function addSchemas(fastify: FastifyInstance) {
   await fastify.addSchema(rIhgSport);
   await fastify.addSchema(rIhgPlacement);
   await fastify.addSchema(rRoom);
+  await fastify.addSchema(rRoomBidInfo);
 }
 
 export { addSchemas };
