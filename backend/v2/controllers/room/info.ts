@@ -14,8 +14,16 @@ const schema = {
         info: {
           $ref: `roomBidInfo`,
         },
-        system: {},
+        system: {
+          type: `object`,
+          properties: {
+            bidOpen: { type: `number` },
+            bidClose: { tyhpe: `number` },
+          },
+          additionalProperties: false,
+        },
       },
+      additionalProperties: false,
     }),
   },
 } as const;
@@ -51,7 +59,13 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
         curDate <= (bidClose.value as number);
     }
 
-    return await success(res, { info });
+    return await success(res, {
+      info,
+      system: {
+        bidOpen: bidOpen.value as number,
+        bidClose: bidClose.value as number,
+      },
+    });
   } catch (error) {
     reportError(error, `Bid Info handler error`);
     return sendError(res);
