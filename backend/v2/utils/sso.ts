@@ -14,6 +14,10 @@ const jacksonOptions = {
     engine: 'mongo' as const,
     url: process.env.MONGO_URI,
   },
+  ory: {
+    projectId: undefined,
+    sdkToken: undefined,
+  },
 };
 
 (async function init() {

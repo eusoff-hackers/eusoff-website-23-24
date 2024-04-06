@@ -47,7 +47,9 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
       (c) => c.cca,
     );
 
-    const isOpen = (await Server.findOne({ key: `ccaOpen` }))?.value;
+    const isOpen = (
+      await Server.findOne({ key: `ccaOpen` }).session(session.session)
+    )?.value;
 
     return await success(res, { info, ccas, isOpen });
   } catch (error) {

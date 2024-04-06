@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply, RouteOptions } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
-import { Cca } from '../../models/cca';
+import { Hall } from '../../models/hall';
 import { success, resBuilder, sendError } from '../../utils/req_handler';
 import { reportError } from '../../utils/logger';
 
@@ -9,7 +9,7 @@ const schema = {
     200: resBuilder({
       type: `array`,
       items: {
-        $ref: `cca`,
+        $ref: `hall`,
       },
     }),
   },
@@ -18,10 +18,10 @@ const schema = {
 async function handler(req: FastifyRequest, res: FastifyReply) {
   const session = req.session.get(`session`)!;
   try {
-    const cca = await Cca.find().session(session.session);
-    return await success(res, cca);
+    const hall = await Hall.find().session(session.session);
+    return await success(res, hall);
   } catch (error) {
-    reportError(error, `Cca list handler error`);
+    reportError(error, `Hall list handler error`);
     return sendError(res);
   } finally {
     await session.end();
