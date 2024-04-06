@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply, RouteOptions } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { FromSchema } from 'json-schema-to-ts';
-import { isEligible } from '../../utils/eligibilityChecker';
+import { isEligible } from '../../utils/jersey';
 import { reportError, logEvent } from '../../utils/logger';
 import { sendError, sendStatus } from '../../utils/req_handler';
 import { auth } from '../../utils/auth';
