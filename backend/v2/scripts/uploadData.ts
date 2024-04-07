@@ -1,14 +1,14 @@
 /* eslint-disable no-console */
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-await-in-loop */
 
 import { parse } from 'csv-parse';
 import * as fs from 'fs';
-import { User, iUser } from '../models/user';
-import { Jersey } from '../models/jersey';
-import { Member } from '../models/member';
-import { BiddingInfo } from '../models/biddingInfo';
-import mongoose, { Types } from 'mongoose';
-import { createObjectCsvWriter } from 'csv-writer';
+import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import { User, iUser } from '../models/user';
 
 const SALT_ROUNDS = 10;
 
@@ -42,8 +42,8 @@ async function hashPassword(password: string) {
       if (error) {
         console.error(error);
       }
-      let res: iUser[] = [];
-      for (let user of result) {
+      const res: iUser[] = [];
+      for (const user of result) {
         user.password = await hashPassword(user.password);
         res.push(user as iUser);
       }
@@ -58,12 +58,12 @@ async function hashPassword(password: string) {
 
         try {
           await session.commitTransaction();
-        } catch (error) {
+        } catch (e) {
           await session.abortTransaction();
-          console.error(error);
+          console.error(e);
         }
-      } catch (error) {
-        console.error(error);
+      } catch (e) {
+        console.error(e);
       } finally {
         await session.endSession();
       }
