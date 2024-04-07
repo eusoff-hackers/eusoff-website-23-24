@@ -2,7 +2,8 @@ import csv
 
 def translate_csv(input_file, output_file):
     translation_dict = {
-        'user': 'Matric Number',
+        'username': 'Matric Number',
+        'name': 'Full Name',
         'points': 'Total Points',
         'External CCA': 'External CCA',
         'Dean\'s list': 'Dean\'s list ',
@@ -85,10 +86,11 @@ def translate_csv(input_file, output_file):
         'flag': 'flag '
     }
 
-    with open(input_file, 'r') as csv_in, open(output_file, 'w', newline='') as csv_out:
+    with open(input_file, 'r', encoding="utf-8-sig") as csv_in, open(output_file, 'w', newline='') as csv_out:
         reader = csv.DictReader(csv_in)
-        fieldnames = fieldnames = [
-            'user',
+        fieldnames = [
+            'username',
+            'name',
             'points',
             'External CCA',
             'Dean\'s list',
@@ -168,7 +170,7 @@ def translate_csv(input_file, output_file):
             'ehoc',
             'rag comm',
             'rag dancer',
-            'flag '
+            'flag'
         ]
         writer = csv.DictWriter(csv_out, fieldnames=fieldnames)
 

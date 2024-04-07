@@ -10,7 +10,7 @@ def generate_xkcd_password():
 def translate_csv(input_file, output_file):
     with open(input_file, 'r', encoding="utf-8-sig") as csvfile:
         reader = csv.DictReader(csvfile)
-        fieldnames = ['username', 'role', 'gender', 'year', 'room', 'email', 'password']
+        fieldnames = ['username', 'role', 'gender', 'year', 'room', 'email', 'name']
         with open(output_file, 'w', newline='') as outfile:
             writer = csv.DictWriter(outfile, fieldnames=fieldnames)
             writer.writeheader()
@@ -20,12 +20,12 @@ def translate_csv(input_file, output_file):
                     year_of_study = 0
                 translated_row = {
                     'username': row['Student No.'],
+                    'name': row['Name Preferred'],
                     'role': 'USER',
                     'gender': row['Gender'],
                     'year': year_of_study,
                     'room': row['Room Space'],
                     'email': row['Student NUS Email'],
-                    'password': generate_xkcd_password()
                 }
                 writer.writerow(translated_row)
 
