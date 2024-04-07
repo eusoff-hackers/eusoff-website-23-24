@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { removeUser, selectUser, User } from '../../redux/Resources/userSlice';
+import { removeUser, selectUser, User, setUser } from '../../redux/Resources/userSlice';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import NavBar from '../../components/NavBar';
 import Loading from '../../components/Loading';
 import { ProfileTableItems } from '@/app/components/Profile/ProfileTable';
 import ProfileTable from '@/app/components/Profile/ProfileTable';
+import { AxiosError } from 'axios';
 
 
 const axios = require('axios');
@@ -34,21 +35,20 @@ const ProfilePage = () => {
   const [ccaInfo, setCcaInfo] = useState<ProfileTableItems[]>([]);
 
   useEffect(() => {
+    if (user == null) {
+      route.push('/');
+      return;
+    }
     setIsClient(true);
     fetchRoomBidInfo();
     getUserInfo();
-  }, []);
-
-  useEffect(() => {
-    if (user == null) {
-        route.push('/');
-    }
   }, [user, route]);
 
   // api call to fetch user's room bidding points, eligibility
   const fetchRoomBidInfo = async () => {
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/room/info`);
+
       if (response.data.success) {
         console.log("This is eligible bids info " + JSON.stringify(response.data.data))
 
@@ -72,6 +72,15 @@ const ProfilePage = () => {
         console.log({ message: 'Failed to fetch data' });
       }
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+
+        if(axiosError.response.status == 401) {
+          console.error('Session Expired'); 
+          dispatch(setUser(null));
+          route.push('/');
+        }
+      }
       console.error('Error during fetching data', error);
     }
   }
@@ -115,7 +124,7 @@ const ProfilePage = () => {
           </div>
             
           {/*Room Bidding*/}
-          <div className=" bg-slate-200 text-center w-5/6 shadow-2xl ">
+          <div className=" bg-slate-200 text-center w-5/6 shadow-2xl text-gray-800">
             <h1 className='text-3xl'>Room Bidding</h1>
             { roomBidInfo == null ? <p>Loading...</p> 
             : <ul>
