@@ -128,9 +128,9 @@ const ProfilePage = () => {
             <h1 className='text-3xl'>Room Bidding</h1>
             { roomBidInfo == null ? <p>Loading...</p> 
             : <ul>
-                <li>{`Eligible for room bidding: ${roomBidInfo.isEligible} `}</li>
                 <li>{`Total Bidding points: ${roomBidInfo.points}`}</li>
-                <li>{`Can bid: ${roomBidInfo.canBid}`}</li>
+                {/* <li>{`Eligible for room bidding: ${roomBidInfo.isEligible} `}</li>
+                <li>{`Can bid: ${roomBidInfo.canBid}`}</li> */}
               </ul>
             }
             <div className="py-5 px-5">
