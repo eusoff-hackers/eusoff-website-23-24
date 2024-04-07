@@ -29,7 +29,7 @@ async function hashPassword(password: string) {
 
 (async () => {
   await mongoose.connect(process.env.MONGO_URI);
-  const csvFilePath = './v2/scripts/csv/23_24_formatted.csv';
+  const csvFilePath = './v2/scripts/csv/passworded.csv';
   const fileContent = fs.readFileSync(csvFilePath, { encoding: 'utf-8' });
 
   parse(
