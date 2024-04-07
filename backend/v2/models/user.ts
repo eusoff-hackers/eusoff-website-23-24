@@ -19,7 +19,7 @@ const rUser = {
   properties: {
     username: { type: `string` },
     role: { type: `string`, enum: [`USER`, `ADMIN`] },
-    year: { type: `number`, minimum: 1, maximum: 5 },
+    year: { type: `number`, minimum: 0, maximum: 5 },
     gender: { type: `string`, enum: [`Male`, `Female`] },
     room: { type: `string` },
   },
@@ -36,7 +36,7 @@ const userSchema = new Schema<iUser>(
       default: `USER`,
       required: true,
     },
-    year: { type: Number, min: 1, max: 5, required: true },
+    year: { type: Number, min: 0, max: 5, required: true },
     gender: { type: String, enum: [`Male`, `Female`], required: true },
     email: { type: String },
     room: { type: String, required: true },
