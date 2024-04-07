@@ -1,20 +1,26 @@
 "use client"; // This is a client component 👈🏽
 
-import React, { useState, useEffect } from 'react'
+import React from 'react';
+import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectUser, setUser, User } from '../redux/Resources/userSlice';
+import { selectUser, setUser, User } from '../../redux/Resources/userSlice';
 import { useRouter } from 'next/navigation';
 import { Alert, Snackbar, AlertColor } from '@mui/material';
  
-import Modal from '../components/Modal/modal';
-import BiddingTable from '../components/BiddingTable';
-import NavBar from '../components/NavBar';
-import Loading from '../components/Loading';
+import Modal from '../../components/Modal/modal';
+import BiddingTable from '../../components/BiddingTable';
+import NavBar from '../../components/NavBar';
+import Loading from '../../components/Loading';
 import { AxiosError } from 'axios';
-import Legend from '../components/Legend';
+import Legend from '../../components/Legend';
 
 export interface Bidding {
   number: number
+}
+
+export interface Teams {
+  name: String,
+  shareable: boolean
 }
 
 export interface ToastMessage {
@@ -38,17 +44,14 @@ const loadBiddings = () => {
   }
 };
 
-// Create an instance of axios with credentials 
+// // Create an instance of axios with credentials 
 const axios = require('axios'); 
 axios.defaults.withCredentials = true;
 
-const Dashboard: React.FC = () => {
+const Jersey: React.FC = () => {
   const user = useSelector(selectUser);
   const route = useRouter();
   const dispatch = useDispatch();
-
-  // Check if there is better fix for this.
-  const [isNav, setIsNav] = useState(false);
   
   const [isClient, setIsClient] = useState(false);
 
@@ -58,6 +61,7 @@ const Dashboard: React.FC = () => {
   const userBiddings : Bidding[] = []
   const [biddings, setBiddings] = useState<Bidding[]>(userBiddings);
   const [allowedBids, setAllowedBids] = useState<number[]>([])
+  const [teams, setTeams] = useState<Teams[]>([]);
 
   // State to manage error toast throughout app
   const [toast, setToast] = useState<ToastMessage>({message:"", severity:"error"});
@@ -89,44 +93,60 @@ const Dashboard: React.FC = () => {
     }
   }
 
-  // Updates information on the page after bids are submitted 
-  const updateUser = async () => {
+  // Does a call to for user's teams
+  const getUserTeam = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/info`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/team/info`);
 
       if (response.data.success) {
-        const newUser : User = {
-          username: response.data.data.user.username,
-          teams: response.data.data.user.teams,
-          bids: response.data.data.user.bids,
-          isEligible: response.data.data.user.isEligible,
-          role: response.data.data.user.role,
-          year: response.data.data.user.year,
-          points: response.data.data.user.points,
-          allocatedNumber: response.data.data.user.allocatedNumber,
-          round: response.data.data.user.bidding_round
-        }
-        console.log("updated user")
-        dispatch(setUser(newUser));
+        setTeams(response.data.data.teams)
+        console.log("This is user's team" + JSON.stringify(response.data.data.teams))
       }
+      
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError;
-
-        if(axiosError.response.status == 401) {
-          console.error('Session Expired'); 
-          dispatch(setUser(null));
-          route.push('/');
-        }
-      }
-      console.error(`Error during update. ${error}`, error);
+      console.error('Error during getting allowed bids', error);
     }
+
   }
+
+  // Updates information on the page after bids are submitted 
+  // const updateUser = async () => {
+  //   try {
+  //     const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/info`);
+
+  //     if (response.data.success) {
+  //       const newUser : User = {
+  //         username: response.data.data.user.username,
+  //         teams: response.data.data.user.teams,
+  //         bids: response.data.data.user.bids,
+  //         isEligible: response.data.data.user.isEligible,
+  //         role: response.data.data.user.role,
+  //         year: response.data.data.user.year,
+  //         points: response.data.data.user.points,
+  //         allocatedNumber: response.data.data.user.allocatedNumber,
+  //         round: response.data.data.user.bidding_round
+  //       }
+  //       console.log("updated user")
+  //       dispatch(setUser(newUser));
+  //     }
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       const axiosError = error as AxiosError;
+
+  //       if(axiosError.response.status == 401) {
+  //         console.error('Session Expired'); 
+  //         dispatch(setUser(null));
+  //         route.push('/');
+  //       }
+  //     }
+  //     console.error(`Error during update. ${error}`, error);
+  //   }
+  // }
 
   // set biddings to the biddings the user has previously made
-  const setPreviousBids = () => {
-    user != null ? setBiddings(JSON.parse("["+String(user.bids.map(item => `\{\"number\":${item.jersey.number}\}`))+"]")) : false;
-  }
+  // const setPreviousBids = () => {
+  //   user != null ? setBiddings(JSON.parse("["+String(user.bids.map(item => `\{\"number\":${item.jersey.number}\}`))+"]")) : false;
+  // }
 
   // Saves changes to user_biddings in local storage
   useEffect(() => {
@@ -134,11 +154,11 @@ const Dashboard: React.FC = () => {
   }, [biddings])
 
   useEffect(() => {
-    setIsNav(true);
     setIsClient(true); // indicate that client has been rendered
     getEligibleBids(); // get all eligible bids when page renders
-    setPreviousBids(); // set bids in bidding table when page renders
-    updateUser(); // Makes a get request each time page is refreshed to check if cookie still exist
+    // setPreviousBids(); // set bids in bidding table when page renders
+    getUserTeam(); // get user's team when page renders
+    // updateUser(); // Makes a get request each time page is refreshed to check if cookie still exist
     console.log("Saved user: " + JSON.stringify(user));
   }, [])
 
@@ -159,12 +179,9 @@ const Dashboard: React.FC = () => {
     setIsModalOpen(false);
   };
 
-
-
   return (
     !isClient || user == null ? <Loading /> : 
     (<div className="w-full flex flex-col lg:flex-row">
-      { isNav && <NavBar/>}
       <div className="flex-1 p-5 light:bg-white-800 text-black">
         <div className="border-b-2 pb-2">
           <h2 className="text-2xl font-bold mb-2">Hello, {user.username}</h2>
@@ -172,7 +189,7 @@ const Dashboard: React.FC = () => {
               <div className='bg-gray-200 rounded-lg px-2 py-1'>
                 <p className="font-bold">Your current CCAs:</p>
                 <div> 
-                  {user.teams.map((team, ind) => 
+                  {teams.map((team, ind) => 
                   <div className="flex items-center justify-between" key={ind}>
                     <ul>{ind + 1}. {team.name}</ul>
                     {team.shareable ? <p>Can share number</p> : <p>Cannot share number</p>}
@@ -249,4 +266,4 @@ const Dashboard: React.FC = () => {
   )
 }
 
-export default Dashboard;
+export default Jersey;

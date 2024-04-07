@@ -6,10 +6,7 @@ import FakeNavBar from './FakeNavBar'
 // Loading Page
 export default function Loading() {
   return (
-  <main className="flex flex-col md:flex-row">
-    {/*Hacky solution to fix the flickering*/}
-    <FakeNavBar />
-    
+  <main className="flex flex-col md:flex-row">    
     <div className="h-screen flex justify-center items-center animate-spin text-2xl w-full"> 
         <h1>
             <svg

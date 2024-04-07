@@ -16,7 +16,7 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (user !== null) {
-      router.push(`/dashboard`);
+      router.push(`/dashboard/profile`);
     }
   });
 
@@ -40,18 +40,14 @@ export default function LoginForm() {
         console.log('This is the auth response' + JSON.stringify(response.data.data))
         const newUser : User = {
           username: response.data.data.user.username,
-          teams: response.data.data.user.teams,
-          bids: response.data.data.user.bids,
-          isEligible: response.data.data.user.isEligible,
           role: response.data.data.user.role,
           year: response.data.data.user.year,
-          points: response.data.data.user.points,
-          allocatedNumber: response.data.data.user.allocatedNumber,
-          round: response.data.data.user.bidding_round
+          gender: response.data.data.user.gender,
+          room: response.data.data.user.room
         }
 
         dispatch(setUser(newUser));
-        router.replace("/dashboard");
+        router.replace("/dashboard/profile");
       } 
     } catch (error) {
       const axiosError = error as AxiosError;

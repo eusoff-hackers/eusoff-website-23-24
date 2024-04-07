@@ -39,14 +39,10 @@ const loadState = () => {
 const oldState = loadState()
 const savedUser : User | null = oldState == null ? null : {
   username: oldState.username,
-  bids: oldState.bids,
-  teams: oldState.teams,
-  isEligible: oldState.isEligible,
   role: oldState.role,
   year: oldState.year,
-  points: oldState.points,
-  allocatedNumber: oldState.allocatedNumber,
-  round: oldState.round
+  gender: oldState.gender,
+  room: oldState.room
 }
 console.log("This is saved user :" + JSON.stringify(savedUser))
 
