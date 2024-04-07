@@ -32,7 +32,7 @@ module.exports = {
     ],
   },
   root: true,
-  ignorePatterns: [`v2/scripts/*`, `environment.d.ts`, `v1/*`],
+  ignorePatterns: [`environment.d.ts`, `v1/*`],
   settings: {
     'import/resolver': {
       node: {
