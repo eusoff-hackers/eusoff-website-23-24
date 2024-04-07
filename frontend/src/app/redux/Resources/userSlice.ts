@@ -4,14 +4,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface User {
   username: string,
-  teams: any[],
-  bids: any[],
-  isEligible: boolean,
   role: string, 
   year: number,
-  points: number,
-  allocatedNumber: number,
-  round: number
+  gender: string,
+  room: string
 }
 
 const initialState: User | null = null;

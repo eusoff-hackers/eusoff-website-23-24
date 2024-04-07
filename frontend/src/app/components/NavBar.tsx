@@ -79,7 +79,7 @@ export default function NavBar() {
             </Link>
           </li>
           <li className="hover:translate-x-1">
-            <Link className="flex items-center gap-3 py-2" href="/dashboard/jersey">
+            <Link className="flex items-center gap-3 py-2" href="/dashboard/jersey" onClick={e => e.preventDefault()}>
               <svg
                   className="h-5 w-5"
                   fill="none"
