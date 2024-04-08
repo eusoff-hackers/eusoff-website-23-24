@@ -78,7 +78,7 @@ async function mail(user: Data) {
     await transport.sendMail({
       from: process.env.EMAIL, // sender address
       to: email, // list of receivers
-      subject: 'Credentials for Jersey Bidding.', // Subject line
+      subject: 'Credentials for Room Bidding.', // Subject line
       // text: mail.password, // plain text body
       html: template, // html body
     });
