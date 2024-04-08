@@ -3,6 +3,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
+/* eslint-disable no-continue */
 
 import { parse } from 'csv-parse';
 import * as fs from 'fs';
@@ -207,6 +208,8 @@ interface Data {
           );
           if (!tmp || tmp.role !== 'USER') missing.push(user);
           else {
+            if ((await RoomBidInfo.countDocuments({ user: tmp._id })) !== 0)
+              continue;
             res.push({
               user: tmp._id,
               isEligible: false,
