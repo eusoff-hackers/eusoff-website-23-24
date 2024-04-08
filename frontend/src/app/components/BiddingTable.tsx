@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { Bidding } from '../dashboard/page';
-import { ToastMessage } from '../dashboard/page';
+import { Bidding } from '../dashboard/jersey/page';
+import { ToastMessage } from '../dashboard/jersey/page';
 
 interface BiddingList {
   biddings: Bidding[];

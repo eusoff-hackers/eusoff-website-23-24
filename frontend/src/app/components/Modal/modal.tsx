@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Bidding, ToastMessage } from '@/app/dashboard/page';
+import { Bidding, ToastMessage } from '@/app/dashboard/jersey/page';
 
 interface ModalProps {
   closeModal: () => void;
