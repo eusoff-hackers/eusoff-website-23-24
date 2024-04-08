@@ -8,11 +8,11 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <section className="h-screen flex flex-row">
-        <div className='w-1/5'>
+    <section className="lg:grid lg:grid-cols-6">
+        <div className='lg:col-span-1'>
           <NavBar/>
         </div>
-        <div className='w-full'>{children}</div>
+        <div className='lg:col-span-5'>{children}</div>
     </section>
   )
 }
