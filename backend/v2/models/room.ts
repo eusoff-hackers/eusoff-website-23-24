@@ -12,11 +12,12 @@ interface iRoom extends Document {
 const rRoom = {
   $id: `room`,
   type: `object`,
-  required: [`block`, `number`],
+  required: [`_id`],
   properties: {
+    _id: { type: `string` },
     block: { type: `string`, enum: BLOCKS_LIST },
     number: { type: `number` },
-    capacity: { type: `number`, mimimum: 1, maximum: 2 },
+    capacity: { type: `number`, minimum: 1, maximum: 2 },
     occupancy: { type: `number`, minimum: 0, maximum: 2 },
   },
 };
