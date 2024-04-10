@@ -36,7 +36,8 @@ async function isEligible(
       curDate <= (bidClose.value as number)
     ) {
       return true;
-    } return false;
+    }
+    return false;
   } catch (error) {
     reportError(error, `Room Bid User eligibility checker error.`);
     throw new Error(`Room Bid User eligibility checker error.`);
@@ -69,4 +70,14 @@ async function parseRooms(
   return { valid: true, rooms };
 }
 
-export { isEligible, parseRooms };
+async function validateRooms(user: iUser, rooms: iRoom[]) {
+  if (
+    rooms.filter((r) => r.occupancy >= r.capacity).length +
+      rooms.filter((r) => !r.allowedGenders.includes(user.gender)).length !==
+    0
+  )
+    return false;
+  return true;
+}
+
+export { isEligible, parseRooms, validateRooms };

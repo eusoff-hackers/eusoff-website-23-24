@@ -1,7 +1,7 @@
 import { Document, Schema, model } from 'mongoose';
 
 const BLOCKS_LIST = [`A`, `B`, `C`, `D`, `E`];
-const GENDERS = ['MALE', 'FEMALE'];
+const GENDERS = ['Male', 'Female'];
 
 interface iRoom extends Document {
   block: string;

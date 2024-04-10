@@ -4,7 +4,7 @@ import { FromSchema } from 'json-schema-to-ts';
 import { iRoom } from '../../models/room';
 import { sendError, sendStatus } from '../../utils/req_handler';
 import { reportError, logEvent } from '../../utils/logger';
-import { isEligible, parseRooms } from '../../utils/room';
+import { validateRooms, isEligible, parseRooms } from '../../utils/room';
 import { RoomBid } from '../../models/roomBid';
 import { auth } from '../../utils/auth';
 
@@ -41,7 +41,11 @@ async function handler(
       req.body.rooms.map((r) => r._id),
       session,
     );
-    if (!valid || !(await isEligible(user, session))) {
+    if (
+      !valid ||
+      !(await isEligible(user, session)) ||
+      !(await validateRooms(user, rooms))
+    ) {
       return await sendStatus(res, 400, `Ineligible for a room bid.`);
     }
 
