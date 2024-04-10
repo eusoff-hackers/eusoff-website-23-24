@@ -41,12 +41,16 @@ async function handler(
       req.body.rooms.map((r) => r._id),
       session,
     );
-    if (
-      !valid ||
-      !(await isEligible(user, session)) ||
-      !(await validateRooms(user, rooms))
-    ) {
+
+    if (!valid) {
+      return await sendStatus(res, 400, `Invalid room(s).`);
+    }
+
+    if (!(await isEligible(user, session))) {
       return await sendStatus(res, 400, `Ineligible for a room bid.`);
+    }
+    if (!(await validateRooms(user, rooms))) {
+      return await sendStatus(res, 400, `Ineligible room(s).`);
     }
 
     const newBids = rooms.map((room, i) => ({
