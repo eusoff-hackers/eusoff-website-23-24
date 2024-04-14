@@ -66,7 +66,9 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
         curDate <= (bidClose.value as number);
     }
 
-    const bids = await RoomBid.find({ user: user._id }).populate(`room`);
+    const bids = await RoomBid.find({ user: user._id })
+      .populate(`room`)
+      .session(session.session);
 
     return await success(res, {
       info,
