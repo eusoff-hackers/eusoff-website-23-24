@@ -19,8 +19,15 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
   const session = req.session.get(`session`)!;
   try {
     const rooms = await Room.find()
+      .populate({
+        path: `bidders`,
+        select: `user info -room`,
+        populate: [`user`, { path: `info`, select: `isEligible points -user` }],
+      })
       .sort({ block: 1, number: 1 })
-      .session(session.session);
+      .session(session.session)
+      .lean();
+
     return await success(res, rooms);
   } catch (error) {
     reportError(error, `Room list handler error`);
