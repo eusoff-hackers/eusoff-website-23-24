@@ -17,10 +17,21 @@ const axiosWithCredentials = axios.create({
   withCredentials: true,
 });
 
-interface RoomInfoType {
+export interface RoomInfoType {
   isEligible: boolean;
   points: number;
   canBid: boolean;
+  bids: RoomType[];
+}
+
+export interface RoomType {
+  room: {
+    block: string;
+    number: number;
+    capacity: number;
+    occupancy: number;
+    allowedGender: string[];
+  }
 }
 
 const ProfilePage = () => {
@@ -56,7 +67,8 @@ const ProfilePage = () => {
         const roomBidInfo: RoomInfoType = {
           isEligible: response.data.data.info.isEligible,
           points: response.data.data.info.points,
-          canBid: response.data.data.info.canBid
+          canBid: response.data.data.info.canBid,
+          bids: response.data.data.bids
         }
         setRoomBidInfo(roomBidInfo)
 
@@ -92,6 +104,8 @@ const ProfilePage = () => {
     ];
     setUserInfo(userData);
   }
+
+  console.log(roomBidInfo)
 
   return (
     !isClient || user == null ? <Loading /> : 
