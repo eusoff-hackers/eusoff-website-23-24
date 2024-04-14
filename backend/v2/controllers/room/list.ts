@@ -18,7 +18,9 @@ const schema = {
 async function handler(req: FastifyRequest, res: FastifyReply) {
   const session = req.session.get(`session`)!;
   try {
-    const rooms = await Room.find().session(session.session);
+    const rooms = await Room.find()
+      .sort({ block: 1, number: 1 })
+      .session(session.session);
     return await success(res, rooms);
   } catch (error) {
     reportError(error, `Room list handler error`);
