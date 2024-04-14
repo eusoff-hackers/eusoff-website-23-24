@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react'
-import NavBar from '../components/NavBar';
+import NavBar from '../../components/NavBar';
 import { CircularProgress } from '@mui/material';
 import {useEffect, useState} from "react";
 import eusoffLogo from "public/eusoff-logo.png";
@@ -56,7 +56,6 @@ const RoomBidding: React.FC = () => {
   ) : 
         (
           <div className=" bg-gradient-to-tl from-slate-200 to-slate-300 min-h-screen flex flex-col lg:flex-row">
-             {<NavBar/>} 
              
       <main className=" h-full w-full ">
 
