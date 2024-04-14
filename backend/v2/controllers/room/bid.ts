@@ -15,7 +15,7 @@ const schema = {
     properties: {
       rooms: {
         type: `array`,
-        maxItems: 3,
+        maxItems: 1,
         uniqueItems: true,
         items: {
           $ref: `room`,
