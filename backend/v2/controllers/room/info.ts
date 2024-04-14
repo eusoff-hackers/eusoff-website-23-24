@@ -46,7 +46,10 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
       iServer | null,
     ] = logAndThrow<iServer | iRoomBidInfo | null>(
       await Promise.allSettled([
-        RoomBidInfo.findOne({ user: user._id }).session(session.session).lean(),
+        RoomBidInfo.findOne({ user: user._id })
+          .select(`-user`)
+          .session(session.session)
+          .lean(),
         Server.findOne({ key: `roomBidOpen` }).session(session.session),
         Server.findOne({ key: `roomBidClose` }).session(session.session),
       ]),
@@ -58,7 +61,6 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
     }
 
     if (info) {
-      info.user = undefined;
       const curDate = Date.now();
       info.canBid =
         info.isEligible &&
@@ -67,8 +69,10 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
     }
 
     const bids = await RoomBid.find({ user: user._id })
+      .select(`-user`)
       .populate(`room`)
-      .session(session.session);
+      .session(session.session)
+      .lean();
 
     return await success(res, {
       info,
