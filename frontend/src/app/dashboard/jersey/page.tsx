@@ -182,7 +182,7 @@ const Jersey: React.FC = () => {
   return (
     !isClient || user == null ? <Loading /> : 
     (<div className="w-full flex flex-col lg:flex-row">
-      {/* <div className="flex-1 p-5 light:bg-white-800 text-black">
+      <div className="flex-1 p-5 light:bg-white-800 text-black">
         <div className="border-b-2 pb-2">
           <h2 className="text-2xl font-bold mb-2">Hello, {user.username}</h2>
             <div className='space-y-2'>
@@ -261,7 +261,7 @@ const Jersey: React.FC = () => {
         )}
 
         </div>
-      </div> */}
+      </div> 
     </div>)
   )
 }
