@@ -1,15 +1,17 @@
 import { FastifyRequest, FastifyReply, RouteOptions } from 'fastify';
 import { IncomingMessage, Server as httpServer, ServerResponse } from 'http';
 import { FromSchema } from 'json-schema-to-ts';
-import { iRoom } from '../../models/room';
+import { Room, iRoom } from '../../models/room';
 import { sendError, sendStatus } from '../../utils/req_handler';
-import { reportError, logEvent } from '../../utils/logger';
+import { reportError, logEvent, logAndThrow } from '../../utils/logger';
 import { validateRooms, isEligible, parseRooms } from '../../utils/room';
 import { RoomBid } from '../../models/roomBid';
 import { auth } from '../../utils/auth';
 import { mail } from '../../utils/mailer';
 import { RoomBidInfo } from '../../models/roomBidInfo';
 import { Server } from '../../models/server';
+import { MongoSession } from '../../utils/mongoSession';
+import { iUser } from '../../models/user';
 
 const schema = {
   body: {
@@ -31,6 +33,56 @@ const schema = {
 
 type iRooms = FromSchema<typeof schema.body>;
 type iBody = Omit<iRooms, keyof { rooms: iRoom[] }> & { rooms: iRoom[] };
+
+async function alert(
+  room: iRoom,
+  bound: number,
+  session: MongoSession,
+  alertInterval: number,
+  user: iUser,
+) {
+  const users = (await Room.findById(room._id)
+    .populate({ path: `bidders`, populate: [`user`, `info`] })
+    .session(session.session))!
+    .bidders!.filter((u) => u.info!.points <= bound)
+    .filter(
+      (u) => u.info!.lastAlertMail.getTime() + alertInterval <= Date.now(),
+    )
+    .filter((u) => !user._id.equals(u.user?._id));
+
+  logAndThrow(
+    await Promise.allSettled(
+      users.map(async (u) => {
+        await RoomBidInfo.findOneAndUpdate(
+          { user: u.user?._id },
+          { lastAlertMail: Date.now() },
+        ).session(session.session);
+
+        const body = [
+          `Please review your bid for the room <strong>${room.block}${room.number}</strong> as soon as possible to ensure you maintain the highest bid. This is your chance to secure your preferred room.`,
+          `To update your bid, please visit our bidding page and save your new preference before the deadline.`,
+        ];
+
+        const { email, username, _id } = u.user as iUser;
+
+        await mail(
+          {
+            subject: `Urgent Alert: Risk of Being Outbidded`,
+            title: `Alert: You are in danger of being outbidded!`,
+            body,
+            email,
+            username,
+            userId: _id,
+          },
+          session,
+        );
+      }),
+    ),
+    `Alert mail send`,
+  );
+
+  return true;
+}
 
 async function handler(
   req: FastifyRequest<{ Body: iBody }>,
@@ -69,10 +121,12 @@ async function handler(
     const saveInterval = await Server.findOne({
       key: `roomBidMailSaveInterval`,
     });
+    const alertInterval = await Server.findOne({
+      key: `roomBidMailAlertInterval`,
+    });
 
     if (
       saveInterval &&
-      process.env.EMAIL_GAP &&
       bidInfo!.lastSaveMail.getTime() + (saveInterval.value as number) <=
         Date.now() &&
       rooms.length > 0
@@ -99,6 +153,22 @@ async function handler(
         session,
       );
     }
+
+    if (alertInterval)
+      logAndThrow(
+        await Promise.allSettled(
+          rooms.map((r) =>
+            alert(
+              r,
+              bidInfo!.points,
+              session,
+              alertInterval.value as number,
+              user,
+            ),
+          ),
+        ),
+        `Room bid alert mail`,
+      );
 
     await logEvent(
       `USER PLACE ROOM BID`,

@@ -1,10 +1,10 @@
 import { Document, Types, Schema, model } from 'mongoose';
-import './user';
+import { iUser } from './user';
 import './room';
 import { iRoomBidInfo } from './roomBidInfo';
 
 interface iRoomBid extends Document {
-  user?: Types.ObjectId;
+  user?: Types.ObjectId | iUser;
   room?: Types.ObjectId;
   priority: number;
   info?: iRoomBidInfo;

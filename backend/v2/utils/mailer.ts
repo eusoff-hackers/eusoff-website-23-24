@@ -26,8 +26,8 @@ interface Payload {
 
 async function mail(payload: Payload, session: MongoSession) {
   try {
-    logger.info(`Emailing user: ${payload.username}.`);
     if (!MAIL_FLAG) return false;
+    logger.info(`Emailing user: ${payload.username}.`);
 
     const { subject, title, body, email, username, userId } = payload;
 
@@ -55,8 +55,7 @@ async function mail(payload: Payload, session: MongoSession) {
                                   
                                   ${body.reduce(
                                     (a, b) =>
-                                      `${a 
-                                      }\n<p style="margin-bottom: 20px; color: #666; line-height: 1.6; align-text: justify;">
+                                      `${a}\n<p style="margin-bottom: 20px; color: #666; line-height: 1.6; align-text: justify;">
                                                     ${b}
                                                     </p>`,
                                     '',
