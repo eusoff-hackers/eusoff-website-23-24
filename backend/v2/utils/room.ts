@@ -70,7 +70,7 @@ async function parseRooms(
   return { valid: true, rooms };
 }
 
-async function validateRooms(user: iUser, rooms: iRoom[]) {
+function validateRooms(user: iUser, rooms: iRoom[]) {
   if (
     rooms.filter((r) => r.occupancy >= r.capacity).length +
       rooms.filter((r) => !r.allowedGenders.includes(user.gender)).length !==

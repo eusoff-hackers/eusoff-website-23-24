@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply, RouteOptions } from 'fastify';
-import { IncomingMessage, Server, ServerResponse } from 'http';
+import { IncomingMessage, Server as httpServer, ServerResponse } from 'http';
 import { FromSchema } from 'json-schema-to-ts';
 import { iRoom } from '../../models/room';
 import { sendError, sendStatus } from '../../utils/req_handler';
@@ -7,6 +7,9 @@ import { reportError, logEvent } from '../../utils/logger';
 import { validateRooms, isEligible, parseRooms } from '../../utils/room';
 import { RoomBid } from '../../models/roomBid';
 import { auth } from '../../utils/auth';
+import { mail } from '../../utils/mailer';
+import { RoomBidInfo } from '../../models/roomBidInfo';
+import { Server } from '../../models/server';
 
 const schema = {
   body: {
@@ -62,6 +65,41 @@ async function handler(
     await RoomBid.deleteMany({ user: user._id }).session(session.session);
     await RoomBid.create(newBids, { session: session.session });
 
+    const bidInfo = await RoomBidInfo.findOne({ user: user._id });
+    const saveInterval = await Server.findOne({
+      key: `roomBidMailSaveInterval`,
+    });
+
+    if (
+      saveInterval &&
+      process.env.EMAIL_GAP &&
+      bidInfo!.lastSaveMail.getTime() + (saveInterval.value as number) <=
+        Date.now() &&
+      rooms.length > 0
+    ) {
+      await RoomBidInfo.findOneAndUpdate(
+        { user: user._id },
+        { lastSaveMail: Date.now() },
+      ).session(session.session);
+
+      const body = [
+        `We appreciate you taking the time to place your bid with us. You have bid for the following room: <strong>${rooms[0].block}${rooms[0].number}</strong>.`,
+        `We will notify you if any issues arise. Please make sure to check your spam folder and add us to your trusted sender list to receive all our communications.`,
+      ];
+
+      await mail(
+        {
+          subject: `Thank You for Bidding!`,
+          title: `Your bid has successfully been saved!`,
+          body,
+          email: user.email,
+          username: user.username,
+          userId: user._id,
+        },
+        session,
+      );
+    }
+
     await logEvent(
       `USER PLACE ROOM BID`,
       session,
@@ -87,7 +125,7 @@ async function handler(
 }
 
 const bid: RouteOptions<
-  Server,
+  httpServer,
   IncomingMessage,
   ServerResponse,
   { Body: iBody }
