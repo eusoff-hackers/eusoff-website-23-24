@@ -30,6 +30,11 @@ export interface Room {
   allowedGenders: string[];
 }
 
+export interface BlockInfo{
+  quota: number;
+  bidderCount: number ;
+}
+
 export interface RoomBlock {
   block: string;
   quota: number;
@@ -79,7 +84,7 @@ const RoomBidding: React.FC = () => {
 
   const [currentBid,setCurrentBid] = useState<RoomDet>({block:'',number: 0})
   
-const objectify = (array: BlockInfo[]): Record<string, BlockInfo> => {
+const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
   const object: Record<string, BlockInfo> = {};
   array.forEach((item) => {
     object[item.block] = { quota: item.quota, bidderCount: item.bidderCount };
@@ -130,7 +135,7 @@ const objectify = (array: BlockInfo[]): Record<string, BlockInfo> => {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/room/info`);
 
       if (response.data.success) {
-        console.log("This is eligible bids info " + JSON.stringify(response.data.data))
+        //console.log("This is eligible bids info " + JSON.stringify(response.data.data))
 
         const roomBidInfo: RoomInfoType = {
           isEligible: response.data.data.info.isEligible,
