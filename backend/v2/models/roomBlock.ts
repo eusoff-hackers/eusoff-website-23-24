@@ -13,6 +13,7 @@ const rRoomBlock = {
   properties: {
     block: { type: `string`, enum: BLOCKS_LIST },
     quota: { type: `number` },
+    bidderCount: { type: `number` },
   },
 };
 
@@ -20,7 +21,7 @@ const roomBlockSchema = new Schema<iRoomBlock>({
   block: {
     type: String,
     required: true,
-    index: 1,
+    index: true,
     enum: BLOCKS_LIST,
     unique: true,
   },
