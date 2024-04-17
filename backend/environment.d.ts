@@ -13,6 +13,9 @@ declare global {
       SSO_TENANT: string;
       SSO_PRODUCT: string;
       SSO_AUDIENCE: string;
+      ENABLE_EMAIL: string | undefined;
+      EMAIL: string;
+      EMAIL_PASSWORD: string;
     }
   }
 }

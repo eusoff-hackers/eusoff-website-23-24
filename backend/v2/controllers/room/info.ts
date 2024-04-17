@@ -5,6 +5,7 @@ import { iServer, Server } from '../../models/server';
 import { success, resBuilder, sendError } from '../../utils/req_handler';
 import { logAndThrow, reportError } from '../../utils/logger';
 import { auth } from '../../utils/auth';
+import { RoomBid } from '../../models/roomBid';
 
 const schema = {
   response: {
@@ -13,6 +14,12 @@ const schema = {
       properties: {
         info: {
           $ref: `roomBidInfo`,
+        },
+        bids: {
+          type: `array`,
+          items: {
+            $ref: `roomBid`,
+          },
         },
         system: {
           type: `object`,
@@ -39,7 +46,10 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
       iServer | null,
     ] = logAndThrow<iServer | iRoomBidInfo | null>(
       await Promise.allSettled([
-        RoomBidInfo.findOne({ user: user._id }).session(session.session).lean(),
+        RoomBidInfo.findOne({ user: user._id })
+          .select(`-user`)
+          .session(session.session)
+          .lean(),
         Server.findOne({ key: `roomBidOpen` }).session(session.session),
         Server.findOne({ key: `roomBidClose` }).session(session.session),
       ]),
@@ -51,7 +61,6 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
     }
 
     if (info) {
-      info.user = undefined;
       const curDate = Date.now();
       info.canBid =
         info.isEligible &&
@@ -59,8 +68,15 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
         curDate <= (bidClose.value as number);
     }
 
+    const bids = await RoomBid.find({ user: user._id })
+      .select(`-user`)
+      .populate(`room`)
+      .session(session.session)
+      .lean();
+
     return await success(res, {
       info,
+      bids,
       system: {
         bidOpen: bidOpen.value as number,
         bidClose: bidClose.value as number,

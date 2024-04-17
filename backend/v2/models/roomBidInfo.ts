@@ -11,6 +11,8 @@ interface iRoomBidInfo extends Document {
   points: number;
   canBid?: boolean;
   pointsDistribution: iPointsDistribution[];
+  lastSaveMail: Date;
+  lastAlertMail: Date;
 }
 
 const rRoomBidInfo = {
@@ -55,6 +57,16 @@ const roomBidInfoSchema = new Schema<iRoomBidInfo>({
   pointsDistribution: {
     type: [{ type: pointsDistributionSchema }],
     default: [],
+  },
+  lastSaveMail: {
+    type: Date,
+    required: true,
+    default: 0,
+  },
+  lastAlertMail: {
+    type: Date,
+    required: true,
+    default: 0,
   },
 });
 

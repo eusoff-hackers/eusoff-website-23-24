@@ -53,13 +53,20 @@ function logAndThrow<Type>(
   ).map((j) => j.value);
 }
 
-function reportError(error: unknown, template: string) {
-  if (error instanceof Error) {
-    logger.error(`${template}: ${error.message}.`, { error });
-  } else {
-    logger.error(`Thrown error is not an error: ${template}: ${error}`, {
-      error,
-    });
+async function reportError(error: unknown, template: string) {
+  try {
+    if (error instanceof Error) {
+      await logger.error(`${template}: ${error.message}.`, { error });
+    } else {
+      await logger.error(
+        `Thrown error is not an error: ${template}: ${error}`,
+        {
+          error,
+        },
+      );
+    }
+  } catch (error2) {
+    reportError(error2, `Error report error.`);
   }
 }
 
