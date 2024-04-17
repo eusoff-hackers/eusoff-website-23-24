@@ -36,6 +36,10 @@ export interface RoomBlock {
   bidderCount: number;
 }
 
+export interface RoomDet {
+  block: string;
+  number: number;
+}
 const axios = require('axios');
 
 const hallBlocks = ['A', 'B', 'C', 'D', 'E']
@@ -61,12 +65,8 @@ const RoomBidding: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [blockfilter, setBlockFilter] = useState<string>('A');
   const [userInfo, setUserInfo] = useState<RoomInfoType>();
-  const [blockData, setBlockData] = useState<RoomBlock>(
-    {
-      block: '',
-      quota: 0,
-      bidderCount: 0,
-    })
+  const [unsaved,setUnsaved] = useState<boolean> (false);
+  const [blockData, setBlockData] = useState<Record<string, BlockInfo>>({});
   const [roomSelect, setRoomSelect] = useState<Room>(
     {
       block: '',
@@ -76,7 +76,17 @@ const RoomBidding: React.FC = () => {
       allowedGenders: [''],
     }
   );
+
+  const [currentBid,setCurrentBid] = useState<RoomDet>({block:'',number: 0})
   
+const objectify = (array: BlockInfo[]): Record<string, BlockInfo> => {
+  const object: Record<string, BlockInfo> = {};
+  array.forEach((item) => {
+    object[item.block] = { quota: item.quota, bidderCount: item.bidderCount };
+  });
+  return object;
+}
+
   const handleDialogOpen = (room : Room) => {
     setDialogOpen(true);
     setRoomSelect(room);
@@ -90,22 +100,15 @@ const RoomBidding: React.FC = () => {
     setBlockFilter(block);
   }
 
-  const setBid = () => {
-
+  const handleBidAcceptance = (block:string,number:number) => {
+    userInfo.bids[0].room.block = block;
+    userInfo.bids[0].room.number = number;
+    setDialogOpen(false);
   }
 
   useEffect(() => {
-    console.log('im called')
     fetchRoomBidInfo()
     fetchRoooms()
-   /* axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/room/info`)
-    .then((response:any)=>{
-    if(response.data.success){
-        setLoading(!response.data.success)
-        setPoints(sortPoints(response.data.data))
-        }
-    })
-    .catch() */
 }, [])
 
   // api call to fetch all rooms
@@ -114,7 +117,7 @@ const RoomBidding: React.FC = () => {
     .then((response:any)=>{
     if(response.data.success){
         setLoading(!response.data.success)
-        setBlockData(response.data.data.blocks)
+        setBlockData(objectify(response.data.data.blocks))
         setRoomList(response.data.data.rooms)
         }
     })
@@ -127,7 +130,7 @@ const RoomBidding: React.FC = () => {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/room/info`);
 
       if (response.data.success) {
-       // console.log("This is eligible bids info " + JSON.stringify(response.data.data))
+        console.log("This is eligible bids info " + JSON.stringify(response.data.data))
 
         const roomBidInfo: RoomInfoType = {
           isEligible: response.data.data.info.isEligible,
@@ -211,7 +214,7 @@ const RoomBidding: React.FC = () => {
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button  color="success" onClick={handleDialogClose}>Accept</Button>
+                <Button  color="success" onClick={()=>{handleBidAcceptance(roomSelect.block,roomSelect.number)}}>Accept</Button>
                 <Button  color="error" onClick={handleDialogClose}>Close</Button>
               </DialogActions>
             </Dialog>
@@ -233,13 +236,16 @@ const RoomBidding: React.FC = () => {
                     key={index}
                     className={` h-10 w-10 m-2 flex items-center justify-center text-white font-semibold text-xl cursor-pointer hover:bg-gray-500 rounded-lg
                     ${blockfilter === block ? 'bg-blue-500' : 'bg-gray-800'}`}
-                    onClick={() => handleBlockFilter(block)}
+                    onClick={() => handleBlockFilter(block)}  
                     >
                         {block}
                     </div>
                   )
                 })
               }
+          </div>
+          <div className='flex flex-row justify-center items-center' >
+            <p className="text-black text-xs lg:text-xl font-mono"> Block Quota : {blockData[blockfilter].quota} , Bids : {blockData[blockfilter].bidderCount}</p>
           </div>
           <div className="w-full h-full grid grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
             {
