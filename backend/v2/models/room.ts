@@ -22,14 +22,8 @@ const rRoom = {
     _id: { type: `string` },
     block: { type: `string`, enum: BLOCKS_LIST },
     number: { type: `number` },
-    capacity: { type: `number`, minimum: 1, maximum: 2, required: true },
-    occupancy: {
-      type: `number`,
-      minimum: 0,
-      maximum: 2,
-      required: true,
-      default: 0,
-    },
+    capacity: { type: `number`, minimum: 1, maximum: 2 },
+    occupancy: { type: `number`, minimum: 0, maximum: 2 },
     allowedGenders: { type: `array`, items: { type: `string`, enum: GENDERS } },
     bidders: { type: `array`, items: { $ref: `roomBid` } },
   },
@@ -39,8 +33,8 @@ const roomSchema = new Schema<iRoom>(
   {
     block: { type: String, required: true, index: 1, enum: BLOCKS_LIST },
     number: { type: Number, required: true },
-    capacity: { type: Number, min: 1, max: 2 },
-    occupancy: { type: Number, min: 0, max: 2 },
+    capacity: { type: Number, min: 1, max: 2, required: true },
+    occupancy: { type: Number, min: 0, max: 2, required: true, default: 0 },
     allowedGenders: [{ type: String, enum: GENDERS }],
   },
   {
