@@ -27,6 +27,14 @@ const fastify = Fastify({
   logger: LOG_LEVEL,
 }).withTypeProvider<JsonSchemaToTsProvider>();
 
+process.on('unhandledRejection', (reason, promise) => {
+  reportError({ reason, promise }, 'Unhandled Rejection.');
+});
+
+process.on('uncaughtException', (error) => {
+  reportError(error, 'Uncaught Exception.');
+});
+
 async function run() {
   try {
     await Promise.allSettled([

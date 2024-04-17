@@ -21,9 +21,10 @@ interface Data {
 }
 
 const transport = nodemailer.createTransport({
-  host: 'smtpout.secureserver.net',
-  port: 465,
-  secure: true,
+  // host: 'smtpout.secureserver.net',
+  // port: 465,
+  // secure: true,
+  service: 'Outlook365',
   auth: {
     user: process.env.EMAIL,
     pass: process.env.EMAIL_PASSWORD,

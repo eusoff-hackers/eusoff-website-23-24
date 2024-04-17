@@ -42,17 +42,17 @@ async function hashPassword(password: string) {
       if (error) {
         console.error(error);
       }
-      const res: iUser[] = [];
-      for (const user of result) {
-        user.password = await hashPassword(user.password);
-        res.push(user as iUser);
-      }
       const session = await mongoose.startSession();
 
       await session.startTransaction({
         readConcern: { level: `snapshot` },
         writeConcern: { w: `majority`, j: true },
       });
+      const res: iUser[] = [];
+      for (const user of result) {
+        user.password = await hashPassword(user.password);
+        res.push(user as iUser);
+      }
       try {
         await User.create(res, { session });
 

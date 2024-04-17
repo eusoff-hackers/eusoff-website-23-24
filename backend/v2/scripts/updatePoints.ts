@@ -9,7 +9,7 @@ import { parse } from 'csv-parse';
 import * as fs from 'fs';
 import mongoose from 'mongoose';
 import { User } from '../models/user';
-import { RoomBidInfo, iRoomBidInfo } from '../models/roomBidInfo';
+import { RoomBidInfo } from '../models/roomBidInfo';
 
 const DISTRIBUTIONS = [
   'External CCA',
@@ -17,6 +17,7 @@ const DISTRIBUTIONS = [
   'cmc',
   'aca',
   'band',
+  'rockfest',
   'choir',
   'drama',
   'edc',
@@ -81,6 +82,7 @@ const DISTRIBUTIONS = [
   'ew audio',
   'ew design',
   'ew dmm',
+  'ew logs',
   'ew cro',
   'audit',
   'elections',
@@ -200,26 +202,29 @@ interface Data {
       });
       try {
         const missing: Data[] = [];
-        const res: iRoomBidInfo[] = [];
+        const res: Data[] = [];
 
         for (const user of result) {
           const tmp = await User.findOne({ username: user.username }).session(
             session,
           );
           if (!tmp || tmp.role !== 'USER') missing.push(user);
-          else {
-            if ((await RoomBidInfo.countDocuments({ user: tmp._id })) !== 0)
-              continue;
-            res.push({
-              user: tmp._id,
-              isEligible: false,
-              points: user.points,
-              pointsDistribution: DISTRIBUTIONS.map((k) => ({
-                cca: k,
-                points: user[k as keyof Data],
-              })).filter((c) => c.points && c.points !== '0'),
-            } as iRoomBidInfo);
-          }
+          else if (
+            (await RoomBidInfo.countDocuments({ user: tmp._id })) !== 0
+          ) {
+            await RoomBidInfo.updateOne(
+              { user: tmp._id },
+              {
+                user: tmp._id,
+                isEligible: false,
+                points: user.points,
+                pointsDistribution: DISTRIBUTIONS.map((k) => ({
+                  cca: k,
+                  points: user[k as keyof Data],
+                })).filter((c) => c.points && c.points !== '0'),
+              },
+            ).session(session);
+          } else res.push(user);
         }
 
         console.log(
@@ -227,7 +232,11 @@ interface Data {
           missing.map((u) => u.username),
         );
 
-        await RoomBidInfo.create(res, { session });
+        console.log(
+          'Unupdated users: ',
+          res.map((u) => u.username),
+        );
+        // await RoomBidInfo.create(res, { session });
 
         try {
           await session.commitTransaction();
