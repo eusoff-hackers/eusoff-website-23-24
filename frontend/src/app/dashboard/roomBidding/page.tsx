@@ -197,8 +197,6 @@ const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
     }
   }  
 
-  console.log(roomSelect)
-
 
   return ( loading || userLoading ? (
     <div className="flex justify-center items-center h-screen">
