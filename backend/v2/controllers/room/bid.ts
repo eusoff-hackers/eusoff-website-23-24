@@ -36,23 +36,28 @@ type iBody = Omit<iRooms, keyof { rooms: iRoom[] }> & { rooms: iRoom[] };
 
 async function alert(
   room: iRoom,
-  bound: number,
   session: MongoSession,
   alertInterval: number,
-  user: iUser,
 ) {
   const users = (await Room.findById(room._id)
     .populate({ path: `bidders`, populate: [`user`, `info`] })
-    .session(session.session))!
-    .bidders!.filter((u) => u.info!.points <= bound)
+    .session(session.session))!.bidders!.sort(
+    (u, v) => v.info!.points - u.info!.points,
+  );
+
+  const n = room.capacity - room.occupancy;
+  if (n >= users.length) return false;
+  const limit = users[n].info!.points;
+
+  const fUsers = users
     .filter(
       (u) => u.info!.lastAlertMail.getTime() + alertInterval <= Date.now(),
     )
-    .filter((u) => !user._id.equals(u.user?._id));
+    .filter((u) => u.info!.points <= limit);
 
   logAndThrow(
     await Promise.allSettled(
-      users.map(async (u) => {
+      fUsers.map(async (u) => {
         await RoomBidInfo.findOneAndUpdate(
           { user: u.user?._id },
           { lastAlertMail: Date.now() },
@@ -157,15 +162,7 @@ async function handler(
     if (alertInterval)
       logAndThrow(
         await Promise.allSettled(
-          rooms.map((r) =>
-            alert(
-              r,
-              bidInfo!.points,
-              session,
-              alertInterval.value as number,
-              user,
-            ),
-          ),
+          rooms.map((r) => alert(r, session, alertInterval.value as number)),
         ),
         `Room bid alert mail`,
       );
