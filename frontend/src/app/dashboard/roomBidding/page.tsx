@@ -30,6 +30,12 @@ export interface Room {
   allowedGenders: string[];
 }
 
+export interface RoomBlock {
+  block: string;
+  quota: number;
+  bidderCount: number;
+}
+
 const axios = require('axios');
 
 const hallBlocks = ['A', 'B', 'C', 'D', 'E']
@@ -55,6 +61,12 @@ const RoomBidding: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [blockfilter, setBlockFilter] = useState<string>('A');
   const [userInfo, setUserInfo] = useState<RoomInfoType>();
+  const [blockData, setBlockData] = useState<RoomBlock>(
+    {
+      block: '',
+      quota: 0,
+      bidderCount: 0,
+    })
   const [roomSelect, setRoomSelect] = useState<Room>(
     {
       block: '',
@@ -98,10 +110,8 @@ const RoomBidding: React.FC = () => {
     .then((response:any)=>{
     if(response.data.success){
         setLoading(!response.data.success)
-
-
-        setRoomList(response.data.data)
-        console.log("im in")
+        setBlockData(response.data.data.blocks)
+        setRoomList(response.data.data.rooms)
         }
     })
     .catch()
@@ -113,7 +123,7 @@ const RoomBidding: React.FC = () => {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/room/info`);
 
       if (response.data.success) {
-        console.log("This is eligible bids info " + JSON.stringify(response.data.data))
+       // console.log("This is eligible bids info " + JSON.stringify(response.data.data))
 
         const roomBidInfo: RoomInfoType = {
           isEligible: response.data.data.info.isEligible,
