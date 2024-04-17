@@ -23,11 +23,27 @@ import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 
 export interface Room {
+  _id: string;
   block: string;
   number: number;
   capacity: number;
   occupancy: number;
   allowedGenders: string[];
+  bidders: bidderInfo[];
+}
+
+export interface bidderInfo {
+  user: {
+      username: string;
+      role: string;
+      year: number;
+      gender: string;
+      room: string;
+  },
+  info: {
+      isEligible: boolean;
+      points: number;
+  }
 }
 
 export interface BlockInfo{
@@ -74,11 +90,13 @@ const RoomBidding: React.FC = () => {
   const [blockData, setBlockData] = useState<Record<string, BlockInfo>>({});
   const [roomSelect, setRoomSelect] = useState<Room>(
     {
+      _id: '',
       block: '',
       number: 0,
       capacity: 0,
       occupancy: 0,
       allowedGenders: [''],
+      bidders: []
     }
   );
 
@@ -108,13 +126,29 @@ const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
   const handleBidAcceptance = (block:string,number:number) => {
     userInfo.bids[0].room.block = block;
     userInfo.bids[0].room.number = number;
+    submitBid();
     setDialogOpen(false);
+
+
   }
 
   useEffect(() => {
     fetchRoomBidInfo()
     fetchRoooms()
 }, [])
+
+  // api call to make room bidding submission
+  const submitBid = async () => {
+    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/room/bid`, {
+      rooms: [{ _id: roomSelect._id }]
+    })
+    .then((response:any)=>{
+    if(response.data.success) {
+        console.log("Bid Submitted")
+    }
+    })
+    .catch()
+  }
 
   // api call to fetch all rooms
   const fetchRoooms = async () => {
@@ -163,6 +197,7 @@ const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
     }
   }  
 
+
   return ( loading || userLoading ? (
     <div className="flex justify-center items-center h-screen">
         <div className="rounded-full h-20 w-20 bg-violet-800 animate-ping">
@@ -181,11 +216,15 @@ const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
           <div className="w-6/12 text-gray-900 text-2xl text-left">
                         Eusoff Room Bidding 
           </div>
+          {
+            user.username == "A106" && <div className="w-6/12 text-gray-900 text-2xl text-left">THE GOAT GETS +1 POINT</div> // please remove
+          }
           <div className="w-6/12 text-gray-900 text- base text-right"> 
               Current Bid : {userInfo.bids[0].room.block}{userInfo.bids[0].room.number}
           </div>
           <div className="w-6/12 text-gray-900 text- base text-right"> 
               Points : {userInfo.points}
+              { user.username == "A106" && <p>+1</p> } {/* please remove */}
           </div>
         </div>
         {/*Top Banner
@@ -211,6 +250,19 @@ const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
                 <DialogContentText>
                   {roomSelect.capacity == 1 ? "Room Type: Single Room" : "Room Type: Double Room"}
                 </DialogContentText>
+                <br/>
+                <DialogContentText>
+                  <p className='font-bold'>Bidders List:</p>
+                </DialogContentText>
+                {
+                  roomSelect.bidders.length != 0 && roomSelect.bidders.map((bidder,index)=>{
+                    return (
+                      <DialogContentText key={index}>
+                        {`Bidder ${index+1}: ${bidder.user.username} - ${bidder.info.points} points`}
+                      </DialogContentText>
+                    )
+                  })
+                }
                 <DialogContentText>
                   &nbsp;
                 </DialogContentText>
