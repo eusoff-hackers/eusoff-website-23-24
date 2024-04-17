@@ -90,6 +90,10 @@ const RoomBidding: React.FC = () => {
     setBlockFilter(block);
   }
 
+  const setBid = () => {
+
+  }
+
   useEffect(() => {
     console.log('im called')
     fetchRoomBidInfo()
@@ -183,7 +187,8 @@ const RoomBidding: React.FC = () => {
     
 
         {/*Main Content*/}
-        <div className="bg-slate-200 mt-10 w-5/6 shadow-2xl text-3xl font-mono rounded-lg divide-y-5 m-auto grid grid-flow-row md:grid-flow-col gap-0 md:items-center py-10 px-5 mb-3">
+        <div className="flex flex-col bg-slate-200 mt-10 w-5/6 shadow-2xl text-3xl font-mono rounded-lg divide-y-5
+         m-auto h-full items-center py-10 px-5 mb-3">
 
           {/*Dialog Box*/}
           <React.Fragment>
@@ -198,22 +203,29 @@ const RoomBidding: React.FC = () => {
                 <DialogContentText>
                   {roomSelect.capacity == 1 ? "Room Type: Single Room" : "Room Type: Double Room"}
                 </DialogContentText>
+                <DialogContentText>
+                  &nbsp;
+                </DialogContentText>
+                <DialogContentText>
+                  Are you sure you want to choose this room?
+                </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button onClick={handleDialogClose}>Close</Button>
+                <Button  color="success" onClick={handleDialogClose}>Accept</Button>
+                <Button  color="error" onClick={handleDialogClose}>Close</Button>
               </DialogActions>
             </Dialog>
           </React.Fragment>
 
           {/*Placeholder image and log in text*/}
-          <div className=" bg-slate-200 text-center">
+          <div className="flex flex-col w-full h-full bg-slate-200 text-center">
             <h1 className="text-black border-b-2 border-b-slate-400">
             Available Rooms 
             </h1>
 
             
           <div className='flex flex-row justify-center items-center'>
-            <p>Select Block:</p>
+            <p className="text-black text-xs lg:text-xl font-mono">Select Block:</p>
               {
                 hallBlocks.map((block,index)=>{
                   return (
@@ -229,7 +241,7 @@ const RoomBidding: React.FC = () => {
                 })
               }
           </div>
-          <div className="flex flexCol">
+          <div className="w-full h-full grid grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
             {
               roomList!==null && 
               roomList.filter(
