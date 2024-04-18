@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { removeUser, selectUser, User, setUser } from '../../redux/Resources/userSlice';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
-import { RoomInfoType } from '../profile/page';
+import { RoomInfoType, RoomType } from '../profile/page';
 import { AxiosError } from 'axios';
 
 // Room Dialog Imports 
@@ -126,6 +126,7 @@ const RoomBidding: React.FC = () => {
     setBlockFilter(block);
   }
 
+
   const handleBidAcceptance = (block:string,number:number) => {
     userInfo.bids[0].room.block = block;
     userInfo.bids[0].room.number = number;
@@ -224,7 +225,7 @@ const RoomBidding: React.FC = () => {
             user != undefined && user.username == "A106" && <div className="w-6/12 text-gray-900 text-2xl text-left">THE GOAT GETS +1 POINT</div> // please remove
           }
           <div className="w-6/12 text-gray-900 text- base text-right"> 
-              Current Bid : {userInfo.bids[0].room.block}{userInfo.bids[0].room.number}
+              Current Bid : {userInfo.bids[0]?.room.block}{userInfo.bids[0]?.room.number}
           </div>
           <div className="w-6/12 text-gray-900 text- base text-right"> 
               Points : {userInfo.points}
