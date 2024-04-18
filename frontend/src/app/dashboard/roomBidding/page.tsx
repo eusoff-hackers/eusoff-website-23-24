@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { RoomInfoType, RoomType } from '../profile/page';
 import { AxiosError } from 'axios';
+import LeaderboardDialog from '../../components/LeaderboardDialog'
 
 // Room Dialog Imports 
 import Button from '@mui/material/Button';
@@ -111,15 +112,15 @@ const RoomBidding: React.FC = () => {
     return object;
   }
 
-    const createLeaderboard = (block) => {
+    const createLeaderboard = (block: string) => {
       // Filter rooms by block and flatMap to get an array of all bidders in that block
-      const getAllBiddersForBlock = roomList
+      const getAllBiddersForBlock:bidderInfo[] = roomList
         .filter(room => room.block === block)
         .flatMap(room => room.bidders);
     
       // Sort bidders by points in descending order
-      const sortedBidders = getAllBiddersForBlock.sort((a, b) => b.info.points - a.info.points);
-    
+      const sortedBidders:bidderInfo[] = getAllBiddersForBlock.sort((a:any ,b:any) => b.info.points - a.info.points);
+
       return sortedBidders;
     }
 
@@ -299,11 +300,13 @@ const RoomBidding: React.FC = () => {
                   <p className='font-bold'>Bidders List:</p>
                 </DialogContentText>
                 {
+
                   roomSelect.bidders.length != 0 && 
                     roomSelect.bidders
                     .slice() // Make a shallow copy of the array to prevent mutating the original
                     .sort((a, b) => b.info.points - a.info.points) //
                     .map((bidder,index)=>{
+                      
                       return (
                         <DialogContentText key={index}>
                           {`Bidder ${index+1}: ${bidder.user.room} - ${bidder.info.points} points`}
@@ -355,6 +358,7 @@ const RoomBidding: React.FC = () => {
                   )
                 })
               }
+            <LeaderboardDialog data={createLeaderboard(blockfilter)} />
           </div>
           <div className='flex flex-row justify-center items-center' >
             <p className="text-black text-xs lg:text-xl font-mono"> Block Quota : {blockData[blockfilter].quota} , Bids : {blockData[blockfilter].bidderCount}</p>
