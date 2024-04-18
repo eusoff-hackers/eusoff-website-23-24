@@ -12,6 +12,7 @@ import { RoomBidInfo } from '../../models/roomBidInfo';
 import { Server } from '../../models/server';
 import { MongoSession } from '../../utils/mongoSession';
 import { iUser } from '../../models/user';
+import { RoomBlock } from '../../models/roomBlock';
 
 const schema = {
   body: {
@@ -34,59 +35,129 @@ const schema = {
 type iRooms = FromSchema<typeof schema.body>;
 type iBody = Omit<iRooms, keyof { rooms: iRoom[] }> & { rooms: iRoom[] };
 
-async function alert(
+async function alertBlock(
+  block: string,
+  session: MongoSession,
+  alertInterval: number,
+) {
+  try {
+    const blockInfo = await RoomBlock.findOne({ block });
+    if (!blockInfo) {
+      throw new Error();
+    }
+    const rooms = (await Room.find({ block }).session(session.session)).map(
+      (r) => r._id,
+    );
+    const users = await RoomBid.find({ room: { $in: rooms } })
+      .session(session.session)
+      .populate(`info`)
+      .populate(`user`);
+
+    const n = blockInfo.quota;
+    if (n >= users.length) return false;
+    const limit: number = users[n].info!.points;
+
+    const fUsers = users
+      .filter(
+        (u) => u.info!.lastAlertMail.getTime() + alertInterval <= Date.now(),
+      )
+      .filter((u) => u.info!.points <= limit);
+
+    logAndThrow(
+      await Promise.allSettled(
+        fUsers.map(async (u) => {
+          await RoomBidInfo.findOneAndUpdate(
+            { user: u.user?._id },
+            { lastAlertMail: Date.now() },
+          ).session(session.session);
+
+          const body = [
+            `Please review your bid for a room in <strong>${block} block</strong> as soon as possible to ensure you maintain the highest bid. This is your chance to secure your preferred room.`,
+            `To update your bid, please visit our bidding page and save your new preference before the deadline.`,
+          ];
+
+          const { email, username, _id } = u.user as iUser;
+
+          await mail(
+            {
+              subject: `Urgent Alert: Risk of Being Outbidded`,
+              title: `Alert: You are in danger of being outbidded!`,
+              body,
+              email,
+              username,
+              userId: _id,
+            },
+            session,
+          );
+        }),
+      ),
+      `Alert mail send`,
+    );
+    return true;
+  } catch (error) {
+    reportError(error, `Block alert handler.`);
+    throw error;
+  }
+}
+
+async function alertRoom(
   room: iRoom,
   session: MongoSession,
   alertInterval: number,
 ) {
-  const users = (await Room.findById(room._id)
-    .populate({ path: `bidders`, populate: [`user`, `info`] })
-    .session(session.session))!.bidders!.sort(
-    (u, v) => v.info!.points - u.info!.points,
-  );
+  try {
+    const users = (await Room.findById(room._id)
+      .populate({ path: `bidders`, populate: [`user`, `info`] })
+      .session(session.session))!.bidders!.sort(
+      (u, v) => v.info!.points - u.info!.points,
+    );
 
-  const n = room.capacity - room.occupancy;
-  if (n >= users.length) return false;
-  const limit = users[n].info!.points;
+    const n = room.capacity - room.occupancy;
+    if (n >= users.length) return false;
+    const limit = users[n].info!.points;
 
-  const fUsers = users
-    .filter(
-      (u) => u.info!.lastAlertMail.getTime() + alertInterval <= Date.now(),
-    )
-    .filter((u) => u.info!.points <= limit);
+    const fUsers = users
+      .filter(
+        (u) => u.info!.lastAlertMail.getTime() + alertInterval <= Date.now(),
+      )
+      .filter((u) => u.info!.points <= limit);
 
-  logAndThrow(
-    await Promise.allSettled(
-      fUsers.map(async (u) => {
-        await RoomBidInfo.findOneAndUpdate(
-          { user: u.user?._id },
-          { lastAlertMail: Date.now() },
-        ).session(session.session);
+    logAndThrow(
+      await Promise.allSettled(
+        fUsers.map(async (u) => {
+          await RoomBidInfo.findOneAndUpdate(
+            { user: u.user?._id },
+            { lastAlertMail: Date.now() },
+          ).session(session.session);
 
-        const body = [
-          `Please review your bid for the room <strong>${room.block}${room.number}</strong> as soon as possible to ensure you maintain the highest bid. This is your chance to secure your preferred room.`,
-          `To update your bid, please visit our bidding page and save your new preference before the deadline.`,
-        ];
+          const body = [
+            `Please review your bid for the room <strong>${room.block}${room.number}</strong> as soon as possible to ensure you maintain the highest bid. This is your chance to secure your preferred room.`,
+            `To update your bid, please visit our bidding page and save your new preference before the deadline.`,
+          ];
 
-        const { email, username, _id } = u.user as iUser;
+          const { email, username, _id } = u.user as iUser;
 
-        await mail(
-          {
-            subject: `Urgent Alert: Risk of Being Outbidded`,
-            title: `Alert: You are in danger of being outbidded!`,
-            body,
-            email,
-            username,
-            userId: _id,
-          },
-          session,
-        );
-      }),
-    ),
-    `Alert mail send`,
-  );
+          await mail(
+            {
+              subject: `Urgent Alert: Risk of Being Outbidded`,
+              title: `Alert: You are in danger of being outbidded!`,
+              body,
+              email,
+              username,
+              userId: _id,
+            },
+            session,
+          );
+        }),
+      ),
+      `Alert mail send`,
+    );
 
-  return true;
+    return true;
+  } catch (error) {
+    reportError(error, `Room alert mail handler`);
+    throw error;
+  }
 }
 
 async function handler(
@@ -159,13 +230,28 @@ async function handler(
       );
     }
 
-    if (alertInterval)
+    if (alertInterval) {
       logAndThrow(
         await Promise.allSettled(
-          rooms.map((r) => alert(r, session, alertInterval.value as number)),
+          rooms.map((r) =>
+            alertRoom(r, session, alertInterval.value as number),
+          ),
         ),
         `Room bid alert mail`,
       );
+      const blocks = rooms
+        .map((r) => r.block)
+        .filter((v, i, arr) => arr.indexOf(v) === i);
+
+      logAndThrow(
+        await Promise.allSettled(
+          blocks.map((b) =>
+            alertBlock(b, session, alertInterval.value as number),
+          ),
+        ),
+        `Block alert mail`,
+      );
+    }
 
     await logEvent(
       `USER PLACE ROOM BID`,
