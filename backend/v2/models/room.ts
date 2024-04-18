@@ -33,8 +33,8 @@ const roomSchema = new Schema<iRoom>(
   {
     block: { type: String, required: true, index: 1, enum: BLOCKS_LIST },
     number: { type: Number, required: true },
-    capacity: { type: Number, min: 1, max: 2 },
-    occupancy: { type: Number, min: 0, max: 2 },
+    capacity: { type: Number, min: 1, max: 2, required: true },
+    occupancy: { type: Number, min: 0, max: 2, required: true, default: 0 },
     allowedGenders: [{ type: String, enum: GENDERS }],
   },
   {
