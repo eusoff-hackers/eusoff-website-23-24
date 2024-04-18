@@ -16,7 +16,10 @@ async function auth(req: FastifyRequest, res: FastifyReply) {
   const session = req.session.get(`session`)!;
   try {
     const allow = await Server.findOne({ key: `allowLogin` });
-    if (!req.session?.user || !allow || !allow.value) {
+    if (
+      !req.session?.user ||
+      (req.session.user.role !== 'ADMIN' && (!allow || !allow.value))
+    ) {
       await sendStatus(res, 401, `Unauthorized.`);
       return false;
     }

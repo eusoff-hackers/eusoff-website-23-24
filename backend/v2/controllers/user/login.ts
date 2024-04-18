@@ -53,11 +53,6 @@ async function handler(
       credentials: { username, password },
     } = req.body;
 
-    const allow = await Server.findOne({ key: `allowLogin` });
-    if (!allow || !allow.value) {
-      return await sendStatus(res, 401, `Login disabled.`);
-    }
-
     if (!(await User.exists({ username }).session(session.session))) {
       return await sendStatus(res, 401, `Invalid credentials.`);
     }
@@ -67,6 +62,10 @@ async function handler(
       return sendStatus(res, 401, `Invalid credentials.`);
     }
 
+    const allow = await Server.findOne({ key: `allowLogin` });
+    if (user.role !== 'ADMIN' && (!allow || !allow.value)) {
+      return await sendStatus(res, 401, `Login disabled.`);
+    }
     await auth.login(user, req);
 
     await logEvent(`USER LOGIN`, session, user._id);
