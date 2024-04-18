@@ -111,6 +111,19 @@ const RoomBidding: React.FC = () => {
     return object;
   }
 
+    const createLeaderboard = (block) => {
+      // Filter rooms by block and flatMap to get an array of all bidders in that block
+      const getAllBiddersForBlock = roomList
+        .filter(room => room.block === block)
+        .flatMap(room => room.bidders);
+    
+      // Sort bidders by points in descending order
+      const sortedBidders = getAllBiddersForBlock.sort((a, b) => b.info.points - a.info.points);
+    
+      return sortedBidders;
+    }
+
+
   const handleDialogOpen = (room : Room) => {
     setDialogOpen(true);
     setRoomSelect(room);
@@ -157,8 +170,15 @@ const RoomBidding: React.FC = () => {
 
   useEffect(() => {
     fetchRoomBidInfo()
-    fetchRoooms()
-  }, )
+    fetchRooms()
+
+    const interval = setInterval(() => {
+      fetchRoomBidInfo();
+      fetchRooms();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [])
 
 
   // api call to make room bidding submission
@@ -175,7 +195,7 @@ const RoomBidding: React.FC = () => {
   }
 
   // api call to fetch all rooms
-  const fetchRoooms = async () => {
+  const fetchRooms = async () => {
     await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/room/list`)
     .then((response:any)=>{
     if(response.data.success){
