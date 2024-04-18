@@ -13,6 +13,8 @@ interface iRoomBidInfo extends Document {
   pointsDistribution: iPointsDistribution[];
   lastSaveMail: Date;
   lastAlertMail: Date;
+  isAllocated: boolean;
+  room?: Types.ObjectId;
 }
 
 const rRoomBidInfo = {
@@ -35,6 +37,8 @@ const rRoomBidInfo = {
       },
     },
     canBid: { type: `boolean` },
+    isAllocated: { type: `boolean` },
+    room: { $ref: `room` },
   },
   additionalProperties: false,
 };
@@ -58,6 +62,8 @@ const roomBidInfoSchema = new Schema<iRoomBidInfo>({
     type: [{ type: pointsDistributionSchema }],
     default: [],
   },
+  isAllocated: { type: Boolean, required: true, default: false },
+  room: { type: Schema.Types.ObjectId, unique: true, ref: `Room` },
   lastSaveMail: {
     type: Date,
     required: true,
