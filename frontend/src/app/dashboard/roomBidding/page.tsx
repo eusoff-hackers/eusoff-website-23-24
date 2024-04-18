@@ -111,7 +111,7 @@ const RoomBidding: React.FC = () => {
     return object;
   }
 
-    const createLeaderboard = (block) => {
+    const createLeaderboard = (block: string) => {
       // Filter rooms by block and flatMap to get an array of all bidders in that block
       const getAllBiddersForBlock = roomList
         .filter(room => room.block === block)
