@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { removeUser, selectUser, User, setUser } from '../../redux/Resources/userSlice';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
-import { RoomInfoType } from '../profile/page';
+import { RoomInfoType, RoomType } from '../profile/page';
 import { AxiosError } from 'axios';
 
 // Room Dialog Imports 
@@ -123,9 +123,8 @@ const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
     setBlockFilter(block);
   }
 
-  const handleBidAcceptance = (block:string,number:number) => {
-    userInfo.bids[0].room.block = block;
-    userInfo.bids[0].room.number = number;
+  const handleBidAcceptance = (room: RoomType) => {
+    userInfo.bids = [room];
     submitBid();
     setDialogOpen(false);
 
@@ -220,7 +219,7 @@ const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
             user.username == "A106" && <div className="w-6/12 text-gray-900 text-2xl text-left">THE GOAT GETS +1 POINT</div> // please remove
           }
           <div className="w-6/12 text-gray-900 text- base text-right"> 
-              Current Bid : {userInfo.bids[0].room.block}{userInfo.bids[0].room.number}
+              Current Bid : {userInfo.bids[0]?.room.block}{userInfo.bids[0]?.room.number}
           </div>
           <div className="w-6/12 text-gray-900 text- base text-right"> 
               Points : {userInfo.points}
@@ -271,7 +270,7 @@ const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button  color="success" onClick={()=>{handleBidAcceptance(roomSelect.block,roomSelect.number)}}>Accept</Button>
+                <Button  color="success" onClick={()=>{handleBidAcceptance({room: roomSelect} as RoomType)}}>Accept</Button>
                 <Button  color="error" onClick={handleDialogClose}>Close</Button>
               </DialogActions>
             </Dialog>
