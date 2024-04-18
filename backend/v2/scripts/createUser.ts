@@ -1,18 +1,28 @@
-const mongoose = require(`mongoose`);
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import { User } from '../models/user';
+import { RoomBidInfo } from '../models/roomBidInfo';
+
 const { env } = process;
-const { User } = require(`../models/user`);
-const bcrypt = require(`bcryptjs`);
 
 async function run() {
   await mongoose.connect(env.MONGO_URI);
 
-  await User.create({
-    username: 'C111',
-    password: await bcrypt.hash(`mediumcoock`, 10),
+  const user = await User.create({
+    username: 'female4',
+    password: await bcrypt.hash(`female4`, 10),
     year: 1,
     role: `ADMIN`,
     gender: `Female`,
-    email: `haha@gmail.com`,
+    email: `e1129892@u.nus.edu`,
+    room: `female4 Room`,
+  });
+
+  await RoomBidInfo.create({
+    user: user._id,
+    isEligible: true,
+    points: 40,
+    pointsDistribution: [],
   });
   console.log(`Finished.`);
 }
