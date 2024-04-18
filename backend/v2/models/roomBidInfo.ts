@@ -63,7 +63,7 @@ const roomBidInfoSchema = new Schema<iRoomBidInfo>({
     default: [],
   },
   isAllocated: { type: Boolean, required: true, default: false },
-  room: { type: Schema.Types.ObjectId, unique: true, ref: `Room` },
+  room: { type: Schema.Types.ObjectId, ref: `Room` },
   lastSaveMail: {
     type: Date,
     required: true,

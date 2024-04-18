@@ -31,6 +31,7 @@ async function isEligible(
 
     const curDate = Date.now();
     if (
+      !info.isAllocated &&
       info.isEligible &&
       (bidOpen.value as number) <= curDate &&
       curDate <= (bidClose.value as number)

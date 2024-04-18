@@ -6,6 +6,7 @@ import { success, resBuilder, sendError } from '../../utils/req_handler';
 import { logAndThrow, reportError } from '../../utils/logger';
 import { auth } from '../../utils/auth';
 import { RoomBid } from '../../models/roomBid';
+import { isEligible } from '../../utils/room';
 
 const schema = {
   response: {
@@ -49,6 +50,7 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
         RoomBidInfo.findOne({ user: user._id })
           .select(`-user`)
           .session(session.session)
+          .populate(`room`)
           .lean(),
         Server.findOne({ key: `roomBidOpen` }).session(session.session),
         Server.findOne({ key: `roomBidClose` }).session(session.session),
@@ -61,11 +63,7 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
     }
 
     if (info) {
-      const curDate = Date.now();
-      info.canBid =
-        info.isEligible &&
-        (bidOpen.value as number) <= curDate &&
-        curDate <= (bidClose.value as number);
+      info.canBid = await isEligible(user, session);
     }
 
     const bids = await RoomBid.find({ user: user._id })
