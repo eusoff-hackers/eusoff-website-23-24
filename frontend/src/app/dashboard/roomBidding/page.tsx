@@ -286,7 +286,7 @@ const RoomBidding: React.FC = () => {
                     .map((bidder,index)=>{
                       return (
                         <DialogContentText key={index}>
-                          {`Bidder ${index+1}: ${bidder.user.username} - ${bidder.info.points} points`}
+                          {`Bidder ${index+1}: ${bidder.user.room} - ${bidder.info.points} points`}
                         </DialogContentText>
                       )
                     })
