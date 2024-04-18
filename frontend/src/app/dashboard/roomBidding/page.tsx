@@ -128,7 +128,7 @@ const RoomBidding: React.FC = () => {
 
 
   const handleBidAcceptance = (roomSelect:Room) => {
-    if(userInfo.bids[0]==null){
+    if(userInfo.bids[0]==null && userInfo.canBid){
       const newRoom = {
         block: roomSelect.block,
         number: roomSelect.number,
