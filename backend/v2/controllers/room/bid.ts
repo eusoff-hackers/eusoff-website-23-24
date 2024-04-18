@@ -48,10 +48,12 @@ async function alertBlock(
     const rooms = (await Room.find({ block }).session(session.session)).map(
       (r) => r._id,
     );
-    const users = await RoomBid.find({ room: { $in: rooms } })
-      .session(session.session)
-      .populate(`info`)
-      .populate(`user`);
+    const users = (
+      await RoomBid.find({ room: { $in: rooms } })
+        .session(session.session)
+        .populate(`info`)
+        .populate(`user`)
+    ).sort((u, v) => v.info!.points - u.info!.points);
 
     const n = blockInfo.quota;
     if (n >= users.length) return false;
