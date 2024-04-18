@@ -30,7 +30,7 @@ export interface RoomType {
     number: number;
     capacity: number;
     occupancy: number;
-    allowedGender: string[];
+    allowedGenders: string[];
   }
 }
 
