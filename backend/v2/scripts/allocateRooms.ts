@@ -44,12 +44,10 @@ async function compute(bid: iRoomBid, session: ClientSession) {
     { user: user!._id },
     { isAllocated: true, room: room!._id },
   ).session(session);
-  
 }
 
 (async () => {
   await mongoose.connect(process.env.MONGO_URI);
-
   const session = await mongoose.startSession();
 
   await session.startTransaction({
