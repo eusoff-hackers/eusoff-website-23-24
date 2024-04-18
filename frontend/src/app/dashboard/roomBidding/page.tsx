@@ -215,15 +215,11 @@ const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
           <div className="w-6/12 text-gray-900 text-2xl text-left">
                         Eusoff Room Bidding 
           </div>
-          {
-            user.username == "A106" && <div className="w-6/12 text-gray-900 text-2xl text-left">THE GOAT GETS +1 POINT</div> // please remove
-          }
           <div className="w-6/12 text-gray-900 text- base text-right"> 
               Current Bid : {userInfo.bids[0]?.room.block}{userInfo.bids[0]?.room.number}
           </div>
           <div className="w-6/12 text-gray-900 text- base text-right"> 
               Points : {userInfo.points}
-              { user.username == "A106" && <p>+1</p> } {/* please remove */}
           </div>
         </div>
         {/*Top Banner
