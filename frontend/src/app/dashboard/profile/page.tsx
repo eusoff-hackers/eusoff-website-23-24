@@ -143,8 +143,8 @@ const ProfilePage = () => {
             { roomBidInfo == null ? <p>Loading...</p> 
             : <ul>
                 <li>{`Total Bidding points: ${roomBidInfo.points}`}</li>
-                {/* <li>{`Eligible for room bidding: ${roomBidInfo.isEligible} `}</li>
-                <li>{`Can bid: ${roomBidInfo.canBid}`}</li> */}
+                <li>{`Qualified to stay: ${roomBidInfo.isEligible ? `Yes` : `No`} `}</li>
+                {/* <li>{`Can bid: ${roomBidInfo.canBid}`}</li> */}
               </ul>
             }
             <div className="py-5 px-5">
