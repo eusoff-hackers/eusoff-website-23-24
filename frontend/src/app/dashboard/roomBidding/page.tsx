@@ -127,9 +127,25 @@ const RoomBidding: React.FC = () => {
   }
 
 
-  const handleBidAcceptance = (block:string,number:number) => {
-    userInfo.bids[0].room.block = block;
-    userInfo.bids[0].room.number = number;
+  const handleBidAcceptance = (roomSelect:Room) => {
+    if(userInfo.bids[0]==null){
+      const newRoom = {
+        block: roomSelect.block,
+        number: roomSelect.number,
+        capacity: roomSelect.capacity,
+        occupancy: roomSelect.occupancy,
+        allowedGenders: roomSelect.allowedGenders,
+      };
+
+      setUserInfo({
+        ...userInfo,
+        bids: [newRoom] // Adding the new room
+      });
+
+    } else {
+      userInfo.bids[0].room.block = roomSelect.block;
+      userInfo.bids[0].room.number = roomSelect.number;
+    }
     setIsSubmitting(true);
     submitBid();
     setIsSubmitting(false);
@@ -260,13 +276,17 @@ const RoomBidding: React.FC = () => {
                   <p className='font-bold'>Bidders List:</p>
                 </DialogContentText>
                 {
-                  roomSelect.bidders.length != 0 && roomSelect.bidders.map((bidder,index)=>{
-                    return (
-                      <DialogContentText key={index}>
-                        {`Bidder ${index+1}: ${bidder.user.username} - ${bidder.info.points} points`}
-                      </DialogContentText>
-                    )
-                  })
+                  roomSelect.bidders.length != 0 && 
+                    roomSelect.bidders
+                    .slice() // Make a shallow copy of the array to prevent mutating the original
+                    .sort((a, b) => b.info.points - a.info.points) //
+                    .map((bidder,index)=>{
+                      return (
+                        <DialogContentText key={index}>
+                          {`Bidder ${index+1}: ${bidder.user.room} - ${bidder.info.points} points`}
+                        </DialogContentText>
+                      )
+                    })
                 }
                 <DialogContentText>
                   &nbsp;
@@ -279,7 +299,7 @@ const RoomBidding: React.FC = () => {
               {
                 userInfo.canBid ? (
                   <>
-                    <Button  color="success" onClick={()=>{handleBidAcceptance(roomSelect.block,roomSelect.number)}}>Accept</Button>
+                    <Button  color="success" onClick={()=>{handleBidAcceptance(roomSelect)}}>Accept</Button>
                     <Button  color="error" onClick={handleDialogClose}>Close</Button>
                   </>
                 )
