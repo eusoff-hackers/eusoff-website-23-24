@@ -3,6 +3,7 @@ import { iUser, User } from '../models/user';
 import { sendStatus } from './req_handler';
 import { reportError, logger } from './logger';
 import { MongoSession } from './mongoSession';
+import { Server } from '../models/server';
 
 declare module 'fastify' {
   interface Session {
@@ -14,7 +15,8 @@ declare module 'fastify' {
 async function auth(req: FastifyRequest, res: FastifyReply) {
   const session = req.session.get(`session`)!;
   try {
-    if (!req.session?.user) {
+    const allow = await Server.findOne({ key: `allowLogin` });
+    if (!req.session?.user || !allow || !allow.value) {
       await sendStatus(res, 401, `Unauthorized.`);
       return false;
     }

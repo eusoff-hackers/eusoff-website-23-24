@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply, RouteOptions } from 'fastify';
-import { IncomingMessage, Server, ServerResponse } from 'http';
+import { IncomingMessage, Server as httpServer, ServerResponse } from 'http';
 import { FromSchema } from 'json-schema-to-ts';
 import * as bcrypt from 'bcryptjs';
 import {
@@ -11,6 +11,7 @@ import {
 import { User } from '../../models/user';
 import { reportError, logEvent } from '../../utils/logger';
 import * as auth from '../../utils/auth';
+import { Server } from '../../models/server';
 
 const schema = {
   body: {
@@ -52,6 +53,11 @@ async function handler(
       credentials: { username, password },
     } = req.body;
 
+    const allow = await Server.findOne({ key: `allowLogin` });
+    if (!allow || !allow.value) {
+      return await sendStatus(res, 401, `Login disabled.`);
+    }
+
     if (!(await User.exists({ username }).session(session.session))) {
       return await sendStatus(res, 401, `Invalid credentials.`);
     }
@@ -81,7 +87,7 @@ async function handler(
 }
 
 const login: RouteOptions<
-  Server,
+  httpServer,
   IncomingMessage,
   ServerResponse,
   { Body: iBody }
