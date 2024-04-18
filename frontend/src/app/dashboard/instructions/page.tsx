@@ -1,10 +1,11 @@
-"use client"; // This is a client component 👈🏽
+"use client"; // This is a client component 
 
 import React, { useState, useEffect } from 'react'
 import { removeUser } from '../../redux/Resources/userSlice';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import NavBar from '../../components/NavBar';
+import PDFViewer from '../../components/PDFViewer'
 
 const InstructionsPage = () => {
   const route = useRouter();
@@ -22,11 +23,11 @@ const InstructionsPage = () => {
   }
 
   return (
-    <div className="bg-gradient-to-tl h-full w-full flex flex-col lg:flex-row">
+    /*<div className="bg-gradient-to-tl h-full w-full flex flex-col lg:flex-row">
       <main className="bg-gradient-to-tl h-fit w-full">
         <article className="bg-slate-200 shadow-2xl py-5 p-2 border-4 lg:rounded-r-lg lg:rounded-bl-none rounded-b-lg font-mono border-slate-800">
 
-          {/*-------------General Information-----------*/}
+          {/*-------------General Information-----------}
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8 stroke-red-400 m-2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
           </svg>
@@ -133,9 +134,9 @@ const InstructionsPage = () => {
             </ul>
           </div>
           <br/>
-          {/*-------------General Information-----------*/}
+          {/*-------------General Information-----------}
 
-          {/*-------------FAQ-----------*/}
+          {/*-------------FAQ-----------}
           <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-messages stroke-blue-300 w-10 h-10 m-2" width="40" height="40" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
             <path d="M21 14l-3 -3h-7a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h9a1 1 0 0 1 1 1v10"></path>
@@ -177,9 +178,12 @@ const InstructionsPage = () => {
               </ol>
             </ul>
           </div>
-          {/*-------------FAQ-----------*/}
+          {/*-------------FAQ-----------}
         </article>
       </main>
+    </div>*/
+    <div className="bg-gradient-to-tl min-h-screen w-full flex flex-col lg:flex-row">
+      <PDFViewer />
     </div>
   )
 }
