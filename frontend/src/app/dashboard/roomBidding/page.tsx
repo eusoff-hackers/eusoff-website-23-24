@@ -215,28 +215,28 @@ const RoomBidding: React.FC = () => {
              
       <main className=" h-full w-full ">
 
-          {/*Main Content */}
+          {/*Top Banner */}
           <div className=" flex flex-row w-full bg-gradient-to-r from-[#80fbff] to-[#9089fc] opacity-100 font-mono m-0 p-2 font-bold uppercase hover:shadow-2xl">
 
-          <div className="w-6/12 text-gray-900 text-2xl text-left">
+          <div className=" text-gray-900 text-2xl text-left">
                         Eusoff Room Bidding 
           </div>
-          {
-            user != undefined && user.username == "A106" && <div className="w-6/12 text-gray-900 text-2xl text-left">THE GOAT GETS +1 POINT</div> // please remove
-          }
-          <div className="w-6/12 text-gray-900 text- base text-right"> 
-              Current Bid : {userInfo.bids[0]?.room.block}{userInfo.bids[0]?.room.number}
-          </div>
-          <div className="w-6/12 text-gray-900 text- base text-right"> 
-              Points : {userInfo.points}
-              { user != undefined && user.username == "A106" && <p>+1</p> } {/* please remove */}
-          </div>
+         
         </div>
-        {/*Top Banner
+        {/*Top Banner Alternative Color Scheme
         bg-gradient-to-r from-[#25AE8D] to-[#008087]
           bg-gradient-to-r from-[#ff80b5] to-[#9089fc] opacity-30
         */}
     
+    <div className="flex flex-col md:flex-row justify-between bg-slate-200 mt-10 w-5/6 shadow-2xl text-xl font-mono rounded-lg divide-y-5
+             m-auto py-10 px-5 mb-3">
+          <div className="text-gray-900 text-left"> 
+            Current Bid: {userInfo.bids[0]?.room ? `${userInfo.bids[0].room.block}${userInfo.bids[0].room.number}` : "No Room Selected"}
+          </div>
+          <div className="text-gray-900 text-left md:text-right "> 
+              Points : {userInfo.points}
+          </div>
+    </div>
 
         {/*Main Content*/}
         <div className="flex flex-col bg-slate-200 mt-10 w-5/6 shadow-2xl text-3xl font-mono rounded-lg divide-y-5
@@ -290,7 +290,6 @@ const RoomBidding: React.FC = () => {
             </Dialog>
           </React.Fragment>
 
-          {/*Placeholder image and log in text*/}
           <div className="flex flex-col w-full h-full bg-slate-200 text-center">
             <h1 className="text-black border-b-2 border-b-slate-400">
             Available Rooms 
