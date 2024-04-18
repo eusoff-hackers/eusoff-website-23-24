@@ -222,7 +222,7 @@ async function handler(
       await mail(
         {
           subject: `Thank You for Bidding!`,
-          title: `Your bid has successfully been saved!`,
+          title: `Your bid has been saved successfully!`,
           body,
           email: user.email,
           username: user.username,
