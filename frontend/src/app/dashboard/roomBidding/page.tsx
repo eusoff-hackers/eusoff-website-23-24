@@ -99,16 +99,17 @@ const RoomBidding: React.FC = () => {
       bidders: []
     }
   );
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [currentBid,setCurrentBid] = useState<RoomDet>({block:'',number: 0})
   
-const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
-  const object: Record<string, BlockInfo> = {};
-  array.forEach((item) => {
-    object[item.block] = { quota: item.quota, bidderCount: item.bidderCount };
-  });
-  return object;
-}
+  const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
+    const object: Record<string, BlockInfo> = {};
+    array.forEach((item) => {
+      object[item.block] = { quota: item.quota, bidderCount: item.bidderCount };
+    });
+    return object;
+  }
 
   const handleDialogOpen = (room : Room) => {
     setDialogOpen(true);
@@ -116,25 +117,30 @@ const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
   };
 
   const handleDialogClose = () => {
-    setDialogOpen(false);
+    if (!isSubmitting) {
+      setDialogOpen(false);
+    }
   };
 
   const handleBlockFilter = (block: string) => {
     setBlockFilter(block);
   }
 
-  const handleBidAcceptance = (room: RoomType) => {
-    userInfo.bids = [room];
+
+  const handleBidAcceptance = (block:string,number:number) => {
+    userInfo.bids[0].room.block = block;
+    userInfo.bids[0].room.number = number;
+    setIsSubmitting(true);
     submitBid();
+    setIsSubmitting(false);
     setDialogOpen(false);
-
-
   }
 
   useEffect(() => {
     fetchRoomBidInfo()
     fetchRoooms()
-}, [])
+  }, [])
+
 
   // api call to make room bidding submission
   const submitBid = async () => {
@@ -215,11 +221,15 @@ const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
           <div className="w-6/12 text-gray-900 text-2xl text-left">
                         Eusoff Room Bidding 
           </div>
+          {
+            user != undefined && user.username == "A106" && <div className="w-6/12 text-gray-900 text-2xl text-left">THE GOAT GETS +1 POINT</div> // please remove
+          }
           <div className="w-6/12 text-gray-900 text- base text-right"> 
               Current Bid : {userInfo.bids[0]?.room.block}{userInfo.bids[0]?.room.number}
           </div>
           <div className="w-6/12 text-gray-900 text- base text-right"> 
               Points : {userInfo.points}
+              { user != undefined && user.username == "A106" && <p>+1</p> } {/* please remove */}
           </div>
         </div>
         {/*Top Banner
@@ -266,8 +276,16 @@ const objectify = (array: RoomBlock[]): Record<string, BlockInfo> => {
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button  color="success" onClick={()=>{handleBidAcceptance({room: roomSelect} as RoomType)}}>Accept</Button>
-                <Button  color="error" onClick={handleDialogClose}>Close</Button>
+              {
+                userInfo.canBid ? (
+                  <>
+                    <Button  color="success" onClick={()=>{handleBidAcceptance(roomSelect.block,roomSelect.number)}}>Accept</Button>
+                    <Button  color="error" onClick={handleDialogClose}>Close</Button>
+                  </>
+                )
+                : (<p>Not eligible for bidding</p>)
+
+              }
               </DialogActions>
             </Dialog>
           </React.Fragment>
