@@ -45,19 +45,18 @@ console.log(data)
   };
 
   return (
-    <div>
-      <Button onClick={handleClickOpen}>
-        Show Leaderboard
-      </Button>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="leaderboard-dialog-title">
-        <DialogTitle id="leaderboard-dialog-title">Leaderboard</DialogTitle>
-        <DialogContent>
-            <TableContainer component={Paper} style={{ maxHeight: 500, overflow: 'auto' }}>
+    <div className="w-full">
+
+        <h1 className="text-black border-b-2 text-2xl border-b-slate-400">
+            Block LeaderBoard 
+        </h1>
+        
+            <TableContainer component={Paper} style={{ overflow: 'auto' }}>
                 <Table stickyHeader aria-label="simple table">
                     <TableHead>
                     <TableRow>
                         <TableCell>Rank</TableCell>
-                        <TableCell>Name</TableCell>
+                        <TableCell>Room Number</TableCell>
                         <TableCell align="right">Points</TableCell>
                     </TableRow>
                     </TableHead>
@@ -70,18 +69,13 @@ console.log(data)
                         <TableCell component="th" scope="row">
                             {index + 1}
                         </TableCell>
-                        <TableCell>{row.user.room}</TableCell>
+                        <TableCell>{(row.user.room).replace(/EH|\/|\s+/g, '')}</TableCell>
                         <TableCell align="right">{row.info.points}</TableCell>
                         </TableRow>
                     ))}
                     </TableBody>
                     </Table>
                     </TableContainer>
-                </DialogContent>
-                <DialogActions>
-          <Button onClick={handleClose}>Close</Button>
-        </DialogActions>
-      </Dialog>
     </div>
   );
 }

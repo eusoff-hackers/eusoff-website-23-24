@@ -309,7 +309,7 @@ const RoomBidding: React.FC = () => {
                       
                       return (
                         <DialogContentText key={index}>
-                          {`Bidder ${index+1}: ${bidder.user.room} - ${bidder.info.points} points`}
+                          {`Bidder ${index+1}: ${(bidder.user.room).replace(/EH|\/|\s+/g, '')} - ${bidder.info.points} points`}
                         </DialogContentText>
                       )
                     })
@@ -358,7 +358,6 @@ const RoomBidding: React.FC = () => {
                   )
                 })
               }
-            <LeaderboardDialog data={createLeaderboard(blockfilter)} />
           </div>
           <div className='flex flex-row justify-center items-center' >
             <p className="text-black text-xs lg:text-xl font-mono"> Block Quota : {blockData[blockfilter].quota} , Bids : {blockData[blockfilter].bidderCount}</p>
@@ -389,6 +388,12 @@ const RoomBidding: React.FC = () => {
             </div>
           </div>
         </div>
+
+        <div className="flex flex-col md:flex-row justify-between bg-slate-200 mt-10 w-5/6 shadow-2xl text-xl font-mono rounded-lg divide-y-5
+             m-auto py-10 px-5 mb-3">
+                      <LeaderboardDialog data={createLeaderboard(blockfilter)} />
+
+    </div>
 
         </main>
         
