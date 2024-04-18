@@ -129,12 +129,14 @@ const RoomBidding: React.FC = () => {
 
   const handleBidAcceptance = (roomSelect:Room) => {
     if(userInfo.bids[0]==null && userInfo.canBid){
-      const newRoom = {
-        block: roomSelect.block,
-        number: roomSelect.number,
-        capacity: roomSelect.capacity,
-        occupancy: roomSelect.occupancy,
-        allowedGenders: roomSelect.allowedGenders,
+      const newRoom: RoomType = {
+        room: {
+          block: roomSelect.block,
+          number: roomSelect.number,
+          capacity: roomSelect.capacity,
+          occupancy: roomSelect.occupancy,
+          allowedGenders: roomSelect.allowedGenders,
+        }
       };
 
       setUserInfo({
@@ -143,6 +145,7 @@ const RoomBidding: React.FC = () => {
       });
 
     } else {
+      console.log(userInfo)
       userInfo.bids[0].room.block = roomSelect.block;
       userInfo.bids[0].room.number = roomSelect.number;
     }
@@ -155,7 +158,7 @@ const RoomBidding: React.FC = () => {
   useEffect(() => {
     fetchRoomBidInfo()
     fetchRoooms()
-  }, [])
+  }, )
 
 
   // api call to make room bidding submission
@@ -283,7 +286,7 @@ const RoomBidding: React.FC = () => {
                     .map((bidder,index)=>{
                       return (
                         <DialogContentText key={index}>
-                          {`Bidder ${index+1}: ${bidder.user.room} - ${bidder.info.points} points`}
+                          {`Bidder ${index+1}: ${bidder.user.username} - ${bidder.info.points} points`}
                         </DialogContentText>
                       )
                     })
@@ -338,7 +341,7 @@ const RoomBidding: React.FC = () => {
           </div>
           <div className="w-full h-full grid grid-cols-4 md:grid-cols-5 lg:grid-cols-10 gap-4 gap-y-5 mt-5">
             {
-              roomList!==null && 
+              roomList!==null && user!=null &&
               roomList.filter(
                 (room) => (room.block == blockfilter && room.allowedGenders[0] == user.gender) // checks if block selected and gender same as user
               ).map((room,index)=>{
