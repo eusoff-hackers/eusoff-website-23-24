@@ -150,13 +150,7 @@ const Leaderboard: React.FC = () => {
     }*/
 
     useEffect(() => {
-      if(response.data.success){
-          setLoading(!response.data.success)
-          setPoints(sortPoints(response.data.data))
-          }
-      })
-      .catch()
-  }, [])    axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/matches`)
+      axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/matches`)
       .then((response:any)=>{
       if(response.data.success){
           setLoading(!response.data.success)
@@ -167,7 +161,13 @@ const Leaderboard: React.FC = () => {
 
       axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ihg/points`)
       .then((response:any)=>{
-    
+      if(response.data.success){
+          setLoading(!response.data.success)
+          setPoints(sortPoints(response.data.data))
+          }
+      })
+      .catch()
+  }, [])  
 
     const getTime = (timestamp:number) => {
         let time = new Intl.DateTimeFormat("en-GB", {
