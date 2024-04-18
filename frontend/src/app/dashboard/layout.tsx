@@ -9,7 +9,7 @@ export default function DashboardLayout({
 }) {
   return (
     <section className="lg:grid lg:grid-cols-6">
-        <div className='lg:col-span-1'>
+        <div className='lg:flex'>
           <NavBar/>
         </div>
         <div className='lg:col-span-5'>{children}</div>
