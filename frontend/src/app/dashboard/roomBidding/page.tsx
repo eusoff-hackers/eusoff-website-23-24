@@ -166,7 +166,6 @@ const RoomBidding: React.FC = () => {
     setIsSubmitting(true);
     submitBid();
     setIsSubmitting(false);
-    setDialogOpen(false);
   }
 
   useEffect(() => {
@@ -188,9 +187,11 @@ const RoomBidding: React.FC = () => {
       rooms: [{ _id: roomSelect._id }]
     })
     .then((response:any)=>{
-    if(response.data.success) {
-        console.log("Bid Submitted")
+      
+    if(response.status == 200) {
+      setDialogOpen(false);
     }
+ 
     })
     .catch()
   }
@@ -309,7 +310,7 @@ const RoomBidding: React.FC = () => {
                       
                       return (
                         <DialogContentText key={index}>
-                          {`Bidder ${index+1}: ${(bidder.user.room).replace(/EH|\/|\s+/g, '')} - ${bidder.info.points} points`}
+                          {`Bidder ${index+1}: ${(bidder.user.room).replace(/EH|\s|\/.*?\//g, '')} - ${bidder.info.points} points`}
                         </DialogContentText>
                       )
                     })

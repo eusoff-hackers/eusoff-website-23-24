@@ -50,7 +50,7 @@ console.log(data)
         <h1 className="text-black border-b-2 text-2xl border-b-slate-400">
             Block LeaderBoard 
         </h1>
-        
+
             <TableContainer component={Paper} style={{ overflow: 'auto' }}>
                 <Table stickyHeader aria-label="simple table">
                     <TableHead>
@@ -69,7 +69,7 @@ console.log(data)
                         <TableCell component="th" scope="row">
                             {index + 1}
                         </TableCell>
-                        <TableCell>{(row.user.room).replace(/EH|\/|\s+/g, '')}</TableCell>
+                        <TableCell>{(row.user.room).replace(/EH|\s|\/.*?\//g, '')}</TableCell>
                         <TableCell align="right">{row.info.points}</TableCell>
                         </TableRow>
                     ))}
