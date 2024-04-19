@@ -47,14 +47,18 @@ interface Data {
           }).session(session);
           if (!tmp) missing.push(user);
           else {
-            if ((await RoomBidInfo.countDocuments({ user: tmp._id })) === 0) {
+            if (
+              (await RoomBidInfo.countDocuments({ user: tmp._id }).session(
+                session,
+              )) === 0
+            ) {
               missing.push(user);
               continue;
             }
             await RoomBidInfo.findOneAndUpdate(
               { user: tmp._id },
               { isEligible: true, points: user['Room Bidding Points'] },
-            );
+            ).session(session);
           }
         }
 

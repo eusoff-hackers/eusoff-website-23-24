@@ -13,8 +13,10 @@ import { RoomBlock } from '../models/roomBlock';
 
 async function compute(bid: iRoomBid, session: ClientSession) {
   const { user, info, room: oldRoom } = bid;
-  const room = await Room.findById(oldRoom!._id);
-  const block = await RoomBlock.findOne({ block: room?.block });
+  const room = await Room.findById(oldRoom!._id).session(session);
+  const block = await RoomBlock.findOne({ block: room?.block }).session(
+    session,
+  );
   if (!room || !block) {
     throw new Error(`Room ${oldRoom} not found.`);
   }
@@ -37,9 +39,9 @@ async function compute(bid: iRoomBid, session: ClientSession) {
     `Allocating ${room!.block}${room.number} to ${(user as iUser).username}`,
   );
   room!.occupancy += 1;
-  await room!.save();
+  await room!.save({ session });
   block.quota -= 1;
-  await block.save();
+  await block.save({ session });
   await RoomBidInfo.findOneAndUpdate(
     { user: user!._id },
     { isAllocated: true, room: room!._id },

@@ -210,7 +210,9 @@ interface Data {
           );
           if (!tmp || tmp.role !== 'USER') missing.push(user);
           else if (
-            (await RoomBidInfo.countDocuments({ user: tmp._id })) !== 0
+            (await RoomBidInfo.countDocuments({ user: tmp._id }).session(
+              session,
+            )) !== 0
           ) {
             await RoomBidInfo.updateOne(
               { user: tmp._id },

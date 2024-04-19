@@ -15,7 +15,9 @@ declare module 'fastify' {
 async function auth(req: FastifyRequest, res: FastifyReply) {
   const session = req.session.get(`session`)!;
   try {
-    const allow = await Server.findOne({ key: `allowLogin` });
+    const allow = await Server.findOne({ key: `allowLogin` }).session(
+      session.session,
+    );
     if (
       !req.session?.user ||
       (req.session.user.role !== 'ADMIN' && (!allow || !allow.value))

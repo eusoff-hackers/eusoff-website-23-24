@@ -46,12 +46,14 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
       await Promise.allSettled(
         (await RoomBlock.find().session(session.session).lean()).map(
           async (b) => {
-            const currentRooms = (await Room.find({ block: b.block })).map(
-              (r) => r._id,
-            );
+            const currentRooms = (
+              await Room.find({ block: b.block }).session(session.session)
+            ).map((r) => r._id);
             return {
               ...b,
-              bidderCount: await RoomBid.count({ room: { $in: currentRooms } }),
+              bidderCount: await RoomBid.count({
+                room: { $in: currentRooms },
+              }).session(session.session),
             };
           },
         ),
