@@ -208,7 +208,11 @@ interface Data {
           );
           if (!tmp || tmp.role !== 'USER') missing.push(user);
           else {
-            if ((await RoomBidInfo.countDocuments({ user: tmp._id })) !== 0)
+            if (
+              (await RoomBidInfo.countDocuments({ user: tmp._id }).session(
+                session,
+              )) !== 0
+            )
               continue;
             res.push({
               user: tmp._id,
