@@ -209,50 +209,58 @@ async function handler(
         Date.now() &&
       rooms.length > 0
     ) {
-      await RoomBidInfo.findOneAndUpdate(
-        { user: user._id },
-        { lastSaveMail: Date.now() },
-      ).session(session.session);
+      try {
+        await RoomBidInfo.findOneAndUpdate(
+          { user: user._id },
+          { lastSaveMail: Date.now() },
+        ).session(session.session);
 
-      const body = [
-        `We appreciate you taking the time to place your bid with us. You have bid for the following room: <strong>${rooms[0].block}${rooms[0].number}</strong>.`,
-        `We will notify you if any issues arise. Please make sure to check your spam folder and add us to your trusted sender list to receive all our communications.`,
-      ];
+        const body = [
+          `We appreciate you taking the time to place your bid with us. You have bid for the following room: <strong>${rooms[0].block}${rooms[0].number}</strong>.`,
+          `We will notify you if any issues arise. Please make sure to check your spam folder and add us to your trusted sender list to receive all our communications.`,
+        ];
 
-      await mail(
-        {
-          subject: `Thank You for Bidding!`,
-          title: `Your bid has been saved successfully!`,
-          body,
-          email: user.email,
-          username: user.username,
-          userId: user._id,
-        },
-        session,
-      );
+        await mail(
+          {
+            subject: `Thank You for Bidding!`,
+            title: `Your bid has been saved successfully!`,
+            body,
+            email: user.email,
+            username: user.username,
+            userId: user._id,
+          },
+          session,
+        );
+      } catch (error) {
+        reportError(error, `Save mail error.`);
+      }
     }
 
     if (alertInterval) {
-      logAndThrow(
-        await Promise.allSettled(
-          rooms.map((r) =>
-            alertRoom(r, session, alertInterval.value as number),
+      try {
+        logAndThrow(
+          await Promise.allSettled(
+            rooms.map((r) =>
+              alertRoom(r, session, alertInterval.value as number),
+            ),
           ),
-        ),
-        `Room bid alert mail`,
-      );
-      const blocks = rooms
-        .map((r) => r.block)
-        .filter((v, i, arr) => arr.indexOf(v) === i);
+          `Room bid alert mail`,
+        );
+        const blocks = rooms
+          .map((r) => r.block)
+          .filter((v, i, arr) => arr.indexOf(v) === i);
 
-      logAndThrow(
-        await Promise.allSettled(
-          blocks.map((b) =>
-            alertBlock(b, session, alertInterval.value as number),
+        logAndThrow(
+          await Promise.allSettled(
+            blocks.map((b) =>
+              alertBlock(b, session, alertInterval.value as number),
+            ),
           ),
-        ),
-        `Block alert mail`,
-      );
+          `Block alert mail`,
+        );
+      } catch (error) {
+        reportError(error, `Alert mail error.`);
+      }
     }
 
     await logEvent(
