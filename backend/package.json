@@ -41,6 +41,7 @@
     "express-session": "^1.17.3",
     "fastify": "^4.23.2",
     "ioredis": "^5.3.2",
+    "json-2-csv": "^5.5.1",
     "json-schema-to-ts": "^2.9.2",
     "mongodb": "^6.3.0",
     "mongodb-snapshot": "^1.4.1",
