@@ -41,7 +41,9 @@ async function alertBlock(
   alertInterval: number,
 ) {
   try {
-    const blockInfo = await RoomBlock.findOne({ block });
+    const blockInfo = await RoomBlock.findOne({ block }).session(
+      session.session,
+    );
     if (!blockInfo) {
       throw new Error();
     }
@@ -195,13 +197,15 @@ async function handler(
     await RoomBid.deleteMany({ user: user._id }).session(session.session);
     await RoomBid.create(newBids, { session: session.session });
 
-    const bidInfo = await RoomBidInfo.findOne({ user: user._id });
+    const bidInfo = await RoomBidInfo.findOne({ user: user._id }).session(
+      session.session,
+    );
     const saveInterval = await Server.findOne({
       key: `roomBidMailSaveInterval`,
-    });
+    }).session(session.session);
     const alertInterval = await Server.findOne({
       key: `roomBidMailAlertInterval`,
-    });
+    }).session(session.session);
 
     if (
       saveInterval &&
