@@ -51,7 +51,7 @@ async function handler(req: FastifyRequest, res: FastifyReply) {
             ).map((r) => r._id);
             return {
               ...b,
-              bidderCount: await RoomBid.count({
+              bidderCount: await RoomBid.countDocuments({
                 room: { $in: currentRooms },
               }).session(session.session),
             };
