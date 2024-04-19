@@ -1,4 +1,6 @@
 import { Types, Document, Schema, model } from 'mongoose';
+import { iUser } from './user';
+import { iRoom } from './room';
 
 interface iPointsDistribution extends Document {
   cca: string;
@@ -6,7 +8,7 @@ interface iPointsDistribution extends Document {
 }
 
 interface iRoomBidInfo extends Document {
-  user?: Types.ObjectId;
+  user?: Types.ObjectId | iUser;
   isEligible: boolean;
   points: number;
   canBid?: boolean;
@@ -14,7 +16,7 @@ interface iRoomBidInfo extends Document {
   lastSaveMail: Date;
   lastAlertMail: Date;
   isAllocated: boolean;
-  room?: Types.ObjectId;
+  room?: Types.ObjectId | iRoom;
 }
 
 const rRoomBidInfo = {
